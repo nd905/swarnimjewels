@@ -2244,8 +2244,8 @@
                 const response = await fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL);
                 const result = await response.json();
                 
-                if (result.success && Array.isArray(result.data)) {
-                    allProducts = result.data;
+                if (Array.isArray(result.products)) {
+                    allProducts = result.products;
                     
                     // Populate navbar dropdown with categories
                     let categories = [];
