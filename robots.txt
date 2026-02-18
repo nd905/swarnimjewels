@@ -1,0 +1,22 @@
+# robots.txt for Swarnim Jewels
+# Domain: www.swarnimjewels.com
+
+User-agent: *
+Allow: /
+
+# Allow all pages
+Allow: /index.html
+Allow: /product-detail.html
+Allow: /cart.html
+Allow: /checkout.html
+Allow: /about-us.html
+Allow: /contact.html
+
+# Disallow admin
+Disallow: /admin-panel.html
+
+# Sitemap location
+Sitemap: https://www.swarnimjewels.com/sitemap.xml
+
+# Crawl delay (be nice to servers)
+Crawl-delay: 1

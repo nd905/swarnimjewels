@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout | Swarnim Collection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --card-bg: #111;
+            --accent: #d4af37;
+            --text-main: #eee;
+            --border: 1px solid #333;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { font-family: 'Lato', sans-serif; background: var(--bg-dark); color: var(--text-main); padding: 0; min-height: 100vh; }
+        
+        /* Trust Bar */
+        .trust-bar {
+            background: #0a0a0a;
+            border-bottom: 1px solid #222;
+            padding: 12px 5%;
+            text-align: center;
+            color: #888;
+            font-size: 0.85rem;
+        }
+        .trust-bar i {
+            color: #4CAF50;
+            margin-right: 5px;
+        }
+        
+        /* Progress Indicator */
+        .progress-bar {
+            background: #0a0a0a;
+            padding: 30px 5%;
+            border-bottom: var(--border);
+        }
+        .progress-steps {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #333;
+            z-index: 0;
+        }
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            height: 2px;
+            background: var(--accent);
+            width: 33%;
+            z-index: 1;
+            transition: 0.5s;
+        }
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #222;
+            border: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .step.active .step-circle {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: black;
+        }
+        .step.completed .step-circle {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+        }
+        .step-label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .step.active .step-label {
+            color: var(--accent);
+        }
+        
+        .checkout-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; padding: 40px 20px 80px; }
+        
+        .section-header { 
+            font-family: 'Cinzel', serif; 
+            color: var(--accent); 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 15px; 
+            margin-bottom: 25px; 
+            font-size: 1.8rem; 
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-header i {
+            font-size: 1.5rem;
+        }
+        
+        .card { background: var(--card-bg); padding: 40px; border: var(--border); border-radius: 4px; }
+        
+        /* Product Preview */
+        .product-preview { 
+            display: flex; 
+            gap: 25px; 
+            align-items: center; 
+            margin-bottom: 40px; 
+            background: #0a0a0a; 
+            padding: 20px; 
+            border: 1px solid #222; 
+        }
+        .product-preview img { width: 100px; height: 100px; object-fit: cover; border: 1px solid var(--accent); }
+        .product-info h3 { font-family: 'Cinzel', serif; margin-bottom: 8px; font-size: 1.2rem; }
+        .product-info .price { color: var(--accent); font-size: 1.3rem; }
+        .product-info .shipping-note {
+            font-size: 0.8rem;
+            color: #4CAF50;
+            margin-top: 5px;
+        }
+        .product-info .shipping-note i {
+            margin-right: 5px;
+        }
+
+        /* Form */
+        .form-group { margin-bottom: 20px; }
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-size: 0.8rem; 
+            color: #888; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+        label .required {
+            color: #f44336;
+        }
+        input, textarea { 
+            width: 100%; 
+            background: #080808; 
+            border: 1px solid #333; 
+            color: white; 
+            padding: 16px; 
+            font-family: 'Lato', sans-serif; 
+            font-size: 1rem; 
+            transition: border 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--accent); outline: none; }
+        input.error, textarea.error {
+            border-color: #f44336;
+        }
+        .error-message {
+            color: #f44336;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        /* Order Summary Side */
+        .order-summary { 
+            background: #0f0f0f; 
+            border: 1px solid var(--accent); 
+            padding: 30px; 
+            height: fit-content; 
+            text-align: center; 
+            position: sticky; 
+            top: 20px; 
+        }
+        
+        .payment-steps {
+            text-align: left;
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .payment-steps h4 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent);
+            font-size: 1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .payment-steps ol {
+            list-style-position: inside;
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 2.2;
+        }
+        .payment-steps ol li {
+            padding-left: 10px;
+        }
+        .payment-steps .step-highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        .qr-code img { 
+            width: 100%; 
+            max-width: 200px; 
+            margin: 25px 0; 
+            border: 10px solid #fff; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        
+        .upi-id {
+            font-family: monospace; 
+            color: var(--accent); 
+            background: rgba(212, 175, 55, 0.1); 
+            border: 1px solid #333; 
+            padding: 15px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .copy-btn:hover {
+            background: var(--accent);
+            color: black;
+        }
+        
+        .total-amount { 
+            font-size: 2.2rem; 
+            color: var(--accent); 
+            font-family: 'Cinzel', serif; 
+            margin: 20px 0; 
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #333;
+        }
+        
+        .confirm-btn {
+            width: 100%; 
+            padding: 20px; 
+            background: var(--accent); 
+            color: black; 
+            border: none;
+            font-family: 'Cinzel', serif; 
+            font-weight: 700; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+        .confirm-btn:hover { 
+            background: white; 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+        }
+        .confirm-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .secure-badge { 
+            margin-top: 20px; 
+            color: #444; 
+            font-size: 0.8rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+        }
+        
+        /* Money Back Guarantee */
+        .guarantee-badge {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            padding: 15px;
+            margin-top: 20px;
+            color: #4CAF50;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        .guarantee-badge i {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 850px) { 
+            .checkout-container { grid-template-columns: 1fr; gap: 25px; padding: 25px 10px 60px; } 
+            .order-summary { position: static; order: -1; } 
+            .row { grid-template-columns: 1fr; gap: 15px; }
+            .progress-steps { flex-wrap: wrap; gap: 15px; justify-content: center; }
+            .step-label { font-size: 0.65rem; }
+            .step-circle { width: 35px; height: 35px; font-size: 0.9rem; }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 0; }
+            
+            /* Trust bar */
+            .trust-bar { padding: 10px 3%; font-size: 0.75rem; }
+            
+            /* Progress bar */
+            .progress-bar { padding: 20px 3%; }
+            .progress-steps { gap: 10px; }
+            .step { gap: 6px; }
+            .step-circle { width: 30px; height: 30px; font-size: 0.8rem; }
+            .step-label { font-size: 0.6rem; }
+            
+            /* Container */
+            .checkout-container { padding: 20px 8px 60px; gap: 20px; }
+            
+            /* Cards */
+            .card { padding: 20px 15px; }
+            
+            /* Section headers */
+            .section-header { 
+                font-size: 1.3rem; 
+                padding-bottom: 12px; 
+                margin-bottom: 20px;
+                gap: 10px;
+            }
+            .section-header i { font-size: 1.2rem; }
+            
+            /* Product preview */
+            .product-preview { 
+                flex-direction: column;
+                text-align: center;
+                padding: 15px; 
+                gap: 15px;
+            }
+            .product-preview img { width: 80px; height: 80px; }
+            .product-info h3 { font-size: 1rem; }
+            .product-info .price { font-size: 1.1rem; }
+            .product-info .shipping-note { font-size: 0.75rem; }
+            
+            /* Form elements */
+            .form-group { margin-bottom: 15px; }
+            label { 
+                font-size: 0.75rem; 
+                margin-bottom: 6px; 
+            }
+            input, textarea { 
+                padding: 12px; 
+                font-size: 0.9rem; 
+            }
+            
+            /* Order summary */
+            .order-summary { padding: 20px 15px; }
+            .order-summary h3 { font-size: 1.1rem !important; }
+            
+            .payment-steps { padding: 15px; margin-bottom: 20px; }
+            .payment-steps h4 { font-size: 0.9rem; margin-bottom: 12px; }
+            .payment-steps ol { font-size: 0.8rem; line-height: 2; }
+            
+            .qr-code img { max-width: 160px; margin: 20px 0; border-width: 8px; }
+            
+            .upi-id { 
+                padding: 12px; 
+                font-size: 0.85rem; 
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .copy-btn { margin-top: 8px; padding: 6px 12px; }
+            
+            .total-amount { font-size: 1.8rem; margin: 15px 0; padding-bottom: 15px; }
+            
+            .confirm-btn { 
+                padding: 15px 25px; 
+                font-size: 0.9rem; 
+                letter-spacing: 1px;
+            }
+            
+            .guarantee-badge { 
+                padding: 12px; 
+                margin-top: 15px; 
+                font-size: 0.75rem; 
+            }
+            .guarantee-badge i { font-size: 1.3rem; margin-bottom: 8px; }
+            
+            .secure-badge { 
+                margin-top: 15px; 
+                font-size: 0.7rem; 
+            }
+            
+            /* Success modal */
+            .success-content { 
+                padding: 30px 20px; 
+                margin: 15px;
+            }
+            .success-icon { font-size: 3rem; margin-bottom: 15px; }
+            .success-content h2 { font-size: 1.3rem; margin-bottom: 12px; }
+            .success-content p { font-size: 0.85rem; line-height: 1.6; margin-bottom: 15px; }
+            .success-content .confirm-btn { margin-top: 15px; }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 380px) {
+            .section-header { font-size: 1.1rem; }
+            .product-preview img { width: 70px; height: 70px; }
+            .product-info h3 { font-size: 0.9rem; }
+            .qr-code img { max-width: 140px; }
+            .total-amount { font-size: 1.5rem; }
+        }
+
+        /* Success Modal */
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        .success-content {
+            background: var(--card-bg);
+            border: 2px solid var(--accent);
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 500px;
+            margin: 20px;
+        }
+        .success-icon {
+            font-size: 4rem;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        .success-content h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+        .success-content p {
+            color: #aaa;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="trust-bar">
+        <i class="fa-solid fa-lock"></i> <strong>Secure Checkout</strong> - Your payment information is protected with 256-bit SSL encryption
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-steps">
+            <div class="progress-line"></div>
+            <div class="step active">
+                <div class="step-circle">1</div>
+                <div class="step-label">Details</div>
+            </div>
+            <div class="step">
+                <div class="step-circle">2</div>
+                <div class="step-label">Payment</div>
+            </div>
+            <div class="step">
+                <div class="step-circle">3</div>
+                <div class="step-label">Confirmation</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="checkout-container">
+        <div class="card">
+            <h2 class="section-header">
+                <i class="fa-solid fa-truck"></i>
+                Delivery Details
+            </h2>
+            
+            <div class="product-preview">
+                <img id="productImage" src="" alt="Product">
+                <div class="product-info">
+                    <h3 id="productName">Loading Product...</h3>
+                    <div class="price" id="productPrice">₹0</div>
+                    <div class="shipping-note">
+                        <i class="fa-solid fa-truck-fast"></i>
+                        FREE Shipping • Arrives in 3-5 days
+                    </div>
+                </div>
+            </div>
+            
+            <form id="checkoutForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" required placeholder="Enter your full name">
+                    <div class="error-message" id="nameError">Please enter your full name</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>WhatsApp Number <span class="required">*</span></label>
+                    <input type="tel" id="whatsapp" required placeholder="+91 XXXXX XXXXX" pattern="[0-9+\s-]{10,15}">
+                    <div class="error-message" id="phoneError">Please enter a valid phone number</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Complete Shipping Address <span class="required">*</span></label>
+                    <textarea id="address" required placeholder="House No, Street, Landmark" rows="3"></textarea>
+                    <div class="error-message" id="addressError">Please enter your complete address</div>
+                </div>
+                
+                <div class="row">
+                    <div class="form-group">
+                        <label>City <span class="required">*</span></label>
+                        <input type="text" id="city" required placeholder="Your city">
+                        <div class="error-message" id="cityError">Please enter your city</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Pincode <span class="required">*</span></label>
+                        <input type="text" id="pincode" required pattern="[0-9]{6}" placeholder="6-digit PIN">
+                        <div class="error-message" id="pincodeError">Please enter a valid 6-digit pincode</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address (Optional)</label>
+                    <input type="email" id="email" placeholder="For order confirmation email">
+                </div>
+                
+                <button type="submit" class="confirm-btn" id="submitBtn">
+                    <i class="fa-solid fa-paper-plane"></i> CONFIRM ORDER VIA WHATSAPP
+                </button>
+            </form>
+        </div>
+
+        <div class="order-summary">
+            <h3 style="font-family: 'Cinzel', serif; color: white; margin-bottom: 20px;">Payment Instructions</h3>
+            
+            <div class="payment-steps">
+                <h4><i class="fa-solid fa-list-check"></i> How to Complete Your Order</h4>
+                <ol>
+                    <li><span class="step-highlight">Scan QR code</span> below with any UPI app</li>
+                    <li>Enter amount shown and <span class="step-highlight">complete payment</span></li>
+                    <li>Fill the delivery form on the left</li>
+                    <li>Click "Confirm Order" to send details via WhatsApp</li>
+                </ol>
+            </div>
+            
+            <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px;">Scan to pay securely via UPI</p>
+            
+            <div class="qr-code">
+                <img src="https://i.postimg.cc/QH0cjg2Y/qr-code.jpg" alt="UPI QR">
+            </div>
+            
+            <div class="upi-id">
+                <span>jainswarnima93@yesg</span>
+                <button type="button" class="copy-btn" onclick="copyUPI(event)">
+                    <i class="fa-solid fa-copy"></i> Copy
+                </button>
+            </div>
+            
+            <!-- Coupon Section -->
+            <div style="margin: 25px 0; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid #222;">
+                <h4 style="color: var(--accent); margin-bottom: 15px; font-size: 0.95rem;">
+                    <i class="fa-solid fa-tag"></i> Have a Coupon Code?
+                </h4>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <input 
+                        type="text" 
+                        id="couponCode" 
+                        placeholder="Enter code (e.g. WELCOME10)"
+                        style="flex: 1; padding: 12px; background: #0a0a0a; border: 1px solid #333; border-radius: 5px; color: white; text-transform: uppercase; font-size: 0.9rem;"
+                    >
+                    <button 
+                        type="button"
+                        onclick="applyCoupon()"
+                        id="applyBtn"
+                        style="padding: 12px 20px; background: var(--accent); color: black; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 0.9rem;"
+                    >
+                        Apply
+                    </button>
+                </div>
+                
+                <div id="couponMessage" style="display: none;"></div>
+                
+                <div id="couponDiscount" style="
+                    margin-top: 15px;
+                    padding: 12px;
+                    background: rgba(76, 175, 80, 0.1);
+                    border: 1px solid #4CAF50;
+                    border-radius: 5px;
+                    color: #4CAF50;
+                    font-size: 0.9rem;
+                    display: none;
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><i class="fa-solid fa-check-circle"></i> Coupon Applied</span>
+                        <button type="button" onclick="removeCoupon()" style="
+                            background: none;
+                            border: none;
+                            color: #4CAF50;
+                            cursor: pointer;
+                            text-decoration: underline;
+                            font-size: 0.85rem;
+                        ">Remove</button>
+                    </div>
+                    <div id="discountText" style="margin-top: 5px; font-weight: bold;"></div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div style="padding: 20px; background: rgba(212,175,55,0.1); border-radius: 8px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: #888;">Subtotal:</span>
+                    <span id="subtotalAmount" style="color: white;">₹0</span>
+                </div>
+                
+                <div id="discountRow" style="display: none; margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #4CAF50;">Discount:</span>
+                        <span id="discountAmount" style="color: #4CAF50;">-₹0</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: #888;">Shipping:</span>
+                    <span id="shippingAmount" style="color: white;">₹75</span>
+                </div>
+                
+                <div style="border-top: 1px solid #333; padding-top: 10px; margin-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 1.1rem; font-weight: bold; color: white;">Total:</span>
+                        <span id="totalAmount" style="font-size: 1.5rem; color: var(--accent); font-weight: bold;">₹0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="total-amount" id="sidebarPrice" style="font-size: 2rem; color: var(--accent); font-weight: bold; text-align: center; padding: 20px; background: rgba(212,175,55,0.1); border-radius: 8px; margin-bottom: 20px;">₹0</div>
+            
+            <div class="guarantee-badge">
+                <i class="fa-solid fa-shield-check"></i>
+                <strong>100% Money Back Guarantee</strong><br>
+                7-Day Easy Returns Policy
+            </div>
+            
+            <div class="secure-badge">
+                <i class="fa-solid fa-lock"></i> Payments are 100% Secure
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <div class="success-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h2>Order Confirmed!</h2>
+            <p>Your order details have been sent to our team via WhatsApp. We'll process your order and send you tracking details within 24 hours.</p>
+            <p style="color: var(--accent); font-weight: 600;">Thank you for shopping with Swarnim Jewels!</p>
+            <button class="confirm-btn" onclick="window.location.href='index.html'" style="margin-top: 20px;">
+                Continue Shopping
+            </button>
+        </div>
+    </div>
+
+    <!-- Shopping Cart Library -->
+    <script src="shopping-cart.js"></script>
+    <script src="user-system.js"></script>
+
+    <script>
+        // ============================================================
+        //  CONFIGURATION
+        // ============================================================
+
+        const CONFIG = {
+            GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbx6aKrVnUwTl6PeJ5LCwZiOqalaDWGKEZF_eY4b6G3B055gqRMVDnnvjsdPUrvHhs-w/exec',
+            FREE_SHIPPING_THRESHOLD: 1299,
+            SHIPPING_CHARGE: 75,
+            WHATSAPP_NUMBER: '918218768602'
+        };
+
+        let appliedCoupon = null;
+
+        // ============================================================
+        //  LOAD CART ITEMS
+        // ============================================================
+
+        window.addEventListener('load', function() {
+            loadCartItems();
+            calculateTotals();
+        });
+
+        function loadCartItems() {
+            const cart = ShoppingCart.getCart();
+            const container = document.getElementById('productName')?.parentElement;
+            
+            if (!container) {
+                console.error('Product details container not found');
+                return;
+            }
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #888;">
+                        <i class="fa-solid fa-shopping-cart" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.3;"></i>
+                        <p>Your cart is empty</p>
+                        <a href="index.html" style="color: var(--accent); text-decoration: none; margin-top: 15px; display: inline-block;">
+                            ← Continue Shopping
+                        </a>
+                    </div>
+                `;
+                document.getElementById('sidebarPrice').textContent = '₹0';
+                return;
+            }
+            
+            // Display cart items
+            container.innerHTML = `
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: var(--accent); margin-bottom: 20px; font-size: 1.1rem;">
+                        <i class="fa-solid fa-shopping-bag"></i> Order Items (${cart.length})
+                    </h3>
+                    ${cart.map(item => `
+                        <div style="display: flex; gap: 15px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 8px; margin-bottom: 12px; border: 1px solid #222;">
+                            <img src="${item.image}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
+                            <div style="flex: 1;">
+                                <div style="color: white; font-weight: 500; margin-bottom: 5px;">${item.name}</div>
+                                <div style="color: #888; font-size: 0.9rem;">
+                                    ₹${item.price.toLocaleString('en-IN')} × ${item.quantity}
+                                </div>
+                            </div>
+                            <div style="text-align: right; color: var(--accent); font-weight: bold;">
+                                ₹${(item.price * item.quantity).toLocaleString('en-IN')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // ============================================================
+        //  COUPON SYSTEM
+        // ============================================================
+
+        async function applyCoupon() {
+            const couponCode = document.getElementById('couponCode')?.value.trim().toUpperCase();
+            const messageDiv = document.getElementById('couponMessage');
+            const applyBtn = document.getElementById('applyBtn');
+            
+            if (!couponCode) {
+                showCouponMessage('Please enter a coupon code', 'error');
+                return;
+            }
+            
+            const cart = ShoppingCart.getCart();
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            applyBtn.textContent = 'Checking...';
+            applyBtn.disabled = true;
+            
+            try {
+                const response = await fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({
+                        action: 'validateCoupon',
+                        couponCode: couponCode,
+                        orderAmount: subtotal
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    appliedCoupon = {
+                        code: result.code,
+                        discount: result.discount,
+                        minimumAmount: result.minimumAmount
+                    };
+                    
+                    showCouponMessage(`✅ Coupon applied! ${result.discount}% discount`, 'success');
+                    document.getElementById('couponDiscount').style.display = 'block';
+                    document.getElementById('discountText').textContent = 
+                        `${result.discount}% off - Save ₹${Math.round(subtotal * result.discount / 100)}`;
+                    
+                    document.getElementById('couponCode').disabled = true;
+                    applyBtn.style.display = 'none';
+                    
+                    calculateTotals();
+                } else {
+                    showCouponMessage(result.error || 'Invalid coupon code', 'error');
+                    appliedCoupon = null;
+                }
+            } catch (error) {
+                console.error('Error validating coupon:', error);
+                showCouponMessage('Error validating coupon. Please try again.', 'error');
+                appliedCoupon = null;
+            }
+            
+            applyBtn.textContent = 'Apply';
+            applyBtn.disabled = false;
+        }
+
+        function removeCoupon() {
+            appliedCoupon = null;
+            document.getElementById('couponCode').value = '';
+            document.getElementById('couponCode').disabled = false;
+            document.getElementById('couponDiscount').style.display = 'none';
+            document.getElementById('couponMessage').style.display = 'none';
+            document.getElementById('applyBtn').style.display = 'block';
+            calculateTotals();
+        }
+
+        function showCouponMessage(message, type) {
+            const messageDiv = document.getElementById('couponMessage');
+            if (!messageDiv) return;
+            
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+            messageDiv.style.background = type === 'success' ? 
+                'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)';
+            messageDiv.style.border = `1px solid ${type === 'success' ? '#4CAF50' : '#f44336'}`;
+            messageDiv.style.color = type === 'success' ? '#4CAF50' : '#f44336';
+            messageDiv.style.padding = '10px';
+            messageDiv.style.borderRadius = '5px';
+            messageDiv.style.marginTop = '10px';
+            messageDiv.style.fontSize = '0.85rem';
+        }
+
+        function calculateTotals() {
+            const cart = ShoppingCart.getCart();
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            let discountAmount = 0;
+            if (appliedCoupon) {
+                discountAmount = Math.round(subtotal * appliedCoupon.discount / 100);
+            }
+            
+            const afterDiscount = subtotal - discountAmount;
+            const shipping = afterDiscount >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_CHARGE;
+            const total = afterDiscount + shipping;
+            
+            // Update UI
+            const subtotalEl = document.getElementById('subtotalAmount');
+            const shippingEl = document.getElementById('shippingAmount');
+            const totalEl = document.getElementById('totalAmount');
+            const sidebarPrice = document.getElementById('sidebarPrice');
+            const discountRow = document.getElementById('discountRow');
+            const discountAmountEl = document.getElementById('discountAmount');
+            
+            if (subtotalEl) subtotalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+            if (shippingEl) shippingEl.textContent = shipping === 0 ? 'FREE ✅' : `₹${shipping}`;
+            if (totalEl) totalEl.textContent = `₹${total.toLocaleString('en-IN')}`;
+            if (sidebarPrice) sidebarPrice.textContent = `₹${total.toLocaleString('en-IN')}`;
+            
+            if (discountAmount > 0) {
+                if (discountRow) discountRow.style.display = 'flex';
+                if (discountAmountEl) discountAmountEl.textContent = `-₹${discountAmount.toLocaleString('en-IN')}`;
+            } else {
+                if (discountRow) discountRow.style.display = 'none';
+            }
+            
+            window.orderTotals = { 
+                subtotal, 
+                discount: discountAmount, 
+                shipping, 
+                total, 
+                couponCode: appliedCoupon ? appliedCoupon.code : null 
+            };
+        }
+
+
+        function copyUPI(event) {
+            const upiId = 'jainswarnima93@yesg';
+            navigator.clipboard.writeText(upiId).then(() => {
+                const btn = event.target.closest('.copy-btn');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                }, 2000);
+            });
+        }
+
+        function validateForm() {
+            let isValid = true;
+            const fields = [
+                { id: 'fullName', errorId: 'nameError' },
+                { id: 'whatsapp', errorId: 'phoneError' },
+                { id: 'address', errorId: 'addressError' },
+                { id: 'city', errorId: 'cityError' },
+                { id: 'pincode', errorId: 'pincodeError' }
+            ];
+
+            fields.forEach(field => {
+                const input = document.getElementById(field.id);
+                const error = document.getElementById(field.errorId);
+                
+                if (!input.value.trim() || !input.checkValidity()) {
+                    input.classList.add('error');
+                    error.style.display = 'block';
+                    isValid = false;
+                } else {
+                    input.classList.remove('error');
+                    error.style.display = 'none';
+                }
+            });
+
+            return isValid;
+        }
+
+        // Real-time validation
+        document.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                const errorId = this.id + 'Error';
+                const errorEl = document.getElementById(errorId);
+                if (errorEl) {
+                    errorEl.style.display = 'none';
+                }
+            });
+        });
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            if (!validateForm()) {
+                alert('Please fill all required fields correctly');
+                return;
+            }
+            
+            const cart = ShoppingCart.getCart();
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+
+            // Get form data
+            const formData = {
+                name: document.getElementById('fullName').value,
+                phone: document.getElementById('whatsapp').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                pincode: document.getElementById('pincode').value,
+                email: document.getElementById('email').value || 'N/A'
+            };
+            
+            const totals = window.orderTotals || {};
+            
+            // Build cart items text
+            let itemsText = '';
+            cart.forEach((item, index) => {
+                itemsText += `${index + 1}. ${item.name} x${item.quantity} = ₹${(item.price * item.quantity).toLocaleString('en-IN')}%0A`;
+            });
+            
+            // Build coupon text
+            let couponText = '';
+            if (totals.couponCode) {
+                couponText = `%0A*Coupon Applied:* ${totals.couponCode}%0A*Discount:* -₹${totals.discount.toLocaleString('en-IN')}`;
+            }
+            
+            // Build WhatsApp message
+            const msg = `*🛍️ NEW ORDER - SWARNIM JEWELS*%0A%0A` +
+                        `*👤 Customer Details*%0A` +
+                        `Name: ${formData.name}%0A` +
+                        `Phone: ${formData.phone}%0A` +
+                        `Email: ${formData.email}%0A%0A` +
+                        `*📦 Order Items*%0A` +
+                        `${itemsText}%0A` +
+                        `*💰 Order Summary*%0A` +
+                        `Subtotal: ₹${totals.subtotal.toLocaleString('en-IN')}${couponText}%0A` +
+                        `Shipping: ${totals.shipping === 0 ? 'FREE ✅' : '₹' + totals.shipping}%0A` +
+                        `*TOTAL PAID:* ₹${totals.total.toLocaleString('en-IN')}%0A%0A` +
+                        `*📍 Delivery Address*%0A` +
+                        `${formData.address}%0A` +
+                        `${formData.city}, ${formData.state} - ${formData.pincode}%0A%0A` +
+                        `_Order placed via Swarnim Jewels website_`;
+            
+            // Save order to Google Sheet
+            try {
+                const orderPayload = {
+                    items: cart,
+                    total: totals.total || 0,
+                    name: formData.name,
+                    phone: formData.phone,
+                    address: `${formData.address}, ${formData.city}, ${formData.state} - ${formData.pincode}`,
+                    couponCode: totals.couponCode || ''
+                };
+                if (window.UserSystem) {
+                    await UserSystem.saveOrder(orderPayload);
+                } else {
+                    await fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        redirect: 'follow',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: JSON.stringify({ action: 'saveOrder', userId: 'GUEST', order: orderPayload })
+                    });
+                }
+            } catch(e) { console.warn('Order save failed:', e); }
+
+            // Update progress
+            document.querySelectorAll('.step')[0].classList.add('completed');
+            document.querySelectorAll('.step')[1].classList.add('active');
+            document.querySelector('.progress-line').style.width = '66%';
+            
+            setTimeout(() => {
+                document.querySelectorAll('.step')[1].classList.add('completed');
+                document.querySelectorAll('.step')[2].classList.add('active');
+                document.querySelector('.progress-line').style.width = '100%';
+                
+                setTimeout(() => {
+                    document.getElementById('successModal').style.display = 'flex';
+                    ShoppingCart.clear(); // Clear cart after order
+                }, 500);
+            }, 500);
+            
+            // Open WhatsApp
+            window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+        }
+    </script>
+</body>
+</html>

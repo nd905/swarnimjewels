@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Swarnim Collection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { 
+            background: #050505; color: #eee; font-family: 'Lato', sans-serif; 
+            display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; 
+            background-image: radial-gradient(circle at center, #111 0%, #000 100%);
+        }
+        .contact-card { 
+            background: rgba(10, 10, 10, 0.8); border: 1px solid #333; padding: 50px 40px; 
+            text-align: center; max-width: 500px; width: 90%; backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.1);
+        }
+        h1 { font-family: 'Cinzel', serif; color: #d4af37; margin-bottom: 20px; font-size: 2.2rem; }
+        p { color: #888; margin-bottom: 30px; line-height: 1.6; }
+        .btn { 
+            background: #25D366; color: white; text-decoration: none; padding: 15px 35px; 
+            border-radius: 50px; font-weight: bold; display: inline-flex; align-items: center; 
+            gap: 10px; transition: 0.3s; font-size: 1.1rem;
+        }
+        .btn:hover { background: #1ebc57; transform: translateY(-3px); }
+        .address-box { margin-top: 40px; padding-top: 20px; border-top: 1px solid #222; font-size: 0.9rem; color: #666; }
+        .address-box a { color: #d4af37; text-decoration: none; }
+        .address-box a:hover { color: white; }
+        .back-link { position: absolute; top: 20px; left: 20px; color: #666; text-decoration: none; text-transform: uppercase; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .back-link:hover { color: #d4af37; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Home</a>
+    
+    <div class="contact-card">
+        <i class="fa-brands fa-whatsapp" style="font-size: 3rem; color: #25D366; margin-bottom: 20px;"></i>
+        <h1>Personal Shopper</h1>
+        <p>
+            Need styling advice or help with an order? <br>
+            Chat directly with our sourcing team in Delhi.
+        </p>
+        <a href="https://wa.me/918218768602" class="btn">
+            <i class="fa-brands fa-whatsapp"></i>
+            Chat on WhatsApp
+        </a>
+
+        <div class="address-box">
+            <strong>Registered Office:</strong><br>
+            Swarnim Collection<br>
+            Swarnima Jain, Krishna-Nagar<br>
+            New Delhi, India - 110051<br>
+            <br>
+            <i class="fa-solid fa-phone"></i> +91 8218768602<br>
+            <i class="fa-solid fa-envelope"></i> <a href="https://wa.me/918218768602">Contact via WhatsApp</a>
+        </div>
+    </div>
+    <script src="user-system.js"></script>
+</body>
+</html>

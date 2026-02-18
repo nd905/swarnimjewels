@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | Swarnim Collection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root { --bg-dark: #050505; --accent: #d4af37; --text-main: #f4f4f4; --border: 1px solid #333; }
+        body { 
+            background: var(--bg-dark); 
+            color: var(--text-main); 
+            font-family: 'Lato', sans-serif; 
+            margin: 0;
+            position: relative;
+        }
+        
+        /* Semi-transparent background image */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.25;
+            z-index: -1;
+            filter: blur(5px);
+            transition: opacity 0.5s ease;
+        }
+        
+        body.bg-loaded::before {
+            background-image: var(--bg-image);
+        }
+        
+        /* Announcement Bar */
+        .announcement-bar {
+            background: linear-gradient(90deg, var(--accent) 0%, #c9a436 100%);
+            color: #000;
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .nav-back { 
+            padding: 20px 5%; 
+            border-bottom: var(--border); 
+            background: rgba(10, 10, 10, 0.7); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(15px);
+        }
+        .nav-back a { color: var(--accent); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .nav-back a:hover { color: white; }
+        
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            display: grid; 
+            grid-template-columns: 1.2fr 1fr; 
+            gap: 40px; 
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Lighter backdrop for better visibility of background image */
+        .gallery-box, .info-box {
+            background: rgba(5, 5, 5, 0.25);
+            backdrop-filter: blur(12px);
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        
+        /* IMAGE SECTION */
+        .gallery-box { 
+            position: sticky; 
+            top: 20px;
+            background: rgba(5, 5, 5, 0.25);
+            backdrop-filter: blur(12px);
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .main-img { 
+            width: 100%; 
+            height: 420px; 
+            object-fit: cover; 
+            border: 1px solid #222; 
+            border-radius: 4px; 
+            cursor: crosshair;
+            transition: 0.3s;
+        }
+        .main-img:hover {
+            opacity: 0.9;
+        }
+        .thumbs { display: flex; gap: 10px; margin-top: 15px; overflow-x: auto; }
+        .thumb { width: 80px; height: 80px; object-fit: cover; border: 1px solid #333; cursor: pointer; opacity: 0.6; transition: 0.3s; }
+        .thumb:hover, .thumb.active { border-color: var(--accent); opacity: 1; }
+
+        /* Badge on Main Image */
+        .image-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f44336;
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* INFO SECTION */
+        .info-box { 
+            padding: 15px;
+            background: rgba(5, 5, 5, 0.25);
+            backdrop-filter: blur(12px);
+            border-radius: 4px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .brand { 
+            color: var(--accent); 
+            letter-spacing: 2px; 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            margin-bottom: 8px; 
+            display: block; 
+        }
+        h1 { 
+            font-family: 'Cinzel', serif; 
+            font-size: 2rem; 
+            margin-bottom: 12px; 
+            line-height: 1.2; 
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+        
+        /* Star Rating */
+        .rating-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #222;
+        }
+        .stars {
+            color: var(--accent);
+            font-size: 1rem;
+        }
+        .rating-text {
+            color: #888;
+            font-size: 0.85rem;
+        }
+        .reviews-count {
+            color: var(--accent);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        .price-section {
+            margin-bottom: 20px;
+        }
+        .price { 
+            font-size: 1.8rem; 
+            color: #eee; 
+            font-weight: 300; 
+            display: block;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        }
+        .price-note {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 6px;
+        }
+        .price-note i {
+            color: #4CAF50;
+        }
+        
+        /* Urgency Elements */
+        .urgency-bar {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid #ff9800;
+            padding: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ff9800;
+            font-size: 0.85rem;
+        }
+        .urgency-bar i {
+            font-size: 1rem;
+        }
+        
+        .stock-indicator {
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid #f44336;
+            padding: 10px 12px;
+            margin-bottom: 15px;
+            color: #f44336;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Product Details */
+        .desc { 
+            line-height: 1.6; 
+            color: #aaa; 
+            margin-bottom: 20px; 
+            font-size: 0.95rem; 
+        }
+        
+        .product-specs {
+            background: rgba(10, 10, 10, 0.4);
+            border: 1px solid #222;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .product-specs h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #1a1a1a;
+            font-size: 0.85rem;
+        }
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+        .spec-label {
+            color: #888;
+        }
+        .spec-value {
+            color: white;
+            font-weight: 500;
+        }
+        
+        .btn-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .btn { 
+            background: var(--accent); color: black; border: none; padding: 15px 35px; 
+            flex: 1; font-family: 'Cinzel', serif; font-weight: 700; text-transform: uppercase; 
+            cursor: pointer; transition: 0.3s; letter-spacing: 1px; font-size: 0.95rem;
+        }
+        .btn:hover { background: white; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3); }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+        
+        /* Trust Badges */
+        .trust-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .trust-badge {
+            background: rgba(10, 10, 10, 0.4);
+            border: 1px solid #222;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+        }
+        .trust-badge i {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+        .trust-badge-text {
+            color: #aaa;
+        }
+        
+        /* Share Section */
+        .share-section {
+            padding: 15px;
+            border: 1px solid #222;
+            background: rgba(10, 10, 10, 0.4);
+            margin-top: 20px;
+        }
+        .share-section h4 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent);
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .share-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .share-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #333;
+            background: transparent;
+            color: var(--accent);
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .share-btn:hover {
+            background: var(--accent);
+            color: black;
+            border-color: var(--accent);
+        }
+        
+        /* Customer Reviews */
+        .reviews-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #222;
+        }
+        .reviews-section h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--accent);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+        .review-card {
+            background: rgba(10, 10, 10, 0.4);
+            border: 1px solid #222;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .reviewer-name {
+            font-weight: 600;
+            color: white;
+        }
+        .review-date {
+            font-size: 0.75rem;
+            color: #666;
+        }
+        .review-text {
+            color: #aaa;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+        
+        .loading { 
+            text-align: center; 
+            padding: 100px 20px; 
+            grid-column: 1/-1; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Image Zoom Modal */
+        .image-zoom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+        .image-zoom-modal.active {
+            display: flex;
+        }
+        .zoom-image-container {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .zoom-image {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border: 2px solid var(--accent);
+        }
+        .zoom-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--accent);
+            color: black;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            z-index: 10000;
+        }
+        .zoom-close:hover {
+            background: white;
+            transform: rotate(90deg);
+        }
+        .zoom-instructions {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        /* Mobile Sticky CTA */
+        .mobile-sticky-cta {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--accent);
+            padding: 15px 20px;
+            z-index: 999;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: space-between;
+        }
+        .mobile-sticky-cta .price-mobile {
+            font-size: 1.3rem;
+            color: black;
+            font-weight: bold;
+        }
+        .mobile-sticky-cta button {
+            background: black;
+            color: var(--accent);
+            border: none;
+            padding: 12px 30px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Image Zoom Modal */
+        .zoom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+        .zoom-modal.active {
+            display: flex;
+        }
+        .zoom-modal img {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain;
+            animation: zoomIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .zoom-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            background: rgba(0,0,0,0.7);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: 0.3s;
+            z-index: 10000;
+        }
+        .zoom-close:hover {
+            background: var(--accent);
+            color: black;
+            transform: rotate(90deg);
+        }
+        .zoom-hint {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        @media (max-width: 768px) { 
+            body { padding: 0; }
+            .announcement-bar { font-size: 10px; padding: 8px 10px; }
+            .nav-back { padding: 12px 3%; }
+            .nav-back a { font-size: 0.75rem; }
+            
+            .container { 
+                grid-template-columns: 1fr; 
+                gap: 20px; 
+                padding: 20px 10px 100px;
+            } 
+            .main-img { height: 300px; }
+            .thumbs { gap: 6px; }
+            .thumb { width: 60px; height: 60px; }
+            .gallery-box { 
+                position: static;
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+            .info-box {
+                padding: 12px;
+            }
+            
+            /* Compact content */
+            .brand { font-size: 0.7rem; margin-bottom: 6px; }
+            h1 { font-size: 1.5rem; margin-bottom: 10px; }
+            
+            .rating-section { 
+                gap: 10px; 
+                margin-bottom: 12px; 
+                padding-bottom: 12px; 
+                flex-wrap: wrap;
+            }
+            .stars { font-size: 0.9rem; }
+            .rating-text { font-size: 0.75rem; }
+            
+            .price-section { margin-bottom: 15px; }
+            .price { font-size: 1.5rem; }
+            .price-note { font-size: 0.75rem; }
+            
+            .urgency-bar { 
+                padding: 8px; 
+                margin-bottom: 12px; 
+                font-size: 0.75rem; 
+                gap: 6px;
+            }
+            .urgency-bar i { font-size: 0.9rem; }
+            
+            .stock-indicator { 
+                padding: 8px 10px; 
+                margin-bottom: 12px; 
+                font-size: 0.75rem;
+            }
+            
+            .desc { 
+                font-size: 0.85rem; 
+                margin-bottom: 15px;
+                line-height: 1.5;
+            }
+            
+            .product-specs { 
+                padding: 12px; 
+                margin-bottom: 15px; 
+            }
+            .product-specs h3 { font-size: 0.85rem; margin-bottom: 10px; }
+            .spec-item { 
+                padding: 6px 0; 
+                font-size: 0.75rem; 
+            }
+            
+            .btn-container { 
+                flex-direction: column; 
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+            .btn { 
+                padding: 12px 25px; 
+                font-size: 0.85rem; 
+                width: 100%;
+            }
+            
+            .trust-section { 
+                grid-template-columns: 1fr; 
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+            .trust-badge { 
+                padding: 10px; 
+                font-size: 0.75rem; 
+            }
+            .trust-badge i { font-size: 1.1rem; }
+            
+            .share-section { 
+                padding: 12px; 
+                margin-top: 15px; 
+            }
+            .share-section h4 { font-size: 0.8rem; margin-bottom: 10px; }
+            .share-btn { width: 36px; height: 36px; font-size: 1rem; }
+            
+            .reviews-section { 
+                margin-top: 20px; 
+                padding-top: 20px; 
+            }
+            .reviews-section h3 { font-size: 1.1rem; margin-bottom: 15px; }
+            .review-card { padding: 12px; margin-bottom: 12px; }
+            .review-text { font-size: 0.8rem; line-height: 1.5; }
+            .review-date { font-size: 0.7rem; }
+            
+            /* Mobile sticky CTA */
+            .mobile-sticky-cta { display: flex !important; }
+            .mobile-sticky-cta .price-mobile { font-size: 1.1rem; }
+            .mobile-sticky-cta button { 
+                padding: 10px 20px; 
+                font-size: 0.8rem; 
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 380px) {
+            h1 { font-size: 1.3rem; }
+            .main-img { height: 250px; }
+            .price { font-size: 1.3rem; }
+            .desc { font-size: 0.8rem; }
+        }
+        /* Loading Screen Animations */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes gemPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.7; }
+        }
+        @keyframes dotPulse {
+            0%, 80%, 100% { transform: scale(0.4); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes quoteFade {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === PRODUCT VIDEOS SECTION === */
+        .video-section {
+            margin: 40px 0;
+            padding: 30px;
+            background: rgba(10, 10, 10, 0.5);
+            border: 1px solid #222;
+            border-radius: 8px;
+            grid-column: 1 / -1;
+        }
+        .video-title {
+            font-family: 'Cinzel', serif;
+            color: var(--accent);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .video-container {
+            display: grid;
+            gap: 20px;
+        }
+        .main-video-player {
+            position: relative;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .main-video-player video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        .video-thumbnails {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .video-thumb {
+            position: relative;
+            cursor: pointer;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #000;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            aspect-ratio: 16/9;
+        }
+        .video-thumb:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        .video-thumb.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+        .video-thumb video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+        }
+        .video-thumb-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .video-thumb:hover .video-thumb-overlay {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .video-thumb-overlay i {
+            font-size: 2rem;
+            color: white;
+            opacity: 0.8;
+        }
+        .video-thumb-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            color: white;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .video-section {
+                padding: 20px 15px;
+                margin: 20px 0;
+            }
+            .video-title {
+                font-size: 1.1rem;
+            }
+            .video-thumbnails {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+
+        /* === PROFESSIONAL IMAGE ZOOM LENS === */
+        .image-zoom-container {
+            position: relative;
+            overflow: visible;
+        }
+
+        .zoom-lens {
+            position: absolute;
+            border: 2px solid var(--accent);
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            cursor: none;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3), 
+                        inset 0 0 40px rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(2px);
+            z-index: 10;
+        }
+
+        .zoom-lens.active {
+            opacity: 1;
+        }
+
+        .zoom-result {
+            position: absolute;
+            right: -420px;
+            top: 0;
+            width: 400px;
+            height: 420px;
+            border: 2px solid var(--accent);
+            background: #000;
+            background-repeat: no-repeat;
+            background-size: 300%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .zoom-result.active {
+            opacity: 1;
+        }
+
+        .zoom-result::before {
+            content: "🔍 Hover to see details";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--accent);
+            font-size: 0.9rem;
+            text-align: center;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .zoom-result.active::before {
+            display: none;
+        }
+
+        /* Mobile: Disable zoom lens, enable tap-to-zoom */
+        @media (max-width: 768px) {
+            .zoom-lens,
+            .zoom-result {
+                display: none !important;
+            }
+            
+            .main-img {
+                cursor: zoom-in;
+            }
+        }
+
+        /* Tablet: Adjust zoom result position */
+        @media (min-width: 769px) and (max-width: 1200px) {
+            .zoom-result {
+                right: -320px;
+                width: 300px;
+                height: 320px;
+            }
+        }
+
+        /* === WHATSAPP FLOATING CHAT BUTTON === */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 5px 25px rgba(37, 211, 102, 0.5);
+            z-index: 9999;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            animation: whatsappPulse 2s infinite;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.15) translateY(-5px);
+            box-shadow: 0 10px 40px rgba(37, 211, 102, 0.7);
+            background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
+        }
+
+        .whatsapp-icon {
+            font-size: 2rem;
+            display: block;
+        }
+
+        .whatsapp-text {
+            position: absolute;
+            right: 80px;
+            background: white;
+            color: #128C7E;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.4s ease;
+            pointer-events: none;
+        }
+
+        .whatsapp-float:hover .whatsapp-text {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        @keyframes whatsappPulse {
+            0%, 100% {
+                box-shadow: 0 5px 25px rgba(37, 211, 102, 0.5);
+            }
+            50% {
+                box-shadow: 0 5px 35px rgba(37, 211, 102, 0.8), 
+                           0 0 0 15px rgba(37, 211, 102, 0.1),
+                           0 0 0 30px rgba(37, 211, 102, 0.05);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+                font-size: 1.8rem;
+            }
+
+            .whatsapp-icon {
+                font-size: 1.8rem;
+            }
+
+            .whatsapp-text {
+                display: none;
+            }
+
+            .whatsapp-float:active {
+                transform: scale(0.95);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .whatsapp-float {
+                bottom: 15px;
+                right: 15px;
+                width: 55px;
+                height: 55px;
+                font-size: 1.6rem;
+            }
+
+            .whatsapp-icon {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* === PREMIUM SCROLL ANIMATIONS === */
+        
+        /* Fade in from bottom */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Fade in from left */
+        .scroll-reveal-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .scroll-reveal-left.revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Fade in from right */
+        .scroll-reveal-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .scroll-reveal-right.revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Scale up fade in */
+        .scroll-reveal-scale {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .scroll-reveal-scale.revealed {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Reduce motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="announcement-bar">
+        🎉 <strong>FREE SHIPPING</strong> on Orders Above ₹999 | <strong>7-Day Easy Returns</strong>
+    </div>
+
+    <div class="nav-back">
+        <a href="javascript:history.back()"><i class="fa-solid fa-arrow-left"></i> Back to Collection</a>
+        <a href="index.html" style="font-family: 'Cinzel', serif;">SWARNIM JEWELS</a>
+        <a href="cart.html" style="position: relative;"><i class="fa-solid fa-shopping-cart"></i> Cart <span class="cart-badge">0</span></a>
+        <a id="accountNavBtn" href="login.html"><i class="fa-solid fa-user"></i> Account</a>
+    </div>
+
+    <div id="loading" class="loading">
+        <!-- Animated Gem Icon -->
+        <div style="position: relative; width: 70px; height: 70px; margin-bottom: 35px;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 2px solid transparent; border-top: 2px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <div style="position: absolute; top: 8px; left: 8px; width: calc(100% - 16px); height: calc(100% - 16px); border: 2px solid transparent; border-bottom: 2px solid rgba(212,175,55,0.4); border-radius: 50%; animation: spin 1.5s linear infinite reverse;"></div>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--accent); font-size: 1.8rem; animation: gemPulse 2s ease-in-out infinite;">💎</div>
+        </div>
+
+        <!-- Quote Text -->
+        <div style="max-width: 420px; position: relative;">
+            <div style="position: absolute; top: -18px; left: -5px; font-family: 'Cinzel', serif; font-size: 3.5rem; color: var(--accent); opacity: 0.25; line-height: 1;">"</div>
+            <div id="detailQuoteText" style="font-family: 'Cinzel', serif; font-size: 1.15rem; color: #ccc; font-style: italic; line-height: 1.7; letter-spacing: 0.5px; animation: quoteFade 0.6s ease; padding: 0 10px;"></div>
+            <div style="text-align: right; margin-top: 2px; font-family: 'Cinzel', serif; font-size: 3.5rem; color: var(--accent); opacity: 0.25; line-height: 0.5;">"</div>
+        </div>
+
+        <!-- Attribution -->
+        <div id="detailQuoteAuthor" style="margin-top: 18px; color: var(--accent); font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7;"></div>
+
+        <!-- Loading dots -->
+        <div style="margin-top: 30px; display: flex; gap: 8px; align-items: center;">
+            <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: dotPulse 1.4s ease-in-out infinite 0s;"></div>
+            <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: dotPulse 1.4s ease-in-out infinite 0.2s;"></div>
+            <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: dotPulse 1.4s ease-in-out infinite 0.4s;"></div>
+        </div>
+    </div>
+
+    <div id="productContent" class="container" style="display: none;">
+        <div class="gallery-box">
+            <div class="image-zoom-container" style="position: relative;">
+                <img id="mainImage" class="main-img" src="">
+                <div class="image-badge">LIMITED STOCK</div>
+                <!-- Zoom Lens Overlay -->
+                <div id="zoomLens" class="zoom-lens"></div>
+                <!-- Zoomed Image Display -->
+                <div id="zoomResult" class="zoom-result"></div>
+            </div>
+            <div id="thumbs" class="thumbs"></div>
+        </div>
+
+        <!-- PRODUCT VIDEOS SECTION -->
+        <div id="videoSection" class="video-section" style="display: none;">
+            <h3 class="video-title">
+                <i class="fa-solid fa-video"></i> Product Videos
+            </h3>
+            <div class="video-container">
+                <div id="videoPlayer" class="main-video-player"></div>
+                <div id="videoThumbnails" class="video-thumbnails"></div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <span class="brand">Swarnim Exclusive Collection</span>
+            <h1 id="pName"></h1>
+            
+            <div class="rating-section">
+                <div class="stars">★★★★★</div>
+                <span class="rating-text">4.8 out of 5 | <span class="reviews-count">247 reviews</span></span>
+            </div>
+            
+            <div class="price-section">
+                <span id="pPrice" class="price"></span>
+                <div class="price-note">
+                    <i class="fa-solid fa-circle-check"></i> Inclusive of all taxes
+                </div>
+            </div>
+            
+            <div class="urgency-bar">
+                <i class="fa-solid fa-fire"></i>
+                <div>
+                    <strong>6 people</strong> are viewing this item right now
+                </div>
+            </div>
+            
+            <div class="stock-indicator">
+                <i class="fa-solid fa-clock"></i>
+                <strong>Only 3 left in stock!</strong> Order within 2 hours for same-day dispatch
+            </div>
+            
+            <p id="pDesc" class="desc"></p>
+            
+            <div class="product-specs">
+                <h3><i class="fa-solid fa-info-circle"></i> Product Specifications</h3>
+                <div class="spec-item">
+                    <span class="spec-label">Material</span>
+                    <span class="spec-value">American Diamond / Jadau</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Finish</span>
+                    <span class="spec-value">Premium Gold Plated</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Care</span>
+                    <span class="spec-value">Store in dry place, avoid water</span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Warranty</span>
+                    <span class="spec-value">6 Months Quality Guarantee</span>
+                </div>
+            </div>
+            
+            <div class="btn-container" style="display: flex; gap: 15px;">
+                <button class="btn" onclick="addProductToCart()" style="flex: 1; background: transparent; border: 2px solid var(--accent);">
+                    <i class="fa-solid fa-cart-plus"></i> ADD TO CART
+                </button>
+                <button class="btn" onclick="buyNow()" style="flex: 1;">
+                    <i class="fa-solid fa-bolt"></i> BUY NOW
+                </button>
+            </div>
+            
+            <div class="trust-section">
+                <div class="trust-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <div class="trust-badge-text">
+                        <strong>Secure Payment</strong><br>
+                        SSL Encrypted
+                    </div>
+                </div>
+                <div class="trust-badge">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <div class="trust-badge-text">
+                        <strong>Easy Returns</strong><br>
+                        7-Day Policy
+                    </div>
+                </div>
+                <div class="trust-badge">
+                    <i class="fa-solid fa-truck-fast"></i>
+                    <div class="trust-badge-text">
+                        <strong>Fast Shipping</strong><br>
+                        Free Above ₹999
+                    </div>
+                </div>
+                <div class="trust-badge">
+                    <i class="fa-solid fa-certificate"></i>
+                    <div class="trust-badge-text">
+                        <strong>100% Authentic</strong><br>
+                        Certified Quality
+                    </div>
+                </div>
+            </div>
+            
+            <div class="share-section">
+                <h4>Share This Product</h4>
+                <div class="share-buttons">
+                    <button class="share-btn" onclick="shareWhatsApp()" title="Share on WhatsApp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </button>
+                    <button class="share-btn" onclick="shareFacebook()" title="Share on Facebook">
+                        <i class="fa-brands fa-facebook"></i>
+                    </button>
+                    <button class="share-btn" onclick="shareTwitter()" title="Share on Twitter">
+                        <i class="fa-brands fa-twitter"></i>
+                    </button>
+                    <button class="share-btn" onclick="copyLink()" title="Copy Link">
+                        <i class="fa-solid fa-link"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="reviews-section">
+                <h3>Customer Reviews</h3>
+                
+                <div class="review-card">
+                    <div class="review-header">
+                        <div>
+                            <div class="reviewer-name">Priya Sharma</div>
+                            <div class="stars">★★★★★</div>
+                        </div>
+                        <div class="review-date">2 days ago</div>
+                    </div>
+                    <p class="review-text">"Absolutely gorgeous! The quality is amazing and it looks exactly like the photos. Delivery was super fast to Mumbai. Highly recommend!"</p>
+                </div>
+                
+                <div class="review-card">
+                    <div class="review-header">
+                        <div>
+                            <div class="reviewer-name">Ananya Verma</div>
+                            <div class="stars">★★★★★</div>
+                        </div>
+                        <div class="review-date">5 days ago</div>
+                    </div>
+                    <p class="review-text">"Perfect for my sister's wedding! The craftsmanship is top-notch and the price is very reasonable. Will definitely order more."</p>
+                </div>
+                
+                <div class="review-card">
+                    <div class="review-header">
+                        <div>
+                            <div class="reviewer-name">Meera Patel</div>
+                            <div class="stars">★★★★☆</div>
+                        </div>
+                        <div class="review-date">1 week ago</div>
+                    </div>
+                    <p class="review-text">"Beautiful piece! Very happy with the purchase. Only minor issue was packaging could be better, but the product itself is excellent."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Sticky CTA -->
+    <div class="mobile-sticky-cta">
+        <div class="price-mobile" id="mobilePriceDisplay">₹0</div>
+        <button onclick="buyNow()">BUY NOW</button>
+    </div>
+
+    <!-- Image Zoom Modal -->
+    <div class="image-zoom-modal" id="imageZoomModal" onclick="closeImageZoom()">
+        <button class="zoom-close" onclick="closeImageZoom()">×</button>
+        <div class="zoom-image-container" onclick="event.stopPropagation()">
+            <img id="zoomImage" class="zoom-image" src="" alt="Zoomed View">
+        </div>
+        <div class="zoom-instructions">👆 Tap outside to close</div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbx6aKrVnUwTl6PeJ5LCwZiOqalaDWGKEZF_eY4b6G3B055gqRMVDnnvjsdPUrvHhs-w/exec'
+        };
+
+        let currentProduct = null;
+
+        // ── Rotating Quotes for Loading Screen ──
+        const detailQuotes = [
+            { text: "Elegance is not about being noticed, it is about being remembered.", author: "Giorgio Armani" },
+            { text: "A woman who wears jewelry tells you she is not afraid to be noticed.", author: "Coco Chanel" },
+            { text: "Jewelry has the power to be the one little thing that makes you feel unique.", author: "Jewel Kade" },
+            { text: "True elegance is refusal of everything that is not essential.", author: "Coco Chanel" },
+            { text: "Style is a reflection of your attitude and personality.", author: "Elie Tahari" },
+            { text: "Every piece of jewelry tells a story — yours begins here.", author: "Swarnim Jewels" },
+            { text: "Adorn yourself with grace, and let your shine be timeless.", author: "Swarnim Jewels" },
+            { text: "The best accessories are the ones that make you feel like yourself.", author: "Sarah Jessica Parker" },
+            { text: "Luxury is not about buying everything, but choosing the best.", author: "Unknown" },
+            { text: "Wear your dreams — one exquisite piece at a time.", author: "Swarnim Jewels" }
+        ];
+        let detailQuoteIndex = 0;
+        let detailQuoteInterval = null;
+
+        function showDetailQuote(index) {
+            const el = document.getElementById('detailQuoteText');
+            const authorEl = document.getElementById('detailQuoteAuthor');
+            if (!el || !authorEl) return;
+            el.style.animation = 'none';
+            authorEl.style.opacity = '0';
+            setTimeout(() => {
+                el.textContent = detailQuotes[index].text;
+                authorEl.textContent = '— ' + detailQuotes[index].author;
+                el.style.animation = 'quoteFade 0.6s ease';
+                authorEl.style.opacity = '0.7';
+                authorEl.style.transition = 'opacity 0.6s ease 0.2s';
+            }, 300);
+        }
+
+        function startDetailQuotes() {
+            detailQuoteIndex = Math.floor(Math.random() * detailQuotes.length);
+            showDetailQuote(detailQuoteIndex);
+            detailQuoteInterval = setInterval(() => {
+                detailQuoteIndex = (detailQuoteIndex + 1) % detailQuotes.length;
+                showDetailQuote(detailQuoteIndex);
+            }, 4000);
+        }
+
+        function stopDetailQuotes() {
+            if (detailQuoteInterval) { clearInterval(detailQuoteInterval); detailQuoteInterval = null; }
+        }
+
+        // Start quotes immediately on page load
+        startDetailQuotes();
+
+        async function init() {
+            const params = new URLSearchParams(window.location.search);
+            const targetId = params.get('id');
+
+            // Check if we have direct parameters (fallback method)
+            if (!targetId) {
+                const name = params.get('name');
+                const price = params.get('price');
+                const image = params.get('image');
+                const description = params.get('description');
+                const gallery = params.get('gallery');
+                
+                if (name && price && image) {
+                    // Construct product from URL parameters
+                    const product = {
+                        id: null,
+                        name: decodeURIComponent(name),
+                        price: decodeURIComponent(price),
+                        coverImage: decodeURIComponent(image),
+                        image: decodeURIComponent(image),
+                        description: description ? decodeURIComponent(description) : '',
+                        galleryImages: gallery ? decodeURIComponent(gallery) : ''
+                    };
+                    renderProduct(product);
+                    return;
+                } else {
+                    stopDetailQuotes();
+                    document.getElementById('loading').innerHTML = '<div style="color:#666; font-size:1rem; font-family:Cinzel,serif;">Product not found</div>';
+                    return;
+                }
+            }
+
+            // Try to fetch by ID from Google Sheet
+            try {
+                const response = await fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL);
+                const result = await response.json();
+                
+                const product = result.data.find(p => p.id === targetId || p.ID === targetId);
+                
+                if (product) {
+                    renderProduct(product);
+                } else {
+                    stopDetailQuotes();
+                    document.getElementById('loading').innerHTML = '<div style="color:#666; font-size:1rem; font-family:Cinzel,serif;">Product sold out or removed</div>';
+                }
+            } catch (e) {
+                stopDetailQuotes();
+                document.getElementById('loading').innerHTML = '<div style="color:#666; font-size:1rem; font-family:Cinzel,serif;">Error loading details. Please refresh.</div>';
+            }
+        }
+
+        function renderProduct(p) {
+            currentProduct = p;
+            
+            document.title = p.name + " | Swarnim Jewels";
+            document.getElementById('pName').textContent = p.name;
+            const priceFormatted = '₹' + parseFloat(p.price).toLocaleString('en-IN');
+            document.getElementById('pPrice').textContent = priceFormatted;
+            document.getElementById('mobilePriceDisplay').textContent = priceFormatted;
+            document.getElementById('pDesc').textContent = p.description || "Exquisite handcrafted jewelry piece from our exclusive collection. Each piece is carefully selected to ensure the highest quality and authentic craftsmanship.";
+            
+            // === DISPLAY PRODUCT VIDEOS ===
+            if (p.videoURLs && p.videoURLs.trim() !== '') {
+                const videoSection = document.getElementById('videoSection');
+                const videoPlayer = document.getElementById('videoPlayer');
+                const videoThumbnails = document.getElementById('videoThumbnails');
+                
+                const videoURLs = p.videoURLs.split(',').map(url => url.trim()).filter(url => url);
+                
+                if (videoURLs.length > 0) {
+                    videoSection.style.display = 'block';
+                    
+                    videoPlayer.innerHTML = `
+                        <video id="mainVideo" controls preload="metadata">
+                            <source src="${videoURLs[0]}" type="video/mp4">
+                            Your browser does not support video playback.
+                        </video>
+                    `;
+                    
+                    if (videoURLs.length > 1) {
+                        videoThumbnails.innerHTML = '';
+                        videoURLs.forEach((url, index) => {
+                            const thumbDiv = document.createElement('div');
+                            thumbDiv.className = 'video-thumb' + (index === 0 ? ' active' : '');
+                            thumbDiv.innerHTML = `
+                                <video preload="metadata" muted>
+                                    <source src="${url}" type="video/mp4">
+                                </video>
+                                <div class="video-thumb-overlay">
+                                    <i class="fa-solid fa-play"></i>
+                                </div>
+                                <div class="video-thumb-title">Video ${index + 1}</div>
+                            `;
+                            
+                            thumbDiv.onclick = function() {
+                                const mainVideo = document.getElementById('mainVideo');
+                                mainVideo.src = url;
+                                mainVideo.load();
+                                mainVideo.play();
+                                
+                                document.querySelectorAll('.video-thumb').forEach(t => t.classList.remove('active'));
+                                thumbDiv.classList.add('active');
+                            };
+                            
+                            videoThumbnails.appendChild(thumbDiv);
+                        });
+                    } else {
+                        videoThumbnails.style.display = 'none';
+                    }
+                    
+                    const mainVideo = document.getElementById('mainVideo');
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (!entry.isIntersecting && !mainVideo.paused) {
+                                mainVideo.pause();
+                            }
+                        });
+                    }, { threshold: 0.5 });
+                    
+                    observer.observe(mainVideo);
+                }
+            }
+            
+            const mainImageUrl = p.coverImage || p.image;
+            document.getElementById('mainImage').src = mainImageUrl;
+            
+            // Set background image dynamically
+            document.documentElement.style.setProperty('--bg-image', `url(${mainImageUrl})`);
+            document.body.classList.add('bg-loaded');
+
+            // Gallery
+            const thumbsDiv = document.getElementById('thumbs');
+            const images = [p.coverImage || p.image];
+            if (p.galleryImages) {
+                images.push(...p.galleryImages.split('||'));
+            }
+
+            images.forEach((src, i) => {
+                if(!src) return;
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = i===0 ? 'thumb active' : 'thumb';
+                img.onclick = () => {
+                    document.getElementById('mainImage').src = src;
+                    // Update background when changing main image
+                    document.documentElement.style.setProperty('--bg-image', `url(${src})`);
+                    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+                    img.classList.add('active');
+                    // Update zoom image
+                    updateZoomImage(src);
+                };
+                thumbsDiv.appendChild(img);
+            });
+
+            // === PROFESSIONAL IMAGE ZOOM LENS ===
+            initImageZoom();
+
+            document.getElementById('loading').style.display = 'none';
+            stopDetailQuotes();
+            document.getElementById('productContent').style.display = 'grid';
+        }
+
+        function buyNow() {
+            buyNowFromProduct();
+        }
+
+        function addProductToCart() {
+            addToCartFromProduct();
+        }
+
+        function shareWhatsApp() {
+            const text = `Check out this beautiful jewelry: ${currentProduct.name} - ${window.location.href}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function shareFacebook() {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+        }
+
+        function shareTwitter() {
+            const text = `Check out this beautiful jewelry from Swarnim Jewels: ${currentProduct.name}`;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link copied to clipboard!');
+            });
+        }
+
+        // Image Zoom Functions
+        function openImageZoom(imageSrc) {
+            const modal = document.getElementById('imageZoomModal');
+            const zoomImg = document.getElementById('zoomImage');
+            zoomImg.src = imageSrc;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            // Push a dummy state so the hardware back button pops THIS
+            // instead of navigating away from the product page
+            history.pushState({ zoomOpen: true }, '', window.location.href);
+        }
+
+        function closeImageZoom() {
+            const modal = document.getElementById('imageZoomModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Back button handler: if zoom modal is open, close it instead of leaving the page
+        window.addEventListener('popstate', function(e) {
+            const modal = document.getElementById('imageZoomModal');
+            if (modal && modal.classList.contains('active')) {
+                // Zoom is open — just close it, stay on this page
+                closeImageZoom();
+                // Re-push the dummy state so repeated back-presses keep working
+                history.pushState({ zoomOpen: true }, '', window.location.href);
+            }
+            // If zoom is NOT open, do nothing — let the browser navigate normally
+        });
+
+        // Make images clickable for zoom
+        // === PROFESSIONAL IMAGE ZOOM LENS ===
+        let zoomInitialized = false; // Prevent multiple initializations
+        
+        function initImageZoom() {
+            const mainImg = document.getElementById('mainImage');
+            const zoomLens = document.getElementById('zoomLens');
+            const zoomResult = document.getElementById('zoomResult');
+            
+            if (!mainImg || !zoomLens || !zoomResult) return;
+            
+            // Prevent re-initialization
+            if (zoomInitialized) {
+                // Just update the background image for the new product
+                if (window.innerWidth > 768) {
+                    zoomResult.style.backgroundImage = `url('${mainImg.src}')`;
+                }
+                return;
+            }
+            
+            // Only enable on desktop
+            if (window.innerWidth <= 768) {
+                // Mobile: Keep click-to-zoom
+                mainImg.onclick = function() {
+                    openImageZoom(this.src);
+                };
+                return;
+            }
+            
+            let zoomRatio = 2.5; // Zoom level (2.5x magnification)
+            
+            // Show zoom lens and result on hover
+            mainImg.addEventListener('mouseenter', function() {
+                zoomLens.classList.add('active');
+                zoomResult.classList.add('active');
+                zoomResult.style.backgroundImage = `url('${this.src}')`;
+            });
+            
+            // Hide zoom lens and result on leave
+            mainImg.addEventListener('mouseleave', function() {
+                zoomLens.classList.remove('active');
+                zoomResult.classList.remove('active');
+            });
+            
+            // Move zoom lens with mouse
+            mainImg.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const lensWidth = zoomLens.offsetWidth / 2;
+                const lensHeight = zoomLens.offsetHeight / 2;
+                
+                // Calculate lens position
+                let x = e.clientX - rect.left - lensWidth;
+                let y = e.clientY - rect.top - lensHeight;
+                
+                // Prevent lens from going outside image bounds
+                x = Math.max(0, Math.min(x, rect.width - zoomLens.offsetWidth));
+                y = Math.max(0, Math.min(y, rect.height - zoomLens.offsetHeight));
+                
+                // Position the lens
+                zoomLens.style.left = x + 'px';
+                zoomLens.style.top = y + 'px';
+                
+                // Calculate background position for zoomed image
+                const bgX = -(x * zoomRatio);
+                const bgY = -(y * zoomRatio);
+                
+                zoomResult.style.backgroundPosition = `${bgX}px ${bgY}px`;
+            });
+            
+            // Mark as initialized
+            zoomInitialized = true;
+        }
+        
+        // Update zoom background when thumbnails are clicked
+        function updateZoomImage(newImageSrc) {
+            const zoomResult = document.getElementById('zoomResult');
+            if (zoomResult && window.innerWidth > 768) {
+                setTimeout(() => {
+                    zoomResult.style.backgroundImage = `url('${newImageSrc}')`;
+                }, 50);
+            }
+        }
+
+        function setupImageZoom() {
+            // This will be called by initImageZoom which is triggered after product loads
+            initImageZoom();
+        }
+
+        init();
+        
+        // Setup zoom after a short delay to ensure images are loaded
+        setTimeout(setupImageZoom, 500);
+    </script>
+
+    <!-- Shopping Cart System -->
+    <script src="cart.js"></script>
+
+    <!-- Cart Notification Styles -->
+    <style>
+    .cart-notification {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: linear-gradient(135deg, #2d7a5d 0%, #1e5a42 100%);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 10000;
+        opacity: 0;
+        transform: translateX(400px);
+        transition: all 0.3s ease;
+    }
+
+    .cart-notification.show {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .cart-notification i {
+        font-size: 1.3rem;
+        color: #4caf50;
+    }
+
+    .cart-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #d4af37;
+        color: black;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: 10px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: bold;
+    }
+    </style>
+    <!-- WhatsApp Floating Chat Button -->
+    <a href="https://wa.me/918218768602?text=Hi!%20I'm%20interested%20in%20this%20product.%20Can%20you%20provide%20more%20details%3F" 
+       class="whatsapp-float" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       aria-label="Chat on WhatsApp">
+        <i class="fa-brands fa-whatsapp whatsapp-icon"></i>
+        <span class="whatsapp-text">Chat with us</span>
+    </a>
+
+    <!-- Premium Scroll Animations Script -->
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+
+        // Initialize scroll animations
+        function initScrollAnimations() {
+            const revealElements = document.querySelectorAll(
+                '.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale'
+            );
+            
+            revealElements.forEach(el => {
+                scrollObserver.observe(el);
+            });
+        }
+
+        // Add scroll reveal classes to product elements
+        window.addEventListener('load', () => {
+            // Add to product content section
+            const productContent = document.querySelector('.product-content');
+            if (productContent) {
+                productContent.classList.add('scroll-reveal-left');
+            }
+
+            // Add to product images
+            const productImages = document.querySelector('.product-images');
+            if (productImages) {
+                productImages.classList.add('scroll-reveal-right');
+            }
+
+            // Add to video section
+            const videoSection = document.getElementById('videoSection');
+            if (videoSection) {
+                videoSection.classList.add('scroll-reveal');
+            }
+
+            // Add to related products if they exist
+            const relatedProducts = document.querySelectorAll('.related-product');
+            relatedProducts.forEach((product, index) => {
+                product.classList.add('scroll-reveal');
+                product.setAttribute('data-delay', (index % 3) + 1);
+            });
+
+            // Initialize observer
+            initScrollAnimations();
+        });
+
+        // Initialize on DOMContentLoaded as fallback
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initScrollAnimations);
+        } else {
+            initScrollAnimations();
+        }
+    </script>
+
+    <!-- Shopping Cart Library -->
+    <script src="shopping-cart.js"></script>
+    <script src="user-system.js"></script>
+
+    <!-- Product Page Functions -->
+    <script>
+    // Add to Cart from Product Page
+    function addToCartFromProduct() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        
+        if (!productId) {
+            alert('Product not found. Please go back and try again.');
+            return;
+        }
+        
+        // Get product details from page
+        const productName = document.querySelector('.product-name, h1, h2')?.textContent || 'Product';
+        const priceElement = document.querySelector('.product-price, .price, [class*="price"]');
+        const imageElement = document.querySelector('.product-image img, .main-image, img[alt]');
+        
+        let price = 0;
+        if (priceElement) {
+            // Extract number from price text (₹1,299 → 1299)
+            const priceText = priceElement.textContent.replace(/[₹,\s]/g, '');
+            price = parseFloat(priceText) || 0;
+        }
+        
+        const image = imageElement?.src || 'https://via.placeholder.com/150';
+        
+        if (price === 0) {
+            alert('Unable to get product price. Please try again.');
+            return;
+        }
+        
+        // Add to cart
+        ShoppingCart.addItem({
+            id: productId,
+            name: productName.trim(),
+            price: price,
+            image: image
+        });
+        
+        // Ask if want to go to cart
+        setTimeout(() => {
+            if (confirm('Item added to cart! View cart now?')) {
+                window.location.href = 'cart.html';
+            }
+        }, 500);
+    }
+
+    // Buy Now from Product Page
+    function buyNowFromProduct() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        
+        if (!productId) {
+            alert('Product not found. Please go back and try again.');
+            return;
+        }
+        
+        // Get product details
+        const productName = document.querySelector('.product-name, h1, h2')?.textContent || 'Product';
+        const priceElement = document.querySelector('.product-price, .price, [class*="price"]');
+        const imageElement = document.querySelector('.product-image img, .main-image, img[alt]');
+        
+        let price = 0;
+        if (priceElement) {
+            const priceText = priceElement.textContent.replace(/[₹,\s]/g, '');
+            price = parseFloat(priceText) || 0;
+        }
+        
+        const image = imageElement?.src || 'https://via.placeholder.com/150';
+        
+        if (price === 0) {
+            alert('Unable to get product price. Please try again.');
+            return;
+        }
+        
+        // Clear cart and add only this item
+        ShoppingCart.clear();
+        ShoppingCart.addItem({
+            id: productId,
+            name: productName.trim(),
+            price: price,
+            image: image
+        });
+        
+        // Go directly to checkout
+        window.location.href = 'checkout.html';
+    }
+    </script>
+
+</body>
+</html>
