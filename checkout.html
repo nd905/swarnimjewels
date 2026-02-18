@@ -121,9 +121,7 @@
             align-items: center;
             gap: 15px;
         }
-        .section-header i {
-            font-size: 1.5rem;
-        }
+        .section-header i { font-size: 1.5rem; }
         
         .card { background: var(--card-bg); padding: 40px; border: var(--border); border-radius: 4px; }
         
@@ -137,7 +135,7 @@
             padding: 20px; 
             border: 1px solid #222; 
         }
-        .product-preview img { width: 100px; height: 100px; object-fit: cover; border: 1px solid var(--accent); }
+        .product-preview img { width: 100px; height: 100px; object-fit: cover; border: 1px solid var(--accent); flex-shrink: 0; }
         .product-info h3 { font-family: 'Cinzel', serif; margin-bottom: 8px; font-size: 1.2rem; }
         .product-info .price { color: var(--accent); font-size: 1.3rem; }
         .product-info .shipping-note {
@@ -145,9 +143,7 @@
             color: #4CAF50;
             margin-top: 5px;
         }
-        .product-info .shipping-note i {
-            margin-right: 5px;
-        }
+        .product-info .shipping-note i { margin-right: 5px; }
 
         /* Form */
         .form-group { margin-bottom: 20px; }
@@ -159,9 +155,7 @@
             text-transform: uppercase; 
             letter-spacing: 1px; 
         }
-        label .required {
-            color: #f44336;
-        }
+        label .required { color: #f44336; }
         input, textarea { 
             width: 100%; 
             background: #080808; 
@@ -173,9 +167,7 @@
             transition: border 0.3s;
         }
         input:focus, textarea:focus { border-color: var(--accent); outline: none; }
-        input.error, textarea.error {
-            border-color: #f44336;
-        }
+        input.error, textarea.error { border-color: #f44336; }
         .error-message {
             color: #f44336;
             font-size: 0.8rem;
@@ -218,13 +210,8 @@
             font-size: 0.9rem;
             line-height: 2.2;
         }
-        .payment-steps ol li {
-            padding-left: 10px;
-        }
-        .payment-steps .step-highlight {
-            color: var(--accent);
-            font-weight: 600;
-        }
+        .payment-steps ol li { padding-left: 10px; }
+        .payment-steps .step-highlight { color: var(--accent); font-weight: 600; }
         
         .qr-code img { 
             width: 100%; 
@@ -256,10 +243,7 @@
             font-size: 0.8rem;
             transition: 0.3s;
         }
-        .copy-btn:hover {
-            background: var(--accent);
-            color: black;
-        }
+        .copy-btn:hover { background: var(--accent); color: black; }
         
         .total-amount { 
             font-size: 2.2rem; 
@@ -284,16 +268,8 @@
             transition: 0.3s;
             font-size: 1rem;
         }
-        .confirm-btn:hover { 
-            background: white; 
-            transform: translateY(-2px); 
-            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
-        }
-        .confirm-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .confirm-btn:hover { background: white; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3); }
+        .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         .secure-badge { 
             margin-top: 20px; 
@@ -305,7 +281,6 @@
             gap: 10px; 
         }
         
-        /* Money Back Guarantee */
         .guarantee-badge {
             background: rgba(76, 175, 80, 0.1);
             border: 1px solid rgba(76, 175, 80, 0.3);
@@ -315,11 +290,7 @@
             font-size: 0.85rem;
             text-align: center;
         }
-        .guarantee-badge i {
-            font-size: 1.5rem;
-            display: block;
-            margin-bottom: 10px;
-        }
+        .guarantee-badge i { font-size: 1.5rem; display: block; margin-bottom: 10px; }
 
         @media (max-width: 850px) { 
             .checkout-container { grid-template-columns: 1fr; gap: 25px; padding: 25px 10px 60px; } 
@@ -327,114 +298,47 @@
             .row { grid-template-columns: 1fr; gap: 15px; }
             .progress-steps { flex-wrap: wrap; gap: 15px; justify-content: center; }
             .step-label { font-size: 0.65rem; }
-            .step-circle { width: 35px; height: 35px; font-size: 0.9rem; }
+            .step-circle { width: 35px; height: 35px; }
         }
 
         @media (max-width: 768px) {
             body { padding: 0; }
-            
-            /* Trust bar */
             .trust-bar { padding: 10px 3%; font-size: 0.75rem; }
-            
-            /* Progress bar */
             .progress-bar { padding: 20px 3%; }
-            .progress-steps { gap: 10px; }
-            .step { gap: 6px; }
             .step-circle { width: 30px; height: 30px; font-size: 0.8rem; }
             .step-label { font-size: 0.6rem; }
-            
-            /* Container */
             .checkout-container { padding: 20px 8px 60px; gap: 20px; }
-            
-            /* Cards */
             .card { padding: 20px 15px; }
-            
-            /* Section headers */
-            .section-header { 
-                font-size: 1.3rem; 
-                padding-bottom: 12px; 
-                margin-bottom: 20px;
-                gap: 10px;
-            }
+            .section-header { font-size: 1.3rem; padding-bottom: 12px; margin-bottom: 20px; gap: 10px; }
             .section-header i { font-size: 1.2rem; }
-            
-            /* Product preview */
-            .product-preview { 
-                flex-direction: column;
-                text-align: center;
-                padding: 15px; 
-                gap: 15px;
-            }
+            .product-preview { flex-direction: column; text-align: center; padding: 15px; gap: 15px; }
             .product-preview img { width: 80px; height: 80px; }
             .product-info h3 { font-size: 1rem; }
             .product-info .price { font-size: 1.1rem; }
-            .product-info .shipping-note { font-size: 0.75rem; }
-            
-            /* Form elements */
             .form-group { margin-bottom: 15px; }
-            label { 
-                font-size: 0.75rem; 
-                margin-bottom: 6px; 
-            }
-            input, textarea { 
-                padding: 12px; 
-                font-size: 0.9rem; 
-            }
-            
-            /* Order summary */
+            label { font-size: 0.75rem; margin-bottom: 6px; }
+            input, textarea { padding: 12px; font-size: 0.9rem; }
             .order-summary { padding: 20px 15px; }
-            .order-summary h3 { font-size: 1.1rem !important; }
-            
             .payment-steps { padding: 15px; margin-bottom: 20px; }
             .payment-steps h4 { font-size: 0.9rem; margin-bottom: 12px; }
             .payment-steps ol { font-size: 0.8rem; line-height: 2; }
-            
             .qr-code img { max-width: 160px; margin: 20px 0; border-width: 8px; }
-            
-            .upi-id { 
-                padding: 12px; 
-                font-size: 0.85rem; 
-                flex-wrap: wrap;
-                justify-content: center;
-            }
+            .upi-id { padding: 12px; font-size: 0.85rem; flex-wrap: wrap; justify-content: center; }
             .copy-btn { margin-top: 8px; padding: 6px 12px; }
-            
             .total-amount { font-size: 1.8rem; margin: 15px 0; padding-bottom: 15px; }
-            
-            .confirm-btn { 
-                padding: 15px 25px; 
-                font-size: 0.9rem; 
-                letter-spacing: 1px;
-            }
-            
-            .guarantee-badge { 
-                padding: 12px; 
-                margin-top: 15px; 
-                font-size: 0.75rem; 
-            }
+            .confirm-btn { padding: 15px 25px; font-size: 0.9rem; letter-spacing: 1px; }
+            .guarantee-badge { padding: 12px; margin-top: 15px; font-size: 0.75rem; }
             .guarantee-badge i { font-size: 1.3rem; margin-bottom: 8px; }
-            
-            .secure-badge { 
-                margin-top: 15px; 
-                font-size: 0.7rem; 
-            }
-            
-            /* Success modal */
-            .success-content { 
-                padding: 30px 20px; 
-                margin: 15px;
-            }
+            .secure-badge { margin-top: 15px; font-size: 0.7rem; }
+            .success-content { padding: 30px 20px; margin: 15px; }
             .success-icon { font-size: 3rem; margin-bottom: 15px; }
             .success-content h2 { font-size: 1.3rem; margin-bottom: 12px; }
             .success-content p { font-size: 0.85rem; line-height: 1.6; margin-bottom: 15px; }
-            .success-content .confirm-btn { margin-top: 15px; }
         }
 
-        /* Extra small phones */
         @media (max-width: 380px) {
             .section-header { font-size: 1.1rem; }
             .product-preview img { width: 70px; height: 70px; }
-            .product-info h3 { font-size: 0.9rem; }
             .qr-code img { max-width: 140px; }
             .total-amount { font-size: 1.5rem; }
         }
@@ -443,10 +347,7 @@
         .success-modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.95);
             z-index: 9999;
             align-items: center;
@@ -460,21 +361,9 @@
             max-width: 500px;
             margin: 20px;
         }
-        .success-icon {
-            font-size: 4rem;
-            color: #4CAF50;
-            margin-bottom: 20px;
-        }
-        .success-content h2 {
-            font-family: 'Cinzel', serif;
-            color: var(--accent);
-            margin-bottom: 15px;
-        }
-        .success-content p {
-            color: #aaa;
-            line-height: 1.8;
-            margin-bottom: 25px;
-        }
+        .success-icon { font-size: 4rem; color: #4CAF50; margin-bottom: 20px; }
+        .success-content h2 { font-family: 'Cinzel', serif; color: var(--accent); margin-bottom: 15px; }
+        .success-content p { color: #aaa; line-height: 1.8; margin-bottom: 25px; }
     </style>
 </head>
 <body>
@@ -507,9 +396,10 @@
                 Delivery Details
             </h2>
             
-            <div class="product-preview">
-                <img id="productImage" src="" alt="Product">
-                <div class="product-info">
+            <!-- ✅ FIX 3: productImage src is now dynamically set from cart data -->
+            <div class="product-preview" id="productPreviewBox">
+                <img id="productImage" src="https://via.placeholder.com/100x100/111/d4af37?text=..." alt="Product">
+                <div class="product-info" id="productInfoBox">
                     <h3 id="productName">Loading Product...</h3>
                     <div class="price" id="productPrice">₹0</div>
                     <div class="shipping-note">
@@ -593,7 +483,6 @@
                 <h4 style="color: var(--accent); margin-bottom: 15px; font-size: 0.95rem;">
                     <i class="fa-solid fa-tag"></i> Have a Coupon Code?
                 </h4>
-                
                 <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                     <input 
                         type="text" 
@@ -606,33 +495,17 @@
                         onclick="applyCoupon()"
                         id="applyBtn"
                         style="padding: 12px 20px; background: var(--accent); color: black; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 0.9rem;"
-                    >
-                        Apply
-                    </button>
+                    >Apply</button>
                 </div>
-                
                 <div id="couponMessage" style="display: none;"></div>
-                
                 <div id="couponDiscount" style="
-                    margin-top: 15px;
-                    padding: 12px;
+                    margin-top: 15px; padding: 12px;
                     background: rgba(76, 175, 80, 0.1);
-                    border: 1px solid #4CAF50;
-                    border-radius: 5px;
-                    color: #4CAF50;
-                    font-size: 0.9rem;
-                    display: none;
-                ">
+                    border: 1px solid #4CAF50; border-radius: 5px;
+                    color: #4CAF50; font-size: 0.9rem; display: none;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span><i class="fa-solid fa-check-circle"></i> Coupon Applied</span>
-                        <button type="button" onclick="removeCoupon()" style="
-                            background: none;
-                            border: none;
-                            color: #4CAF50;
-                            cursor: pointer;
-                            text-decoration: underline;
-                            font-size: 0.85rem;
-                        ">Remove</button>
+                        <button type="button" onclick="removeCoupon()" style="background: none; border: none; color: #4CAF50; cursor: pointer; text-decoration: underline; font-size: 0.85rem;">Remove</button>
                     </div>
                     <div id="discountText" style="margin-top: 5px; font-weight: bold;"></div>
                 </div>
@@ -644,19 +517,16 @@
                     <span style="color: #888;">Subtotal:</span>
                     <span id="subtotalAmount" style="color: white;">₹0</span>
                 </div>
-                
                 <div id="discountRow" style="display: none; margin-bottom: 10px;">
                     <div style="display: flex; justify-content: space-between;">
                         <span style="color: #4CAF50;">Discount:</span>
                         <span id="discountAmount" style="color: #4CAF50;">-₹0</span>
                     </div>
                 </div>
-                
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                     <span style="color: #888;">Shipping:</span>
                     <span id="shippingAmount" style="color: white;">₹75</span>
                 </div>
-                
                 <div style="border-top: 1px solid #333; padding-top: 10px; margin-top: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 1.1rem; font-weight: bold; color: white;">Total:</span>
@@ -702,7 +572,6 @@
         // ============================================================
         //  CONFIGURATION
         // ============================================================
-
         const CONFIG = {
             GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbx6aKrVnUwTl6PeJ5LCwZiOqalaDWGKEZF_eY4b6G3B055gqRMVDnnvjsdPUrvHhs-w/exec',
             FREE_SHIPPING_THRESHOLD: 1299,
@@ -714,8 +583,8 @@
 
         // ============================================================
         //  LOAD CART ITEMS
+        //  ✅ FIX 3: productImage.src is now set from cart[0].image
         // ============================================================
-
         window.addEventListener('load', function() {
             loadCartItems();
             calculateTotals();
@@ -723,16 +592,18 @@
 
         function loadCartItems() {
             const cart = ShoppingCart.getCart();
-            const container = document.getElementById('productName')?.parentElement;
-            
-            if (!container) {
-                console.error('Product details container not found');
+            const previewBox  = document.getElementById('productPreviewBox');
+            const infoBox     = document.getElementById('productInfoBox');
+            const productImgEl = document.getElementById('productImage');
+
+            if (!infoBox || !previewBox) {
+                console.error('Product preview container not found');
                 return;
             }
-            
+
             if (cart.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #888;">
+                previewBox.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #888; width: 100%;">
                         <i class="fa-solid fa-shopping-cart" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.3;"></i>
                         <p>Your cart is empty</p>
                         <a href="index.html" style="color: var(--accent); text-decoration: none; margin-top: 15px; display: inline-block;">
@@ -743,23 +614,28 @@
                 document.getElementById('sidebarPrice').textContent = '₹0';
                 return;
             }
-            
-            // Display cart items
-            container.innerHTML = `
-                <div style="margin-bottom: 25px;">
-                    <h3 style="color: var(--accent); margin-bottom: 20px; font-size: 1.1rem;">
+
+            // ✅ FIX 3: Set preview image to first cart item's image
+            if (productImgEl) {
+                productImgEl.src = cart[0].image || 'https://via.placeholder.com/100x100/111/d4af37?text=Item';
+                productImgEl.alt = cart[0].name || 'Product';
+            }
+
+            // Render all cart items inside infoBox
+            infoBox.innerHTML = `
+                <div>
+                    <h3 style="color: var(--accent); margin-bottom: 15px; font-size: 1rem; font-family: 'Cinzel', serif;">
                         <i class="fa-solid fa-shopping-bag"></i> Order Items (${cart.length})
                     </h3>
                     ${cart.map(item => `
-                        <div style="display: flex; gap: 15px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 8px; margin-bottom: 12px; border: 1px solid #222;">
-                            <img src="${item.image}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
-                            <div style="flex: 1;">
-                                <div style="color: white; font-weight: 500; margin-bottom: 5px;">${item.name}</div>
-                                <div style="color: #888; font-size: 0.9rem;">
-                                    ₹${item.price.toLocaleString('en-IN')} × ${item.quantity}
-                                </div>
+                        <div style="display:flex; gap:12px; padding:12px; background:rgba(255,255,255,0.02); border-radius:6px; margin-bottom:10px; border:1px solid #222; align-items:center;">
+                            <img src="${item.image}" alt="${item.name}"
+                                style="width:50px; height:50px; object-fit:cover; border-radius:4px; border:1px solid var(--accent); flex-shrink:0;">
+                            <div style="flex:1; min-width:0;">
+                                <div style="color:white; font-weight:500; font-size:0.9rem; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
+                                <div style="color:#888; font-size:0.8rem;">₹${item.price.toLocaleString('en-IN')} × ${item.quantity}</div>
                             </div>
-                            <div style="text-align: right; color: var(--accent); font-weight: bold;">
+                            <div style="color:var(--accent); font-weight:bold; font-size:0.95rem; flex-shrink:0;">
                                 ₹${(item.price * item.quantity).toLocaleString('en-IN')}
                             </div>
                         </div>
@@ -771,52 +647,38 @@
         // ============================================================
         //  COUPON SYSTEM
         // ============================================================
-
         async function applyCoupon() {
             const couponCode = document.getElementById('couponCode')?.value.trim().toUpperCase();
-            const messageDiv = document.getElementById('couponMessage');
-            const applyBtn = document.getElementById('applyBtn');
-            
+            const applyBtn   = document.getElementById('applyBtn');
+
             if (!couponCode) {
                 showCouponMessage('Please enter a coupon code', 'error');
                 return;
             }
-            
-            const cart = ShoppingCart.getCart();
+
+            const cart     = ShoppingCart.getCart();
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
+
             applyBtn.textContent = 'Checking...';
-            applyBtn.disabled = true;
-            
+            applyBtn.disabled    = true;
+
             try {
                 const response = await fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL, {
                     method: 'POST',
                     redirect: 'follow',
                     headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({
-                        action: 'validateCoupon',
-                        couponCode: couponCode,
-                        orderAmount: subtotal
-                    })
+                    body: JSON.stringify({ action: 'validateCoupon', couponCode, orderAmount: subtotal })
                 });
-                
                 const result = await response.json();
-                
+
                 if (result.success) {
-                    appliedCoupon = {
-                        code: result.code,
-                        discount: result.discount,
-                        minimumAmount: result.minimumAmount
-                    };
-                    
+                    appliedCoupon = { code: result.code, discount: result.discount, minimumAmount: result.minimumAmount };
                     showCouponMessage(`✅ Coupon applied! ${result.discount}% discount`, 'success');
                     document.getElementById('couponDiscount').style.display = 'block';
-                    document.getElementById('discountText').textContent = 
+                    document.getElementById('discountText').textContent =
                         `${result.discount}% off - Save ₹${Math.round(subtotal * result.discount / 100)}`;
-                    
                     document.getElementById('couponCode').disabled = true;
                     applyBtn.style.display = 'none';
-                    
                     calculateTotals();
                 } else {
                     showCouponMessage(result.error || 'Invalid coupon code', 'error');
@@ -827,106 +689,99 @@
                 showCouponMessage('Error validating coupon. Please try again.', 'error');
                 appliedCoupon = null;
             }
-            
+
             applyBtn.textContent = 'Apply';
-            applyBtn.disabled = false;
+            applyBtn.disabled    = false;
         }
 
         function removeCoupon() {
             appliedCoupon = null;
-            document.getElementById('couponCode').value = '';
+            document.getElementById('couponCode').value    = '';
             document.getElementById('couponCode').disabled = false;
             document.getElementById('couponDiscount').style.display = 'none';
-            document.getElementById('couponMessage').style.display = 'none';
-            document.getElementById('applyBtn').style.display = 'block';
+            document.getElementById('couponMessage').style.display  = 'none';
+            document.getElementById('applyBtn').style.display       = 'block';
             calculateTotals();
         }
 
         function showCouponMessage(message, type) {
             const messageDiv = document.getElementById('couponMessage');
             if (!messageDiv) return;
-            
-            messageDiv.textContent = message;
-            messageDiv.style.display = 'block';
-            messageDiv.style.background = type === 'success' ? 
-                'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)';
-            messageDiv.style.border = `1px solid ${type === 'success' ? '#4CAF50' : '#f44336'}`;
-            messageDiv.style.color = type === 'success' ? '#4CAF50' : '#f44336';
-            messageDiv.style.padding = '10px';
+            messageDiv.textContent        = message;
+            messageDiv.style.display      = 'block';
+            messageDiv.style.background   = type === 'success' ? 'rgba(76,175,80,0.1)' : 'rgba(244,67,54,0.1)';
+            messageDiv.style.border       = `1px solid ${type === 'success' ? '#4CAF50' : '#f44336'}`;
+            messageDiv.style.color        = type === 'success' ? '#4CAF50' : '#f44336';
+            messageDiv.style.padding      = '10px';
             messageDiv.style.borderRadius = '5px';
-            messageDiv.style.marginTop = '10px';
-            messageDiv.style.fontSize = '0.85rem';
+            messageDiv.style.marginTop    = '10px';
+            messageDiv.style.fontSize     = '0.85rem';
         }
 
         function calculateTotals() {
-            const cart = ShoppingCart.getCart();
+            const cart     = ShoppingCart.getCart();
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
+
             let discountAmount = 0;
             if (appliedCoupon) {
                 discountAmount = Math.round(subtotal * appliedCoupon.discount / 100);
             }
-            
+
             const afterDiscount = subtotal - discountAmount;
-            const shipping = afterDiscount >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_CHARGE;
-            const total = afterDiscount + shipping;
-            
-            // Update UI
-            const subtotalEl = document.getElementById('subtotalAmount');
-            const shippingEl = document.getElementById('shippingAmount');
-            const totalEl = document.getElementById('totalAmount');
-            const sidebarPrice = document.getElementById('sidebarPrice');
-            const discountRow = document.getElementById('discountRow');
+            const shipping      = afterDiscount >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_CHARGE;
+            const total         = afterDiscount + shipping;
+
+            const subtotalEl      = document.getElementById('subtotalAmount');
+            const shippingEl      = document.getElementById('shippingAmount');
+            const totalEl         = document.getElementById('totalAmount');
+            const sidebarPrice    = document.getElementById('sidebarPrice');
+            const discountRow     = document.getElementById('discountRow');
             const discountAmountEl = document.getElementById('discountAmount');
-            
-            if (subtotalEl) subtotalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
-            if (shippingEl) shippingEl.textContent = shipping === 0 ? 'FREE ✅' : `₹${shipping}`;
-            if (totalEl) totalEl.textContent = `₹${total.toLocaleString('en-IN')}`;
-            if (sidebarPrice) sidebarPrice.textContent = `₹${total.toLocaleString('en-IN')}`;
-            
+
+            if (subtotalEl)      subtotalEl.textContent   = `₹${subtotal.toLocaleString('en-IN')}`;
+            if (shippingEl)      shippingEl.textContent   = shipping === 0 ? 'FREE ✅' : `₹${shipping}`;
+            if (totalEl)         totalEl.textContent      = `₹${total.toLocaleString('en-IN')}`;
+            if (sidebarPrice)    sidebarPrice.textContent = `₹${total.toLocaleString('en-IN')}`;
+
             if (discountAmount > 0) {
-                if (discountRow) discountRow.style.display = 'flex';
-                if (discountAmountEl) discountAmountEl.textContent = `-₹${discountAmount.toLocaleString('en-IN')}`;
+                if (discountRow)       discountRow.style.display      = 'flex';
+                if (discountAmountEl)  discountAmountEl.textContent   = `-₹${discountAmount.toLocaleString('en-IN')}`;
             } else {
                 if (discountRow) discountRow.style.display = 'none';
             }
-            
-            window.orderTotals = { 
-                subtotal, 
-                discount: discountAmount, 
-                shipping, 
-                total, 
-                couponCode: appliedCoupon ? appliedCoupon.code : null 
+
+            window.orderTotals = {
+                subtotal,
+                discount: discountAmount,
+                shipping,
+                total,
+                couponCode: appliedCoupon ? appliedCoupon.code : null
             };
         }
-
 
         function copyUPI(event) {
             const upiId = 'jainswarnima93@yesg';
             navigator.clipboard.writeText(upiId).then(() => {
-                const btn = event.target.closest('.copy-btn');
+                const btn          = event.target.closest('.copy-btn');
                 const originalHTML = btn.innerHTML;
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-                setTimeout(() => {
-                    btn.innerHTML = originalHTML;
-                }, 2000);
+                btn.innerHTML      = '<i class="fa-solid fa-check"></i> Copied!';
+                setTimeout(() => { btn.innerHTML = originalHTML; }, 2000);
             });
         }
 
         function validateForm() {
             let isValid = true;
             const fields = [
-                { id: 'fullName', errorId: 'nameError' },
-                { id: 'whatsapp', errorId: 'phoneError' },
-                { id: 'address', errorId: 'addressError' },
-                { id: 'city', errorId: 'cityError' },
-                { id: 'pincode', errorId: 'pincodeError' }
+                { id: 'fullName', errorId: 'nameError'    },
+                { id: 'whatsapp', errorId: 'phoneError'   },
+                { id: 'address',  errorId: 'addressError' },
+                { id: 'city',     errorId: 'cityError'    },
+                { id: 'pincode',  errorId: 'pincodeError' }
             ];
 
             fields.forEach(field => {
                 const input = document.getElementById(field.id);
                 const error = document.getElementById(field.errorId);
-                
                 if (!input.value.trim() || !input.checkValidity()) {
                     input.classList.add('error');
                     error.style.display = 'block';
@@ -944,80 +799,88 @@
         document.querySelectorAll('input, textarea').forEach(input => {
             input.addEventListener('input', function() {
                 this.classList.remove('error');
-                const errorId = this.id + 'Error';
-                const errorEl = document.getElementById(errorId);
-                if (errorEl) {
-                    errorEl.style.display = 'none';
-                }
+                const errorEl = document.getElementById(this.id + 'Error');
+                if (errorEl) errorEl.style.display = 'none';
             });
         });
 
-        function handleSubmit(event) {
+        // ============================================================
+        //  ✅ FIX 1: handleSubmit is now declared async
+        //  ✅ FIX 2: 'state' field removed — it does not exist in the form
+        // ============================================================
+        async function handleSubmit(event) {
             event.preventDefault();
-            
+
             if (!validateForm()) {
                 alert('Please fill all required fields correctly');
                 return;
             }
-            
+
             const cart = ShoppingCart.getCart();
             if (cart.length === 0) {
                 alert('Your cart is empty!');
                 return;
             }
 
-            // Get form data
+            // Disable button to prevent double-submit
+            const submitBtn   = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+
+            // ✅ FIX 2: No 'state' field — it doesn't exist in the HTML form
             const formData = {
-                name: document.getElementById('fullName').value,
-                phone: document.getElementById('whatsapp').value,
+                name:    document.getElementById('fullName').value,
+                phone:   document.getElementById('whatsapp').value,
                 address: document.getElementById('address').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value,
+                city:    document.getElementById('city').value,
                 pincode: document.getElementById('pincode').value,
-                email: document.getElementById('email').value || 'N/A'
+                email:   document.getElementById('email').value || 'N/A'
             };
-            
+
             const totals = window.orderTotals || {};
-            
+
             // Build cart items text
             let itemsText = '';
             cart.forEach((item, index) => {
                 itemsText += `${index + 1}. ${item.name} x${item.quantity} = ₹${(item.price * item.quantity).toLocaleString('en-IN')}%0A`;
             });
-            
+
             // Build coupon text
             let couponText = '';
             if (totals.couponCode) {
-                couponText = `%0A*Coupon Applied:* ${totals.couponCode}%0A*Discount:* -₹${totals.discount.toLocaleString('en-IN')}`;
+                couponText = `%0A*Coupon Applied:* ${totals.couponCode}%0A*Discount:* -₹${(totals.discount || 0).toLocaleString('en-IN')}`;
             }
-            
-            // Build WhatsApp message
-            const msg = `*🛍️ NEW ORDER - SWARNIM JEWELS*%0A%0A` +
-                        `*👤 Customer Details*%0A` +
-                        `Name: ${formData.name}%0A` +
-                        `Phone: ${formData.phone}%0A` +
-                        `Email: ${formData.email}%0A%0A` +
-                        `*📦 Order Items*%0A` +
-                        `${itemsText}%0A` +
-                        `*💰 Order Summary*%0A` +
-                        `Subtotal: ₹${totals.subtotal.toLocaleString('en-IN')}${couponText}%0A` +
-                        `Shipping: ${totals.shipping === 0 ? 'FREE ✅' : '₹' + totals.shipping}%0A` +
-                        `*TOTAL PAID:* ₹${totals.total.toLocaleString('en-IN')}%0A%0A` +
-                        `*📍 Delivery Address*%0A` +
-                        `${formData.address}%0A` +
-                        `${formData.city}, ${formData.state} - ${formData.pincode}%0A%0A` +
-                        `_Order placed via Swarnim Jewels website_`;
-            
-            // Save order to Google Sheet
+
+            // ✅ FIX 2: No ${formData.state} in the WhatsApp message
+            const msg =
+                `*🛍️ NEW ORDER - SWARNIM JEWELS*%0A%0A` +
+                `*👤 Customer Details*%0A` +
+                `Name: ${formData.name}%0A` +
+                `Phone: ${formData.phone}%0A` +
+                `Email: ${formData.email}%0A%0A` +
+                `*📦 Order Items*%0A` +
+                `${itemsText}%0A` +
+                `*💰 Order Summary*%0A` +
+                `Subtotal: ₹${(totals.subtotal || 0).toLocaleString('en-IN')}${couponText}%0A` +
+                `Shipping: ${totals.shipping === 0 ? 'FREE ✅' : '₹' + (totals.shipping || 75)}%0A` +
+                `*TOTAL PAID:* ₹${(totals.total || 0).toLocaleString('en-IN')}%0A%0A` +
+                `*📍 Delivery Address*%0A` +
+                `${formData.address}%0A` +
+                `${formData.city} - ${formData.pincode}%0A%0A` +
+                `_Order placed via Swarnim Jewels website_`;
+
+            // Save order to Google Sheet (non-blocking — errors won't stop WhatsApp)
             try {
                 const orderPayload = {
-                    items: cart,
-                    total: totals.total || 0,
-                    name: formData.name,
-                    phone: formData.phone,
-                    address: `${formData.address}, ${formData.city}, ${formData.state} - ${formData.pincode}`,
+                    items:      cart,
+                    total:      totals.total || 0,
+                    name:       formData.name,
+                    phone:      formData.phone,
+                    // ✅ FIX 2: No state in address string
+                    address:    `${formData.address}, ${formData.city} - ${formData.pincode}`,
                     couponCode: totals.couponCode || ''
                 };
+
                 if (window.UserSystem) {
                     await UserSystem.saveOrder(orderPayload);
                 } else {
@@ -1028,26 +891,29 @@
                         body: JSON.stringify({ action: 'saveOrder', userId: 'GUEST', order: orderPayload })
                     });
                 }
-            } catch(e) { console.warn('Order save failed:', e); }
+            } catch(e) {
+                console.warn('Order save failed (non-critical):', e);
+            }
 
-            // Update progress
+            // Update progress bar steps
             document.querySelectorAll('.step')[0].classList.add('completed');
             document.querySelectorAll('.step')[1].classList.add('active');
             document.querySelector('.progress-line').style.width = '66%';
-            
+
+            // Open WhatsApp with the full order message
+            window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+
+            // Complete progress & show success modal
             setTimeout(() => {
                 document.querySelectorAll('.step')[1].classList.add('completed');
                 document.querySelectorAll('.step')[2].classList.add('active');
                 document.querySelector('.progress-line').style.width = '100%';
-                
+
                 setTimeout(() => {
                     document.getElementById('successModal').style.display = 'flex';
-                    ShoppingCart.clear(); // Clear cart after order
+                    ShoppingCart.clear(); // Clear cart after successful order
                 }, 500);
-            }, 500);
-            
-            // Open WhatsApp
-            window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+            }, 1000);
         }
     </script>
 </body>
