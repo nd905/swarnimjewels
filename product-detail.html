@@ -1382,7 +1382,7 @@
                 const response = await fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL);
                 const result = await response.json();
                 
-                const product = result.data.find(p => p.id === targetId || p.ID === targetId);
+                const product = (result.products || []).find(p => String(p.id) === String(targetId) || String(p.ID) === String(targetId));
                 
                 if (product) {
                     renderProduct(product);
