@@ -1,18 +1,18 @@
 // ============================================================
-//  SWARNIM JEWELS — GOOGLE APPS SCRIPT  v3.0
+//  SWARNIM JEWELS  GOOGLE APPS SCRIPT  v3.0
 //
 //  REQUIRED SHEET TABS:
-//    Products  — A:ID  B:Name  C:Description  D:Price
+//    Products   A:ID  B:Name  C:Description  D:Price
 //                E:CoverImage  F:GalleryImages  G:Category  H:VideoURLs
-//    Categories — A:Name
-//    Banners   — A:ID  B:ImageUrl  C:Active  D:SortOrder  E:Title
-//    Coupons   — A:Code  B:DiscountPercent  C:Active(TRUE/FALSE)
-//    Users     — A:UserID  B:Name  C:Email  D:PasswordHash
+//    Categories  A:Name
+//    Banners    A:ID  B:ImageUrl  C:Active  D:SortOrder  E:Title
+//    Coupons    A:Code  B:DiscountPercent  C:Active(TRUE/FALSE)  D:ExpiryDate(YYYY-MM-DD)  E:MinimumAmount
+//    Users      A:UserID  B:Name  C:Email  D:PasswordHash
 //                E:Phone  F:CreatedAt  G:Cart(JSON)  H:Addresses(JSON)
-//    Orders    — A:OrderID  B:UserID  C:Date  D:Items  E:Total
+//    Orders     A:OrderID  B:UserID  C:Date  D:Items  E:Total
 //                F:Name  G:Phone  H:Address  I:Status
 //
-//  Deploy → New Deployment → Web App
+//  Deploy  New Deployment  Web App
 //  Execute as: Me  |  Access: Anyone
 // ============================================================
 
@@ -22,11 +22,11 @@ function out(data) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// ── doGet — products, categories, banners, coupons ──────────
+//  doGet  products, categories, banners, coupons 
 function doGet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  // Products — look up by name first, fallback to first sheet
+  // Products  look up by name first, fallback to first sheet
   var ps = ss.getSheetByName('Products') || ss.getSheets()[0];
   var products = [];
   try {
@@ -60,15 +60,26 @@ function doGet() {
     var coup = ss.getSheetByName('Coupons');
     if (coup && coup.getLastRow() > 0)
       coup.getDataRange().getValues().forEach(function(r){
-        if(r[0] && (r[2]===true||r[2]==='TRUE'))
-          coupons.push({ code:r[0].toString().toUpperCase().trim(), discount:Number(r[1]) });
+        if(r[0] && (r[2]===true||r[2]==='TRUE')) {
+          var expVal = r[3];
+          var expiryStr = '';
+          if (expVal instanceof Date && !isNaN(expVal)) {
+            var yy = expVal.getFullYear();
+            var mm = ('0'+(expVal.getMonth()+1)).slice(-2);
+            var dd = ('0'+expVal.getDate()).slice(-2);
+            expiryStr = yy + '-' + mm + '-' + dd;
+          } else if (expVal) {
+            expiryStr = expVal.toString().trim();
+          }
+          coupons.push({ code:r[0].toString().toUpperCase().trim(), discount:Number(r[1]), expiryDate:expiryStr, minimumAmount:Number(r[4])||0 });
+        }
       });
   } catch(e) {}
 
   return out({ products:products, categories:categories, banners:banners, coupons:coupons });
 }
 
-// ── doPost — routes all write actions ───────────────────────
+//  doPost  routes all write actions 
 function doPost(e) {
   var data;
   try { data = JSON.parse(e.postData.contents); }
@@ -99,9 +110,9 @@ function doPost(e) {
   return out({ success:false, error:'Unknown action: ' + action });
 }
 
-// ══════════════════════════════════════════════════════════════
+// 
 //  PRODUCTS
-// ══════════════════════════════════════════════════════════════
+// 
 function _pSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   return ss.getSheetByName('Products') || ss.getSheets()[0];
@@ -135,9 +146,9 @@ function deleteProduct(d) {
   return out({ success:false, error:'Product not found.' });
 }
 
-// ══════════════════════════════════════════════════════════════
+// 
 //  CATEGORIES / BANNERS / COUPONS
-// ══════════════════════════════════════════════════════════════
+// 
 function addCategory(d) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var s  = ss.getSheetByName('Categories') || ss.insertSheet('Categories');
@@ -180,17 +191,42 @@ function validateCoupon(d) {
   var vals = s.getDataRange().getValues();
   for (var i=0; i<vals.length; i++) {
     if (vals[i][0].toString().toUpperCase().trim() === code) {
-      if (vals[i][2]===true || vals[i][2]==='TRUE')
-        return out({ success:true, discount:Number(vals[i][1]) });
-      return out({ success:false, error:'This coupon has expired.' });
+      // Check active flag
+      if (vals[i][2] !== true && vals[i][2] !== 'TRUE')
+        return out({ success:false, error:'This coupon is inactive.' });
+      // Check expiry date (column D)
+      var expRaw = vals[i][3];
+      var expiry = '';
+      if (expRaw instanceof Date && !isNaN(expRaw)) {
+        var yy = expRaw.getFullYear();
+        var mm = ('0'+(expRaw.getMonth()+1)).slice(-2);
+        var dd = ('0'+expRaw.getDate()).slice(-2);
+        expiry = yy + '-' + mm + '-' + dd;
+      } else if (expRaw) {
+        expiry = expRaw.toString().trim();
+      }
+      if (expiry) {
+        var m = expiry.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (m) {
+          var expiryDate = new Date(+m[1], +m[2]-1, +m[3], 23, 59, 59);
+          if (new Date() > expiryDate)
+            return out({ success:false, error:'This coupon has expired.' });
+        }
+      }
+      return out({
+        success: true,
+        discount: Number(vals[i][1]),
+        expiryDate: expiry,
+        minimumAmount: Number(vals[i][4]) || 0
+      });
     }
   }
   return out({ success:false, error:'Invalid coupon code.' });
 }
 
-// ══════════════════════════════════════════════════════════════
+// 
 //  USER HELPERS
-// ══════════════════════════════════════════════════════════════
+// 
 function _uSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var s  = ss.getSheetByName('Users');
@@ -217,9 +253,9 @@ function _id(prefix) {
   return prefix + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,7).toUpperCase();
 }
 
-// ══════════════════════════════════════════════════════════════
+// 
 //  REGISTER
-// ══════════════════════════════════════════════════════════════
+// 
 function registerUser(d) {
   var email = (d.email||'').toLowerCase().trim();
   if (!email || !d.passwordHash || !d.name)
@@ -238,9 +274,9 @@ function registerUser(d) {
   return out({ success:true, userId:userId });
 }
 
-// ══════════════════════════════════════════════════════════════
+// 
 //  LOGIN
-// ══════════════════════════════════════════════════════════════
+// 
 function loginUser(d) {
   var email = (d.email||'').toLowerCase().trim();
   var sh    = _uSheet(), last = sh.getLastRow();
@@ -261,16 +297,16 @@ function loginUser(d) {
   return out({ success:false, error:'Incorrect email or password.' });
 }
 
-// ══════════════════════════════════════════════════════════════
+// 
 //  UPDATE PROFILE
-// ══════════════════════════════════════════════════════════════
+// 
 function updateUser(d) {
   var sh  = _uSheet();
   var row = _userRow(sh, d.userId);
   if (row < 0) return out({ success:false, error:'User not found.' });
 
   var cur = sh.getRange(row,1,1,5).getValues()[0]; // A-E
-  // Only overwrite if new value is non-empty — preserves existing data
+  // Only overwrite if new value is non-empty  preserves existing data
   var newName  = (d.name  && d.name.trim())  ? d.name.trim()  : cur[1];
   var newPhone = (d.phone !== undefined)       ? d.phone.trim() : cur[4];
 
@@ -279,9 +315,9 @@ function updateUser(d) {
   return out({ success:true });
 }
 
-// ══════════════════════════════════════════════════════════════
+// 
 //  CHANGE PASSWORD
-// ══════════════════════════════════════════════════════════════
+// 
 function changePassword(d) {
   var sh  = _uSheet();
   var row = _userRow(sh, d.userId);
@@ -292,9 +328,9 @@ function changePassword(d) {
   return out({ success:true });
 }
 
-// ══════════════════════════════════════════════════════════════
+// 
 //  CART
-// ══════════════════════════════════════════════════════════════
+// 
 function getCart(d) {
   var sh  = _uSheet();
   var row = _userRow(sh, d.userId);
@@ -315,9 +351,9 @@ function saveCart(d) {
   return out({ success:true });
 }
 
-// ══════════════════════════════════════════════════════════════
+// 
 //  ORDERS
-// ══════════════════════════════════════════════════════════════
+// 
 function _oSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var s  = ss.getSheetByName('Orders');
@@ -356,9 +392,9 @@ function getOrders(d) {
   return out({ success:true, orders:orders });
 }
 
-// ══════════════════════════════════════════════════════════════
+// 
 //  ADDRESSES
-// ══════════════════════════════════════════════════════════════
+// 
 function saveAddressAction(d) {
   var sh  = _uSheet();
   var row = _userRow(sh, d.userId);
