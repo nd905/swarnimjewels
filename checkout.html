@@ -235,7 +235,7 @@
 <script src="user-system.js"></script>
 
 <script>
-// â”€â”€ CONFIG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  CONFIG 
 const CONFIG = {
     GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz2sIsHwOqQPTwTLlsHZgm9D6k9fhH_dZeNxzGYrKfZvTSVfw8Mb0cZg0j8Guefh7MC/exec',
     FREE_SHIPPING_THRESHOLD: 1299,
@@ -246,7 +246,7 @@ const CONFIG = {
 let appliedCoupon    = null;
 let availableCoupons = [];
 
-// â”€â”€ LOAD COUPONS (cache-busted) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  LOAD COUPONS (cache-busted) 
 async function loadCouponsFromServer() {
     try {
         const res    = await fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL + '?t=' + Date.now());
@@ -263,7 +263,7 @@ async function loadCouponsFromServer() {
     document.getElementById('couponInputArea').style.display = 'block';
 }
 
-// â”€â”€ PARSE EXPIRY DATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  PARSE EXPIRY DATE 
 // Accepts "YYYY-MM-DD", returns end-of-day local Date or null.
 function parseExpiry(val) {
     if (!val) return null;
@@ -272,14 +272,14 @@ function parseExpiry(val) {
     return new Date(+m[1], +m[2] - 1, +m[3], 23, 59, 59);
 }
 
-// â”€â”€ PAGE INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  PAGE INIT 
 window.addEventListener('load', function () {
     loadCartItems();
     calculateTotals();
     loadCouponsFromServer();
 });
 
-// â”€â”€ LOAD CART ITEMS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  LOAD CART ITEMS 
 function loadCartItems() {
     var cart     = ShoppingCart.getCart();
     var prevBox  = document.getElementById('productPreviewBox');
@@ -291,7 +291,16 @@ function loadCartItems() {
         prevBox.innerHTML = '<div style="text-align:center;padding:40px;color:#888;width:100%;"><i class="fa-solid fa-shopping-cart" style="font-size:3rem;margin-bottom:20px;opacity:0.3;"></i><p>Your cart is empty</p><a href="index.html" style="color:var(--accent);text-decoration:none;">&#8592; Continue Shopping</a></div>';
         return;
     }
-    if (imgEl) { imgEl.src = cart[0].image || ''; imgEl.alt = cart[0].name || 'Product'; }
+    if (imgEl) {
+        var img0 = cart[0].image || '';
+        if (img0 && img0.indexOf('placeholder') === -1) {
+            imgEl.src = img0;
+            imgEl.alt = cart[0].name || 'Product';
+            imgEl.onerror = function() { this.style.display = 'none'; };
+        } else {
+            imgEl.style.display = 'none';
+        }
+    }
 
     var html = '<div><h3 style="color:var(--accent);margin-bottom:15px;font-size:1rem;font-family:\'Cinzel\',serif;"><i class="fa-solid fa-shopping-bag"></i> Your Items (' + cart.length + ')</h3>';
     cart.forEach(function(item) {
@@ -305,7 +314,7 @@ function loadCartItems() {
     infoBox.innerHTML = html + '</div>';
 }
 
-// â”€â”€ APPLY COUPON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  APPLY COUPON 
 function applyCoupon() {
     var entered = (document.getElementById('couponCode').value || '').trim().toUpperCase();
 
@@ -381,7 +390,7 @@ function showCouponMsg(msg, type) {
     el.style.lineHeight   = '1.5';
 }
 
-// â”€â”€ CALCULATE TOTALS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  CALCULATE TOTALS 
 function calculateTotals() {
     var cart = ShoppingCart.getCart();
     var subtotal = 0;
@@ -405,7 +414,7 @@ function calculateTotals() {
     window.orderTotals = { subtotal: subtotal, discount: discount, shipping: shipping, total: total, couponCode: appliedCoupon ? appliedCoupon.code : null };
 }
 
-// â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  HELPERS 
 function copyUPI(event) {
     navigator.clipboard.writeText('jainswarnima93@yesg').then(function() {
         var btn = event.target.closest('.copy-btn');
@@ -434,7 +443,7 @@ document.querySelectorAll('input, textarea').forEach(function(inp) {
     });
 });
 
-// â”€â”€ SUBMIT ORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+//  SUBMIT ORDER 
 async function handleSubmit(event) {
     event.preventDefault();
     if (!validateForm()) { alert('Please fill all required fields correctly'); return; }
