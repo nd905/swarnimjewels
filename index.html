@@ -172,13 +172,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7));
+            background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             padding: 20px;
+        }
+        .carousel-overlay:empty {
+            background: transparent;
         }
         
         .carousel-overlay h1 {
@@ -2125,18 +2128,14 @@
             carouselBanners.forEach((banner, index) => {
                 const slide = document.createElement('div');
                 slide.className = 'carousel-slide' + (index === 0 ? ' active' : '');
+                const hasTitle = banner.title && banner.title.trim() !== '';
                 slide.innerHTML = `
                     <img src="${banner.imageUrl}" alt="Banner ${index + 1}">
+                    ${hasTitle ? `
                     <div class="carousel-overlay">
-                        <h1>
-                            <span>HANDCRAFTED LUXURY</span>
-                            TIMELESS ELEGANCE
-                        </h1>
-                        <p style="max-width: 700px; margin: 0 auto 30px; color: #ccc; font-size: 1.1rem;">
-                            Authentic oxidized silver, Kundan, and Gold-plated masterpieces curated by our expert sourcing team in Delhi.
-                        </p>
+                        <h1>${banner.title.trim()}</h1>
                         <a href="#shop" class="cta-btn">VIEW COLLECTION</a>
-                    </div>
+                    </div>` : ''}
                 `;
                 container.appendChild(slide);
                 
