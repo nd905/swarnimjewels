@@ -9,146 +9,88 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg-dark: #050505;
-            --card-bg: #111;
-            --accent: #d4af37;
-            --text-main: #eee;
-            --border: 1px solid #333;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Lato', sans-serif; background: var(--bg-dark); color: var(--text-main); padding: 0; min-height: 100vh; }
-
-        .trust-bar { background: #0a0a0a; border-bottom: 1px solid #222; padding: 12px 5%; text-align: center; color: #888; font-size: 0.85rem; }
-        .trust-bar i { color: #4CAF50; margin-right: 5px; }
-
-        .progress-bar { background: #0a0a0a; padding: 30px 5%; border-bottom: var(--border); }
-        .progress-steps { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; position: relative; }
-        .progress-steps::before { content: ''; position: absolute; top: 20px; left: 0; right: 0; height: 2px; background: #333; z-index: 0; }
-        .progress-line { position: absolute; top: 20px; left: 0; height: 2px; background: var(--accent); width: 33%; z-index: 1; transition: 0.5s; }
-        .step { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; z-index: 2; }
-        .step-circle { width: 40px; height: 40px; border-radius: 50%; background: #222; border: 2px solid #333; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: 0.3s; }
-        .step.active .step-circle { background: var(--accent); border-color: var(--accent); color: black; }
-        .step.completed .step-circle { background: #4CAF50; border-color: #4CAF50; color: white; }
-        .step-label { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
-        .step.active .step-label { color: var(--accent); }
-
-        .checkout-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; padding: 40px 20px 80px; }
-        .section-header { font-family: 'Cinzel', serif; color: var(--accent); border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 25px; font-size: 1.8rem; display: flex; align-items: center; gap: 15px; }
-        .section-header i { font-size: 1.5rem; }
-        .card { background: var(--card-bg); padding: 40px; border: var(--border); border-radius: 4px; }
-
-        .product-preview { display: flex; gap: 25px; align-items: center; margin-bottom: 40px; background: #0a0a0a; padding: 20px; border: 1px solid #222; }
-        .product-preview img { width: 100px; height: 100px; object-fit: cover; border: 1px solid var(--accent); flex-shrink: 0; }
-        .product-info h3 { font-family: 'Cinzel', serif; margin-bottom: 8px; font-size: 1.2rem; }
-        .product-info .price { color: var(--accent); font-size: 1.3rem; }
-        .product-info .shipping-note { font-size: 0.8rem; color: #4CAF50; margin-top: 5px; }
-        .product-info .shipping-note i { margin-right: 5px; }
-
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-        label .required { color: #f44336; }
-        input, textarea { width: 100%; background: #080808; border: 1px solid #333; color: white; padding: 16px; font-family: 'Lato', sans-serif; font-size: 1rem; transition: border 0.3s; }
-        input:focus, textarea:focus { border-color: var(--accent); outline: none; }
-        input.error, textarea.error { border-color: #f44336; }
-        .error-message { color: #f44336; font-size: 0.8rem; margin-top: 5px; display: none; }
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-        .order-summary { background: #0f0f0f; border: 1px solid var(--accent); padding: 30px; height: fit-content; text-align: center; position: sticky; top: 20px; }
-        .payment-steps { text-align: left; background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.2); padding: 20px; margin-bottom: 25px; }
-        .payment-steps h4 { font-family: 'Cinzel', serif; color: var(--accent); font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .payment-steps ol { list-style-position: inside; color: #ccc; font-size: 0.9rem; line-height: 2.2; }
-        .payment-steps ol li { padding-left: 10px; }
-        .payment-steps .step-highlight { color: var(--accent); font-weight: 600; }
-
-        .qr-code img { width: 100%; max-width: 200px; margin: 25px 0; border: 10px solid #fff; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
-        .upi-id { font-family: monospace; color: var(--accent); background: rgba(212,175,55,0.1); border: 1px solid #333; padding: 15px; font-size: 1rem; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .copy-btn { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 5px 10px; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
-        .copy-btn:hover { background: var(--accent); color: black; }
-
-        .confirm-btn { width: 100%; padding: 20px; background: var(--accent); color: black; border: none; font-family: 'Cinzel', serif; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; font-size: 1rem; }
-        .confirm-btn:hover { background: white; transform: translateY(-2px); box-shadow: 0 5px 20px rgba(212,175,55,0.3); }
-        .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        .secure-badge { margin-top: 20px; color: #444; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .guarantee-badge { background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.3); padding: 15px; margin-top: 20px; color: #4CAF50; font-size: 0.85rem; text-align: center; }
-        .guarantee-badge i { font-size: 1.5rem; display: block; margin-bottom: 10px; }
-
-        @media (max-width: 850px) {
-            .checkout-container { grid-template-columns: 1fr; gap: 25px; padding: 25px 10px 60px; }
-            .order-summary { position: static; order: -1; }
-            .row { grid-template-columns: 1fr; gap: 15px; }
-        }
-        @media (max-width: 768px) {
-            .trust-bar { padding: 10px 3%; font-size: 0.75rem; }
-            .progress-bar { padding: 20px 3%; }
-            .step-circle { width: 30px; height: 30px; font-size: 0.8rem; }
-            .step-label { font-size: 0.6rem; }
-            .checkout-container { padding: 20px 8px 60px; gap: 20px; }
-            .card { padding: 20px 15px; }
-            .section-header { font-size: 1.3rem; padding-bottom: 12px; margin-bottom: 20px; gap: 10px; }
-            .product-preview { flex-direction: column; text-align: center; padding: 15px; gap: 15px; }
-            .product-preview img { width: 80px; height: 80px; }
-            .order-summary { padding: 20px 15px; }
-            .qr-code img { max-width: 160px; margin: 20px 0; border-width: 8px; }
-            .upi-id { padding: 12px; font-size: 0.85rem; flex-wrap: wrap; justify-content: center; }
-            .confirm-btn { padding: 15px 25px; font-size: 0.9rem; letter-spacing: 1px; }
-            .guarantee-badge { padding: 12px; margin-top: 15px; font-size: 0.75rem; }
-            .secure-badge { margin-top: 15px; font-size: 0.7rem; }
-            .success-content { padding: 30px 20px; margin: 15px; }
-        }
-        @media (max-width: 380px) {
-            .section-header { font-size: 1.1rem; }
-            .product-preview img { width: 70px; height: 70px; }
-            .qr-code img { max-width: 140px; }
-        }
-
-        .success-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; }
-        .success-content { background: var(--card-bg); border: 2px solid var(--accent); padding: 50px 40px; text-align: center; max-width: 500px; margin: 20px; }
-        .success-icon { font-size: 4rem; color: #4CAF50; margin-bottom: 20px; }
-        .success-content h2 { font-family: 'Cinzel', serif; color: var(--accent); margin-bottom: 15px; }
-        .success-content p { color: #aaa; line-height: 1.8; margin-bottom: 25px; }
+        :root { --bg-dark:#050505; --card-bg:#111; --accent:#d4af37; --text-main:#eee; --border:1px solid #333; }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:'Lato',sans-serif; background:var(--bg-dark); color:var(--text-main); padding:0; min-height:100vh; }
+        .trust-bar { background:#0a0a0a; border-bottom:1px solid #222; padding:12px 5%; text-align:center; color:#888; font-size:0.85rem; }
+        .trust-bar i { color:#4CAF50; margin-right:5px; }
+        .progress-bar { background:#0a0a0a; padding:30px 5%; border-bottom:var(--border); }
+        .progress-steps { max-width:800px; margin:0 auto; display:flex; justify-content:space-between; position:relative; }
+        .progress-steps::before { content:''; position:absolute; top:20px; left:0; right:0; height:2px; background:#333; z-index:0; }
+        .progress-line { position:absolute; top:20px; left:0; height:2px; background:var(--accent); width:33%; z-index:1; transition:0.5s; }
+        .step { display:flex; flex-direction:column; align-items:center; gap:10px; position:relative; z-index:2; }
+        .step-circle { width:40px; height:40px; border-radius:50%; background:#222; border:2px solid #333; display:flex; align-items:center; justify-content:center; font-weight:bold; transition:0.3s; }
+        .step.active .step-circle { background:var(--accent); border-color:var(--accent); color:black; }
+        .step.completed .step-circle { background:#4CAF50; border-color:#4CAF50; color:white; }
+        .step-label { font-size:0.75rem; color:#666; text-transform:uppercase; letter-spacing:1px; }
+        .step.active .step-label { color:var(--accent); }
+        .checkout-container { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1.5fr 1fr; gap:40px; padding:40px 20px 80px; }
+        .section-header { font-family:'Cinzel',serif; color:var(--accent); border-bottom:1px solid #333; padding-bottom:15px; margin-bottom:25px; font-size:1.8rem; display:flex; align-items:center; gap:15px; }
+        .section-header i { font-size:1.5rem; }
+        .card { background:var(--card-bg); padding:40px; border:var(--border); border-radius:4px; }
+        .product-preview { display:flex; gap:25px; align-items:center; margin-bottom:40px; background:#0a0a0a; padding:20px; border:1px solid #222; }
+        .product-preview img { width:100px; height:100px; object-fit:cover; border:1px solid var(--accent); flex-shrink:0; }
+        .product-info h3 { font-family:'Cinzel',serif; margin-bottom:8px; font-size:1.2rem; }
+        .product-info .price { color:var(--accent); font-size:1.3rem; }
+        .product-info .shipping-note { font-size:0.8rem; color:#4CAF50; margin-top:5px; }
+        .product-info .shipping-note i { margin-right:5px; }
+        .form-group { margin-bottom:20px; }
+        label { display:block; margin-bottom:8px; font-size:0.8rem; color:#888; text-transform:uppercase; letter-spacing:1px; }
+        label .required { color:#f44336; }
+        input, textarea { width:100%; background:#080808; border:1px solid #333; color:white; padding:16px; font-family:'Lato',sans-serif; font-size:1rem; transition:border 0.3s; }
+        input:focus, textarea:focus { border-color:var(--accent); outline:none; }
+        input.error, textarea.error { border-color:#f44336; }
+        .error-message { color:#f44336; font-size:0.8rem; margin-top:5px; display:none; }
+        .row { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        .order-summary { background:#0f0f0f; border:1px solid var(--accent); padding:30px; height:fit-content; text-align:center; position:sticky; top:20px; }
+        .payment-steps { text-align:left; background:rgba(212,175,55,0.05); border:1px solid rgba(212,175,55,0.2); padding:20px; margin-bottom:25px; }
+        .payment-steps h4 { font-family:'Cinzel',serif; color:var(--accent); font-size:1rem; margin-bottom:15px; display:flex; align-items:center; gap:10px; }
+        .payment-steps ol { list-style-position:inside; color:#ccc; font-size:0.9rem; line-height:2.2; }
+        .payment-steps ol li { padding-left:10px; }
+        .payment-steps .step-highlight { color:var(--accent); font-weight:600; }
+        .qr-code img { width:100%; max-width:200px; margin:25px 0; border:10px solid #fff; box-shadow:0 5px 20px rgba(0,0,0,0.5); }
+        .upi-id { font-family:monospace; color:var(--accent); background:rgba(212,175,55,0.1); border:1px solid #333; padding:15px; font-size:1rem; margin-bottom:20px; display:flex; align-items:center; justify-content:center; gap:10px; }
+        .copy-btn { background:transparent; border:1px solid var(--accent); color:var(--accent); padding:5px 10px; cursor:pointer; font-size:0.8rem; transition:0.3s; }
+        .copy-btn:hover { background:var(--accent); color:black; }
+        .confirm-btn { width:100%; padding:20px; background:var(--accent); color:black; border:none; font-family:'Cinzel',serif; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:2px; transition:0.3s; font-size:1rem; }
+        .confirm-btn:hover { background:white; transform:translateY(-2px); box-shadow:0 5px 20px rgba(212,175,55,0.3); }
+        .confirm-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+        .secure-badge { margin-top:20px; color:#444; font-size:0.8rem; display:flex; align-items:center; justify-content:center; gap:10px; }
+        .guarantee-badge { background:rgba(76,175,80,0.1); border:1px solid rgba(76,175,80,0.3); padding:15px; margin-top:20px; color:#4CAF50; font-size:0.85rem; text-align:center; }
+        .guarantee-badge i { font-size:1.5rem; display:block; margin-bottom:10px; }
+        @media (max-width:850px) { .checkout-container { grid-template-columns:1fr; gap:25px; padding:25px 10px 60px; } .order-summary { position:static; order:-1; } .row { grid-template-columns:1fr; gap:15px; } }
+        @media (max-width:768px) { .trust-bar { padding:10px 3%; font-size:0.75rem; } .progress-bar { padding:20px 3%; } .step-circle { width:30px; height:30px; font-size:0.8rem; } .step-label { font-size:0.6rem; } .checkout-container { padding:20px 8px 60px; gap:20px; } .card { padding:20px 15px; } .section-header { font-size:1.3rem; padding-bottom:12px; margin-bottom:20px; gap:10px; } .product-preview { flex-direction:column; text-align:center; padding:15px; gap:15px; } .product-preview img { width:80px; height:80px; } .order-summary { padding:20px 15px; } .qr-code img { max-width:160px; margin:20px 0; border-width:8px; } .upi-id { padding:12px; font-size:0.85rem; flex-wrap:wrap; justify-content:center; } .confirm-btn { padding:15px 25px; font-size:0.9rem; letter-spacing:1px; } .guarantee-badge { padding:12px; margin-top:15px; font-size:0.75rem; } .secure-badge { margin-top:15px; font-size:0.7rem; } .success-content { padding:30px 20px; margin:15px; } }
+        @media (max-width:380px) { .section-header { font-size:1.1rem; } .product-preview img { width:70px; height:70px; } .qr-code img { max-width:140px; } }
+        .success-modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.95); z-index:9999; align-items:center; justify-content:center; }
+        .success-content { background:var(--card-bg); border:2px solid var(--accent); padding:50px 40px; text-align:center; max-width:500px; margin:20px; }
+        .success-icon { font-size:4rem; color:#4CAF50; margin-bottom:20px; }
+        .success-content h2 { font-family:'Cinzel',serif; color:var(--accent); margin-bottom:15px; }
+        .success-content p { color:#aaa; line-height:1.8; margin-bottom:25px; }
     </style>
 </head>
 <body>
 
 <div class="trust-bar">
-    <i class="fa-solid fa-lock"></i> <strong>Secure Checkout</strong> â€” Your payment information is protected with 256-bit SSL encryption
+    <i class="fa-solid fa-lock"></i> <strong>Secure Checkout</strong> &mdash; Your payment information is protected with 256-bit SSL encryption
 </div>
 
 <div class="progress-bar">
     <div class="progress-steps">
         <div class="progress-line"></div>
-        <div class="step active">
-            <div class="step-circle">1</div>
-            <div class="step-label">Details</div>
-        </div>
-        <div class="step">
-            <div class="step-circle">2</div>
-            <div class="step-label">Payment</div>
-        </div>
-        <div class="step">
-            <div class="step-circle">3</div>
-            <div class="step-label">Confirmation</div>
-        </div>
+        <div class="step active"><div class="step-circle">1</div><div class="step-label">Details</div></div>
+        <div class="step"><div class="step-circle">2</div><div class="step-label">Payment</div></div>
+        <div class="step"><div class="step-circle">3</div><div class="step-label">Confirmation</div></div>
     </div>
 </div>
 
 <div class="checkout-container">
     <div class="card">
-        <h2 class="section-header">
-            <i class="fa-solid fa-truck"></i>
-            Delivery Details
-        </h2>
+        <h2 class="section-header"><i class="fa-solid fa-truck"></i> Delivery Details</h2>
 
         <div class="product-preview" id="productPreviewBox">
-            <img id="productImage" src="https://via.placeholder.com/100x100/111/d4af37?text=..." alt="Product">
+            <img id="productImage" src="" alt="Product">
             <div class="product-info" id="productInfoBox">
-                <h3>Loading Product...</h3>
-                <div class="price" id="productPrice">â‚¹0</div>
-                <div class="shipping-note">
-                    <i class="fa-solid fa-truck-fast"></i> FREE Shipping â€¢ Arrives in 3-5 days
-                </div>
+                <h3>Loading your cart...</h3>
             </div>
         </div>
 
@@ -220,16 +162,12 @@
             <h4 style="color:var(--accent); margin-bottom:15px; font-size:0.95rem;">
                 <i class="fa-solid fa-tag"></i> Have a Coupon Code?
             </h4>
-
-            <!-- shown while coupons are loading from server -->
             <div id="couponLoading" style="color:#888; font-size:0.85rem; padding:8px 0;">
                 <i class="fa-solid fa-spinner fa-spin"></i> Loading coupon system...
             </div>
-
-            <!-- shown once coupons are loaded -->
             <div id="couponInputArea" style="display:none;">
                 <div style="display:flex; gap:10px; margin-bottom:10px;">
-                    <input type="text" id="couponCode" placeholder="Enter code (e.g. WELCOME10)"
+                    <input type="text" id="couponCode" placeholder="Enter coupon code"
                         style="flex:1; padding:12px; background:#0a0a0a; border:1px solid #333; border-radius:5px; color:white; text-transform:uppercase; font-size:0.9rem; letter-spacing:1px;">
                     <button type="button" id="applyBtn" onclick="applyCoupon()"
                         style="padding:12px 20px; background:var(--accent); color:black; border:none; border-radius:5px; font-weight:bold; cursor:pointer; white-space:nowrap; font-size:0.9rem;">
@@ -240,10 +178,7 @@
                 <div id="couponSuccess" style="display:none; margin-top:12px; padding:12px; background:rgba(76,175,80,0.1); border:1px solid #4CAF50; border-radius:5px; color:#4CAF50; font-size:0.9rem;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span><i class="fa-solid fa-check-circle"></i> Coupon Applied!</span>
-                        <button type="button" onclick="removeCoupon()"
-                            style="background:none; border:none; color:#4CAF50; cursor:pointer; text-decoration:underline; font-size:0.8rem;">
-                            Remove
-                        </button>
+                        <button type="button" onclick="removeCoupon()" style="background:none; border:none; color:#4CAF50; cursor:pointer; text-decoration:underline; font-size:0.8rem;">Remove</button>
                     </div>
                     <div id="couponSavingText" style="margin-top:6px; font-weight:bold; font-size:0.95rem;"></div>
                 </div>
@@ -254,22 +189,22 @@
         <div style="padding:20px; background:rgba(212,175,55,0.1); border-radius:8px; margin-bottom:20px;">
             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                 <span style="color:#888;">Subtotal:</span>
-                <span id="subtotalAmount" style="color:white;">â‚¹0</span>
+                <span id="subtotalAmount" style="color:white;">&#8377;0</span>
             </div>
             <div id="discountRow" style="display:none; margin-bottom:10px;">
                 <div style="display:flex; justify-content:space-between;">
                     <span style="color:#4CAF50;"><i class="fa-solid fa-tag"></i> Discount:</span>
-                    <span id="discountAmount" style="color:#4CAF50; font-weight:bold;">-â‚¹0</span>
+                    <span id="discountAmount" style="color:#4CAF50; font-weight:bold;">-&#8377;0</span>
                 </div>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                 <span style="color:#888;">Shipping:</span>
-                <span id="shippingAmount" style="color:white;">â‚¹75</span>
+                <span id="shippingAmount" style="color:white;">&#8377;75</span>
             </div>
             <div style="border-top:1px solid #444; padding-top:12px; margin-top:10px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="font-size:1.1rem; font-weight:bold; color:white;">Total:</span>
-                    <span id="totalAmount" style="font-size:1.6rem; color:var(--accent); font-weight:bold; font-family:'Cinzel',serif;">â‚¹0</span>
+                    <span id="totalAmount" style="font-size:1.6rem; color:var(--accent); font-weight:bold; font-family:'Cinzel',serif;">&#8377;0</span>
                 </div>
             </div>
         </div>
@@ -292,9 +227,7 @@
         <h2>Order Confirmed!</h2>
         <p>Your order details have been sent to our team via WhatsApp. We'll process your order and send you tracking details within 24 hours.</p>
         <p style="color:var(--accent); font-weight:600;">Thank you for shopping with Swarnim Jewels!</p>
-        <button class="confirm-btn" onclick="window.location.href='index.html'" style="margin-top:20px;">
-            Continue Shopping
-        </button>
+        <button class="confirm-btn" onclick="window.location.href='index.html'" style="margin-top:20px;">Continue Shopping</button>
     </div>
 </div>
 
@@ -302,9 +235,7 @@
 <script src="user-system.js"></script>
 
 <script>
-// ============================================================
-//  CONFIG
-// ============================================================
+// ── CONFIG ───────────────────────────────────────────────────
 const CONFIG = {
     GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbx6aKrVnUwTl6PeJ5LCwZiOqalaDWGKEZF_eY4b6G3B055gqRMVDnnvjsdPUrvHhs-w/exec',
     FREE_SHIPPING_THRESHOLD: 1299,
@@ -312,182 +243,115 @@ const CONFIG = {
     WHATSAPP_NUMBER: '918218768602'
 };
 
-let appliedCoupon    = null;   // { code, discount, minimumAmount, expiryDate }
-let availableCoupons = [];     // loaded from doGet â€” includes all 5 columns
+let appliedCoupon    = null;
+let availableCoupons = [];
 
-// ============================================================
-//  LOAD COUPONS via doGet
-//  ?t=timestamp busts Google's CDN cache so fresh data is always returned
-// ============================================================
+// ── LOAD COUPONS (cache-busted) ──────────────────────────────
 async function loadCouponsFromServer() {
     try {
-        // ✅ Cache-busting: append timestamp so Google never serves stale data
-        const url    = CONFIG.GOOGLE_APPS_SCRIPT_URL + '?t=' + Date.now();
-        const res    = await fetch(url);
+        const res    = await fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL + '?t=' + Date.now());
         const result = await res.json();
-
         if (Array.isArray(result.coupons)) {
             availableCoupons = result.coupons;
-
-            // ✅ DEBUG: Check exactly what the server returned
-            console.log('=== COUPONS FROM SERVER ===');
-            availableCoupons.forEach(c => {
-                console.log(`Code: ${c.code} | Discount: ${c.discount}% | Expiry: "${c.expiryDate}" | MinAmount: ${c.minimumAmount}`);
-            });
-            console.log('===========================');
+            console.log('Coupons loaded:', JSON.stringify(availableCoupons));
         }
     } catch (e) {
-        console.warn('Could not load coupons:', e);
+        console.warn('Coupon load failed:', e);
         availableCoupons = [];
     }
-
-    document.getElementById('couponLoading').style.display  = 'none';
+    document.getElementById('couponLoading').style.display   = 'none';
     document.getElementById('couponInputArea').style.display = 'block';
 }
 
-// ============================================================
-//  HELPER: Parse any date string/object and return midnight Date
-//  Handles: "2026-02-15", "Sat Feb 15 2026 ...", Date objects, etc.
-// ============================================================
-function parseCouponExpiry(val) {
+// ── PARSE EXPIRY DATE ────────────────────────────────────────
+// Accepts "YYYY-MM-DD", returns end-of-day local Date or null.
+function parseExpiry(val) {
     if (!val) return null;
-    var str = val.toString().trim();
-    if (!str) return null;
-
-    // Try YYYY-MM-DD first (most reliable)
-    var iso = str.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
-    if (iso) {
-        // Build date in LOCAL time to avoid UTC midnight issues
-        return new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]), 23, 59, 59);
-    }
-
-    // Fallback: let browser parse it
-    var d = new Date(str);
-    if (!isNaN(d.getTime())) {
-        d.setHours(23, 59, 59, 0);
-        return d;
-    }
-    return null;
+    var m = String(val).trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return null;
+    return new Date(+m[1], +m[2] - 1, +m[3], 23, 59, 59);
 }
 
-// ============================================================
-//  PAGE LOAD
-// ============================================================
+// ── PAGE INIT ────────────────────────────────────────────────
 window.addEventListener('load', function () {
     loadCartItems();
     calculateTotals();
     loadCouponsFromServer();
 });
 
-// ============================================================
-//  LOAD CART ITEMS + SET PRODUCT IMAGE
-// ============================================================
+// ── LOAD CART ITEMS ──────────────────────────────────────────
 function loadCartItems() {
-    const cart         = ShoppingCart.getCart();
-    const previewBox   = document.getElementById('productPreviewBox');
-    const infoBox      = document.getElementById('productInfoBox');
-    const productImgEl = document.getElementById('productImage');
-
-    if (!previewBox || !infoBox) return;
+    var cart     = ShoppingCart.getCart();
+    var prevBox  = document.getElementById('productPreviewBox');
+    var infoBox  = document.getElementById('productInfoBox');
+    var imgEl    = document.getElementById('productImage');
+    if (!prevBox || !infoBox) return;
 
     if (cart.length === 0) {
-        previewBox.innerHTML = `
-            <div style="text-align:center; padding:40px; color:#888; width:100%;">
-                <i class="fa-solid fa-shopping-cart" style="font-size:3rem; margin-bottom:20px; opacity:0.3;"></i>
-                <p>Your cart is empty</p>
-                <a href="index.html" style="color:var(--accent); text-decoration:none; margin-top:15px; display:inline-block;">â† Continue Shopping</a>
-            </div>`;
+        prevBox.innerHTML = '<div style="text-align:center;padding:40px;color:#888;width:100%;"><i class="fa-solid fa-shopping-cart" style="font-size:3rem;margin-bottom:20px;opacity:0.3;"></i><p>Your cart is empty</p><a href="index.html" style="color:var(--accent);text-decoration:none;">&#8592; Continue Shopping</a></div>';
         return;
     }
+    if (imgEl) { imgEl.src = cart[0].image || ''; imgEl.alt = cart[0].name || 'Product'; }
 
-    // Set preview image from first cart item
-    if (productImgEl) {
-        productImgEl.src = cart[0].image || 'https://via.placeholder.com/100x100/111/d4af37?text=Item';
-        productImgEl.alt = cart[0].name  || 'Product';
-    }
-
-    // Render all cart items
-    infoBox.innerHTML = `
-        <div>
-            <h3 style="color:var(--accent); margin-bottom:15px; font-size:1rem; font-family:'Cinzel',serif;">
-                <i class="fa-solid fa-shopping-bag"></i> Your Items (${cart.length})
-            </h3>
-            ${cart.map(item => `
-                <div style="display:flex; gap:12px; padding:12px; background:rgba(255,255,255,0.02); border-radius:6px; margin-bottom:10px; border:1px solid #222; align-items:center;">
-                    <img src="${item.image}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; border-radius:4px; border:1px solid var(--accent); flex-shrink:0;">
-                    <div style="flex:1; min-width:0;">
-                        <div style="color:white; font-weight:500; font-size:0.9rem; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
-                        <div style="color:#888; font-size:0.8rem;">â‚¹${item.price.toLocaleString('en-IN')} Ã— ${item.quantity}</div>
-                    </div>
-                    <div style="color:var(--accent); font-weight:bold; font-size:0.95rem; flex-shrink:0;">â‚¹${(item.price * item.quantity).toLocaleString('en-IN')}</div>
-                </div>
-            `).join('')}
-        </div>`;
+    var html = '<div><h3 style="color:var(--accent);margin-bottom:15px;font-size:1rem;font-family:\'Cinzel\',serif;"><i class="fa-solid fa-shopping-bag"></i> Your Items (' + cart.length + ')</h3>';
+    cart.forEach(function(item) {
+        var line = (Number(item.price) * Number(item.quantity)).toLocaleString('en-IN');
+        html += '<div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.02);border-radius:6px;margin-bottom:10px;border:1px solid #222;align-items:center;">'
+            + '<img src="' + item.image + '" style="width:50px;height:50px;object-fit:cover;border-radius:4px;border:1px solid var(--accent);flex-shrink:0;">'
+            + '<div style="flex:1;min-width:0;"><div style="color:white;font-weight:500;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + item.name + '</div>'
+            + '<div style="color:#888;font-size:0.8rem;">&#8377;' + Number(item.price).toLocaleString('en-IN') + ' &times; ' + item.quantity + '</div></div>'
+            + '<div style="color:var(--accent);font-weight:bold;font-size:0.95rem;flex-shrink:0;">&#8377;' + line + '</div></div>';
+    });
+    infoBox.innerHTML = html + '</div>';
 }
 
-// ============================================================
-// ============================================================
-//  COUPON VALIDATION - bulletproof checks
-// ============================================================
+// ── APPLY COUPON ─────────────────────────────────────────────
 function applyCoupon() {
-    const entered = (document.getElementById('couponCode').value || '').trim().toUpperCase();
+    var entered = (document.getElementById('couponCode').value || '').trim().toUpperCase();
 
-    if (!entered) {
-        showCouponMsg('Please enter a coupon code.', 'error');
-        return;
+    if (!entered) { showCouponMsg('Please enter a coupon code.', 'error'); return; }
+    if (availableCoupons.length === 0) { showCouponMsg('Coupon system is loading. Please try again.', 'error'); return; }
+
+    // Step 1: find by code
+    var match = null;
+    for (var i = 0; i < availableCoupons.length; i++) {
+        if (String(availableCoupons[i].code || '').toUpperCase().trim() === entered) { match = availableCoupons[i]; break; }
     }
-    if (availableCoupons.length === 0) {
-        showCouponMsg('Coupon system is still loading. Please wait a moment.', 'error');
-        return;
-    }
+    if (!match) { showCouponMsg('&#10060; Invalid coupon code.', 'error'); appliedCoupon = null; return; }
 
-    // Find coupon in loaded list
-    const match = availableCoupons.find(c => (c.code || '').toString().toUpperCase().trim() === entered);
+    console.log('Match:', JSON.stringify(match));
 
-    if (!match) {
-        showCouponMsg('\u274C Invalid or expired coupon code.', 'error');
-        appliedCoupon = null;
-        return;
-    }
-
-    // BULLETPROOF expiry check - handles any date format from server
-    if (match.expiryDate) {
-        const expiry = parseCouponExpiry(match.expiryDate);
-        console.log('Coupon expiry parsed:', expiry, '| Now:', new Date());
-        if (expiry && new Date() > expiry) {
-            showCouponMsg('\u274C This coupon has expired.', 'error');
-            appliedCoupon = null;
-            return;
-        }
+    // Step 2: expiry check
+    var expiry = parseExpiry(match.expiryDate);
+    console.log('Expiry parsed:', expiry, '| Now:', new Date());
+    if (expiry !== null && new Date() > expiry) {
+        showCouponMsg('&#10060; This coupon has expired.', 'error');
+        appliedCoupon = null; return;
     }
 
-    // BULLETPROOF minimum amount - force Number() to handle string values
-    const cart     = ShoppingCart.getCart();
-    const subtotal = cart.reduce((sum, item) => sum + (Number(item.price) * Number(item.quantity)), 0);
-    const minAmt   = Number(match.minimumAmount) || 0;
-
-    console.log('Subtotal: ' + subtotal + ' | Min amount required: ' + minAmt);
+    // Step 3: minimum amount check
+    var cart = ShoppingCart.getCart();
+    var subtotal = 0;
+    for (var j = 0; j < cart.length; j++) { subtotal += Number(cart[j].price || 0) * Number(cart[j].quantity || 0); }
+    var minAmt = Number(match.minimumAmount) || 0;
+    console.log('Subtotal:', subtotal, '| Min required:', minAmt);
 
     if (minAmt > 0 && subtotal < minAmt) {
-        showCouponMsg(
-            '\u274C This coupon needs a minimum order of \u20B9' + minAmt.toLocaleString('en-IN') +
-            '. Your cart is \u20B9' + subtotal.toLocaleString('en-IN') + '.',
-            'error'
-        );
-        appliedCoupon = null;
-        return;
+        showCouponMsg('&#10060; Minimum order of &#8377;' + minAmt.toLocaleString('en-IN')
+            + ' required. Your cart is &#8377;' + subtotal.toLocaleString('en-IN') + '.', 'error');
+        appliedCoupon = null; return;
     }
 
-    // All checks passed - apply coupon
-    appliedCoupon = { code: match.code, discount: Number(match.discount), minimumAmount: minAmt, expiryDate: match.expiryDate };
+    // Step 4: all good
+    var discount  = Number(match.discount) || 0;
+    appliedCoupon = { code: match.code, discount: discount, minimumAmount: minAmt, expiryDate: match.expiryDate };
+    var saving    = Math.round(subtotal * discount / 100);
 
-    const saving = Math.round(subtotal * Number(match.discount) / 100);
     showCouponMsg('', 'none');
     document.getElementById('couponSuccess').style.display  = 'block';
-    document.getElementById('couponSavingText').textContent = match.discount + '% off - You save \u20B9' + saving.toLocaleString('en-IN') + '!';
+    document.getElementById('couponSavingText').innerHTML   = discount + '% off &mdash; You save &#8377;' + saving.toLocaleString('en-IN') + '!';
     document.getElementById('couponCode').disabled          = true;
     document.getElementById('applyBtn').style.display       = 'none';
-
     calculateTotals();
 }
 
@@ -501,15 +365,15 @@ function removeCoupon() {
     calculateTotals();
 }
 
-function showCouponMsg(message, type) {
-    const el = document.getElementById('couponMessage');
+function showCouponMsg(msg, type) {
+    var el = document.getElementById('couponMessage');
     if (!el) return;
-    if (type === 'none' || !message) { el.style.display = 'none'; return; }
-    el.textContent        = message;
+    if (type === 'none' || !msg) { el.style.display = 'none'; return; }
+    el.innerHTML        = msg;
     el.style.display      = 'block';
-    el.style.background   = type === 'success' ? 'rgba(76,175,80,0.1)' : 'rgba(244,67,54,0.1)';
-    el.style.border       = `1px solid ${type === 'success' ? '#4CAF50' : '#f44336'}`;
-    el.style.color        = type === 'success' ? '#4CAF50' : '#f44336';
+    el.style.background   = type === 'error' ? 'rgba(244,67,54,0.1)' : 'rgba(76,175,80,0.1)';
+    el.style.border       = '1px solid ' + (type === 'error' ? '#f44336' : '#4CAF50');
+    el.style.color        = type === 'error' ? '#f44336' : '#4CAF50';
     el.style.padding      = '10px';
     el.style.borderRadius = '5px';
     el.style.marginTop    = '8px';
@@ -517,95 +381,71 @@ function showCouponMsg(message, type) {
     el.style.lineHeight   = '1.5';
 }
 
-// ============================================================
-//  CALCULATE TOTALS
-// ============================================================
+// ── CALCULATE TOTALS ─────────────────────────────────────────
 function calculateTotals() {
-    const cart     = ShoppingCart.getCart();
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    var cart = ShoppingCart.getCart();
+    var subtotal = 0;
+    for (var i = 0; i < cart.length; i++) { subtotal += Number(cart[i].price || 0) * Number(cart[i].quantity || 0); }
 
-    let discountAmount = 0;
-    if (appliedCoupon) {
-        discountAmount = Math.round(subtotal * appliedCoupon.discount / 100);
-    }
+    var discount     = appliedCoupon ? Math.round(subtotal * appliedCoupon.discount / 100) : 0;
+    var afterDisc    = subtotal - discount;
+    var shipping     = afterDisc >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_CHARGE;
+    var total        = afterDisc + shipping;
 
-    const afterDiscount = subtotal - discountAmount;
-    const shipping      = afterDiscount >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_CHARGE;
-    const total         = afterDiscount + shipping;
-
-    const g = id => document.getElementById(id);
-    if (g('subtotalAmount'))  g('subtotalAmount').textContent  = `â‚¹${subtotal.toLocaleString('en-IN')}`;
-    if (g('shippingAmount'))  g('shippingAmount').textContent  = shipping === 0 ? 'FREE âœ…' : `â‚¹${shipping}`;
-    if (g('totalAmount'))     g('totalAmount').textContent     = `â‚¹${total.toLocaleString('en-IN')}`;
-
-    if (discountAmount > 0) {
+    var g = function(id) { return document.getElementById(id); };
+    if (g('subtotalAmount'))  g('subtotalAmount').innerHTML  = '&#8377;' + subtotal.toLocaleString('en-IN');
+    if (g('shippingAmount'))  g('shippingAmount').innerHTML  = shipping === 0 ? 'FREE &#9989;' : '&#8377;' + shipping;
+    if (g('totalAmount'))     g('totalAmount').innerHTML     = '&#8377;' + total.toLocaleString('en-IN');
+    if (discount > 0) {
         if (g('discountRow'))    g('discountRow').style.display  = 'flex';
-        if (g('discountAmount')) g('discountAmount').textContent = `-â‚¹${discountAmount.toLocaleString('en-IN')}`;
+        if (g('discountAmount')) g('discountAmount').innerHTML   = '-&#8377;' + discount.toLocaleString('en-IN');
     } else {
         if (g('discountRow'))    g('discountRow').style.display  = 'none';
     }
-
-    window.orderTotals = { subtotal, discount: discountAmount, shipping, total, couponCode: appliedCoupon?.code || null };
+    window.orderTotals = { subtotal: subtotal, discount: discount, shipping: shipping, total: total, couponCode: appliedCoupon ? appliedCoupon.code : null };
 }
 
-// ============================================================
-//  HELPERS
-// ============================================================
+// ── HELPERS ──────────────────────────────────────────────────
 function copyUPI(event) {
-    navigator.clipboard.writeText('jainswarnima93@yesg').then(() => {
-        const btn = event.target.closest('.copy-btn');
-        const orig = btn.innerHTML;
+    navigator.clipboard.writeText('jainswarnima93@yesg').then(function() {
+        var btn = event.target.closest('.copy-btn');
+        var orig = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+        setTimeout(function() { btn.innerHTML = orig; }, 2000);
     });
 }
 
 function validateForm() {
-    let valid = true;
-    [
-        { id: 'fullName', err: 'nameError'    },
-        { id: 'whatsapp', err: 'phoneError'   },
-        { id: 'address',  err: 'addressError' },
-        { id: 'city',     err: 'cityError'    },
-        { id: 'pincode',  err: 'pincodeError' }
-    ].forEach(f => {
-        const input = document.getElementById(f.id);
-        const error = document.getElementById(f.err);
-        if (!input.value.trim() || !input.checkValidity()) {
-            input.classList.add('error');
-            error.style.display = 'block';
-            valid = false;
-        } else {
-            input.classList.remove('error');
-            error.style.display = 'none';
-        }
+    var valid = true;
+    [['fullName','nameError'],['whatsapp','phoneError'],['address','addressError'],['city','cityError'],['pincode','pincodeError']].forEach(function(f) {
+        var input = document.getElementById(f[0]);
+        var error = document.getElementById(f[1]);
+        if (!input.value.trim() || !input.checkValidity()) { input.classList.add('error'); error.style.display = 'block'; valid = false; }
+        else { input.classList.remove('error'); error.style.display = 'none'; }
     });
     return valid;
 }
 
-document.querySelectorAll('input, textarea').forEach(input => {
-    input.addEventListener('input', function () {
+document.querySelectorAll('input, textarea').forEach(function(inp) {
+    inp.addEventListener('input', function() {
         this.classList.remove('error');
-        const errEl = document.getElementById(this.id + 'Error');
-        if (errEl) errEl.style.display = 'none';
+        var e = document.getElementById(this.id + 'Error');
+        if (e) e.style.display = 'none';
     });
 });
 
-// ============================================================
-//  SUBMIT ORDER
-// ============================================================
+// ── SUBMIT ORDER ─────────────────────────────────────────────
 async function handleSubmit(event) {
     event.preventDefault();
     if (!validateForm()) { alert('Please fill all required fields correctly'); return; }
-
-    const cart = ShoppingCart.getCart();
+    var cart = ShoppingCart.getCart();
     if (cart.length === 0) { alert('Your cart is empty!'); return; }
 
-    const btn     = document.getElementById('submitBtn');
+    var btn = document.getElementById('submitBtn');
     btn.disabled  = true;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
 
-    const formData = {
+    var f = {
         name:    document.getElementById('fullName').value.trim(),
         phone:   document.getElementById('whatsapp').value.trim(),
         address: document.getElementById('address').value.trim(),
@@ -613,78 +453,47 @@ async function handleSubmit(event) {
         pincode: document.getElementById('pincode').value.trim(),
         email:   document.getElementById('email').value.trim() || 'N/A'
     };
+    var t = window.orderTotals || {};
 
-    const totals = window.orderTotals || {};
-
-    // Build WhatsApp message
-    let itemsText = '';
-    cart.forEach((item, i) => {
-        itemsText += `${i + 1}. ${item.name} x${item.quantity} = â‚¹${(item.price * item.quantity).toLocaleString('en-IN')}%0A`;
+    var items = '';
+    cart.forEach(function(item, i) {
+        items += (i+1) + '. ' + item.name + ' x' + item.quantity + ' = Rs.' + (Number(item.price)*Number(item.quantity)).toLocaleString('en-IN') + '%0A';
     });
+    var coup = t.couponCode ? 'Coupon (' + t.couponCode + '): -Rs.' + (t.discount||0).toLocaleString('en-IN') + '%0A' : '';
 
-    let couponLine = '';
-    if (totals.couponCode) {
-        couponLine = `Coupon (${totals.couponCode}): -â‚¹${(totals.discount || 0).toLocaleString('en-IN')}%0A`;
-    }
+    var msg = '*NEW ORDER - SWARNIM JEWELS*%0A%0A'
+        + '*Customer*%0AName: ' + f.name + '%0APhone: ' + f.phone + '%0AEmail: ' + f.email + '%0A%0A'
+        + '*Items*%0A' + items + '%0A'
+        + '*Summary*%0ASubtotal: Rs.' + (t.subtotal||0).toLocaleString('en-IN') + '%0A'
+        + coup
+        + 'Shipping: ' + (t.shipping === 0 ? 'FREE' : 'Rs.' + t.shipping) + '%0A'
+        + '*TOTAL PAID: Rs.' + (t.total||0).toLocaleString('en-IN') + '*%0A%0A'
+        + '*Delivery Address*%0A' + f.address + '%0A' + f.city + ' - ' + f.pincode + '%0A%0A'
+        + '_Placed via Swarnim Jewels website_';
 
-    const msg =
-        `*ðŸ›ï¸ NEW ORDER - SWARNIM JEWELS*%0A%0A` +
-        `*ðŸ‘¤ Customer*%0A` +
-        `Name: ${formData.name}%0A` +
-        `Phone: ${formData.phone}%0A` +
-        `Email: ${formData.email}%0A%0A` +
-        `*ðŸ“¦ Items*%0A${itemsText}%0A` +
-        `*ðŸ’° Summary*%0A` +
-        `Subtotal: â‚¹${(totals.subtotal || 0).toLocaleString('en-IN')}%0A` +
-        `${couponLine}` +
-        `Shipping: ${totals.shipping === 0 ? 'FREE âœ…' : 'â‚¹' + totals.shipping}%0A` +
-        `*TOTAL PAID: â‚¹${(totals.total || 0).toLocaleString('en-IN')}*%0A%0A` +
-        `*ðŸ“ Delivery Address*%0A` +
-        `${formData.address}%0A` +
-        `${formData.city} - ${formData.pincode}%0A%0A` +
-        `_Placed via Swarnim Jewels website_`;
-
-    // Save to Google Sheet via no-cors (avoids redirect bug â€” body reaches script)
     try {
-        const userId = (window.UserSystem && typeof window.UserSystem.getCurrentUser === 'function')
+        var userId = (window.UserSystem && typeof window.UserSystem.getCurrentUser === 'function')
             ? (window.UserSystem.getCurrentUser()?.userId || 'GUEST') : 'GUEST';
-
         fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL, {
-            method:  'POST',
-            mode:    'no-cors',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({
-                action: 'saveOrder',
-                userId,
-                order: {
-                    items:      cart,
-                    total:      totals.total || 0,
-                    name:       formData.name,
-                    phone:      formData.phone,
-                    address:    `${formData.address}, ${formData.city} - ${formData.pincode}`,
-                    couponCode: totals.couponCode || ''
-                }
-            })
+            method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'},
+            body: JSON.stringify({ action:'saveOrder', userId:userId, order:{
+                items:cart, total:t.total||0, name:f.name, phone:f.phone,
+                address:f.address+', '+f.city+' - '+f.pincode, couponCode:t.couponCode||''
+            }})
         });
-        // fire-and-forget â€” WhatsApp is the real confirmation
-    } catch (e) {
-        console.warn('Order save (non-critical):', e);
-    }
+    } catch(e) { console.warn('Order save (non-critical):', e); }
 
-    // Progress bar step 2
     document.querySelectorAll('.step')[0].classList.add('completed');
     document.querySelectorAll('.step')[1].classList.add('active');
     document.querySelector('.progress-line').style.width = '66%';
 
-    // Open WhatsApp
-    window.open(`https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+    window.open('https://wa.me/' + CONFIG.WHATSAPP_NUMBER + '?text=' + msg, '_blank');
 
-    // Progress bar step 3 + success modal
-    setTimeout(() => {
+    setTimeout(function() {
         document.querySelectorAll('.step')[1].classList.add('completed');
         document.querySelectorAll('.step')[2].classList.add('active');
         document.querySelector('.progress-line').style.width = '100%';
-        setTimeout(() => {
+        setTimeout(function() {
             document.getElementById('successModal').style.display = 'flex';
             ShoppingCart.clear();
         }, 500);
