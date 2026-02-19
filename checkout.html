@@ -235,9 +235,9 @@
 <script src="user-system.js"></script>
 
 <script>
-// ── CONFIG ───────────────────────────────────────────────────
+// â”€â”€ CONFIG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const CONFIG = {
-    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbx6aKrVnUwTl6PeJ5LCwZiOqalaDWGKEZF_eY4b6G3B055gqRMVDnnvjsdPUrvHhs-w/exec',
+    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz2sIsHwOqQPTwTLlsHZgm9D6k9fhH_dZeNxzGYrKfZvTSVfw8Mb0cZg0j8Guefh7MC/exec',
     FREE_SHIPPING_THRESHOLD: 1299,
     SHIPPING_CHARGE: 75,
     WHATSAPP_NUMBER: '918218768602'
@@ -246,7 +246,7 @@ const CONFIG = {
 let appliedCoupon    = null;
 let availableCoupons = [];
 
-// ── LOAD COUPONS (cache-busted) ──────────────────────────────
+// â”€â”€ LOAD COUPONS (cache-busted) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadCouponsFromServer() {
     try {
         const res    = await fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL + '?t=' + Date.now());
@@ -263,7 +263,7 @@ async function loadCouponsFromServer() {
     document.getElementById('couponInputArea').style.display = 'block';
 }
 
-// ── PARSE EXPIRY DATE ────────────────────────────────────────
+// â”€â”€ PARSE EXPIRY DATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Accepts "YYYY-MM-DD", returns end-of-day local Date or null.
 function parseExpiry(val) {
     if (!val) return null;
@@ -272,14 +272,14 @@ function parseExpiry(val) {
     return new Date(+m[1], +m[2] - 1, +m[3], 23, 59, 59);
 }
 
-// ── PAGE INIT ────────────────────────────────────────────────
+// â”€â”€ PAGE INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 window.addEventListener('load', function () {
     loadCartItems();
     calculateTotals();
     loadCouponsFromServer();
 });
 
-// ── LOAD CART ITEMS ──────────────────────────────────────────
+// â”€â”€ LOAD CART ITEMS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function loadCartItems() {
     var cart     = ShoppingCart.getCart();
     var prevBox  = document.getElementById('productPreviewBox');
@@ -305,7 +305,7 @@ function loadCartItems() {
     infoBox.innerHTML = html + '</div>';
 }
 
-// ── APPLY COUPON ─────────────────────────────────────────────
+// â”€â”€ APPLY COUPON â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function applyCoupon() {
     var entered = (document.getElementById('couponCode').value || '').trim().toUpperCase();
 
@@ -381,7 +381,7 @@ function showCouponMsg(msg, type) {
     el.style.lineHeight   = '1.5';
 }
 
-// ── CALCULATE TOTALS ─────────────────────────────────────────
+// â”€â”€ CALCULATE TOTALS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function calculateTotals() {
     var cart = ShoppingCart.getCart();
     var subtotal = 0;
@@ -405,7 +405,7 @@ function calculateTotals() {
     window.orderTotals = { subtotal: subtotal, discount: discount, shipping: shipping, total: total, couponCode: appliedCoupon ? appliedCoupon.code : null };
 }
 
-// ── HELPERS ──────────────────────────────────────────────────
+// â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function copyUPI(event) {
     navigator.clipboard.writeText('jainswarnima93@yesg').then(function() {
         var btn = event.target.closest('.copy-btn');
@@ -434,7 +434,7 @@ document.querySelectorAll('input, textarea').forEach(function(inp) {
     });
 });
 
-// ── SUBMIT ORDER ─────────────────────────────────────────────
+// â”€â”€ SUBMIT ORDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function handleSubmit(event) {
     event.preventDefault();
     if (!validateForm()) { alert('Please fill all required fields correctly'); return; }
