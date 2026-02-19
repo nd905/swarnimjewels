@@ -706,7 +706,7 @@
                             <i class="fa-solid fa-truck-fast"></i>
                         </div>
                         <div class="shipping-text" id="shippingText">
-                            Add ₹250 more for FREE shipping!
+                            Add 250 more for FREE shipping!
                         </div>
                     </div>
                     <div class="shipping-progress-bar">
@@ -715,14 +715,14 @@
                         </div>
                     </div>
                     <div class="shipping-threshold-info">
-                        <span class="current-amount" id="currentAmount">₹0</span>
-                        <span class="threshold-amount">₹1,299</span>
+                        <span class="current-amount" id="currentAmount">0</span>
+                        <span class="threshold-amount">1,299</span>
                     </div>
                 </div>
                 
                 <div class="summary-row">
                     <span>Subtotal (<span id="totalItems">0</span> items):</span>
-                    <span id="subtotal">₹0</span>
+                    <span id="subtotal">0</span>
                 </div>
                 
                 <div class="summary-row">
@@ -732,7 +732,7 @@
                 
                 <div class="summary-row total">
                     <span>Total:</span>
-                    <span id="grandTotal">₹0</span>
+                    <span id="grandTotal">0</span>
                 </div>
                 
                 <button class="checkout-btn" onclick="proceedToCheckout()">
@@ -751,8 +751,9 @@
     </div>
 
     <!-- Shopping Cart System -->
-    <script src="cart.js"></script>
-    
+    <script src="shopping-cart.js"></script>
+    <script src="user-system.js"></script>
+
     <script>
         // Load and display cart
         function loadCart() {
@@ -782,7 +783,7 @@
                         
                         <div class="item-details">
                             <h3>${item.name}</h3>
-                            <div class="item-price">₹${item.price} each</div>
+                            <div class="item-price">${item.price} each</div>
                             <div class="quantity-control">
                                 <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity - 1})">
                                     <i class="fa-solid fa-minus"></i>
@@ -795,7 +796,7 @@
                         </div>
                         
                         <div class="item-actions">
-                            <div class="item-total">₹${item.price * item.quantity}</div>
+                            <div class="item-total">${item.price * item.quantity}</div>
                             <button class="remove-btn" onclick="removeItem('${item.id}')">
                                 <i class="fa-solid fa-trash"></i> Remove
                             </button>
@@ -846,7 +847,7 @@
             
             // Update subtotal
             document.getElementById('totalItems').textContent = itemCount;
-            document.getElementById('subtotal').textContent = '₹' + subtotal;
+            document.getElementById('subtotal').textContent = '' + subtotal;
             
             // Update shipping progress bar
             const shippingProgressContainer = document.getElementById('shippingProgressContainer');
@@ -862,20 +863,20 @@
                 // Update progress bar
                 shippingProgressFill.style.width = progressPercent + '%';
                 shippingProgressPercent.textContent = Math.round(progressPercent) + '%';
-                currentAmount.textContent = '₹' + subtotal;
+                currentAmount.textContent = '' + subtotal;
                 
                 if (isFreeShipping) {
                     // Free shipping achieved!
-                    shippingText.textContent = '🎉 You got FREE shipping!';
+                    shippingText.textContent = ' You got FREE shipping!';
                     shippingText.classList.add('achieved');
                     shippingProgressFill.classList.add('achieved');
                     shippingCharge.innerHTML = '<span style="color: #4caf50; font-weight: 700;">FREE</span>';
                 } else {
                     // Still need more for free shipping
-                    shippingText.textContent = `Add ₹${remainingAmount} more for FREE shipping!`;
+                    shippingText.textContent = `Add ${remainingAmount} more for FREE shipping!`;
                     shippingText.classList.remove('achieved');
                     shippingProgressFill.classList.remove('achieved');
-                    shippingCharge.innerHTML = '<span style="color: #ff9800;">₹' + SHIPPING_CHARGE + '</span>';
+                    shippingCharge.innerHTML = '<span style="color: #ff9800;">' + SHIPPING_CHARGE + '</span>';
                 }
             } else if (shippingProgressContainer) {
                 shippingProgressContainer.style.display = 'none';
@@ -885,13 +886,13 @@
             const shippingFee = isFreeShipping ? 0 : (subtotal > 0 ? SHIPPING_CHARGE : 0);
             const grandTotal = subtotal + shippingFee;
             
-            document.getElementById('grandTotal').textContent = '₹' + grandTotal;
+            document.getElementById('grandTotal').textContent = '' + grandTotal;
         }
         
         // Clear cart with confirmation
         function clearCartConfirm() {
             if (confirm('Are you sure you want to clear your entire cart?')) {
-                ShoppingCart.clearCart();
+                ShoppingCart.clear();
                 loadCart();
             }
         }
@@ -996,9 +997,6 @@
         }
     </script>
 
-    <!-- Shopping Cart Library -->
-    <script src="shopping-cart.js"></script>
-    <script src="user-system.js"></script>
 
 </body>
 </html>
