@@ -1,18 +1,18 @@
 // ============================================================
-//  SWARNIM JEWELS � USER SYSTEM  v3.0
+//  SWARNIM JEWELS  USER SYSTEM  v3.0
 //
-//  Load order � place BEFORE </body>, NO defer/async:
+//  Load order  place BEFORE </body>, NO defer/async:
 //    <script src="shopping-cart.js"></script>
 //    <script src="user-system.js"></script>
 // ============================================================
 
 const UserSystem = (function () {
 
-  // ── CONFIG ──────────────────────────────────────────────────
+  // -- CONFIG --------------------------------------------------
   const API_URL = 'https://script.google.com/macros/s/AKfycbz2sIsHwOqQPTwTLlsHZgm9D6k9fhH_dZeNxzGYrKfZvTSVfw8Mb0cZg0j8Guefh7MC/exec';
   const K = { USER: 'sj_user', TOKEN: 'sj_token', CART: 'swarnimCart', WISH: 'sj_wishlist' };
 
-  // ── STORAGE ─────────────────────────────────────────────────
+  // -- STORAGE -------------------------------------------------
   function lsGet(k)    { try { const v = localStorage.getItem(k);   return v ? JSON.parse(v) : null; } catch { return null; } }
   function ssGet(k)    { try { const v = sessionStorage.getItem(k); return v ? JSON.parse(v) : null; } catch { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
@@ -26,13 +26,13 @@ const UserSystem = (function () {
     return null;
   }
 
-  // ── SHA-256 ──────────────────────────────────────────────────
+  // -- SHA-256 --------------------------------------------------
   async function sha256(msg) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  // ── API ──────────────────────────────────────────────────────
+  // -- API ------------------------------------------------------
   async function api(action, data = {}) {
     try {
       const res = await fetch(API_URL, {
@@ -48,21 +48,21 @@ const UserSystem = (function () {
     }
   }
 
-  // ── TOKEN ────────────────────────────────────────────────────
+  // -- TOKEN ----------------------------------------------------
   function makeToken(userId) {
     return userId + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 12);
   }
 
-  // ── SAFE REDIRECT ────────────────────────────────────────────
+  // -- SAFE REDIRECT --------------------------------------------
   // Prevents open-redirect attacks via ?redirect= parameter
   function safeRedirect(fallback) {
     const raw = new URLSearchParams(window.location.search).get('redirect') || '';
     return (raw && !raw.startsWith('http') && !raw.startsWith('//')) ? raw : fallback;
   }
 
-  // ══════════════════════════════════════════════════════════════
+  // ==============================================================
   //  AUTH
-  // ══════════════════════════════════════════════════════════════
+  // ==============================================================
 
   async function register({ name, email, phone, password }) {
     name = (name || '').trim();
@@ -125,12 +125,12 @@ const UserSystem = (function () {
     window.location.href = 'index.html';
   }
 
-  // ── GETTERS ──────────────────────────────────────────────────
+  // -- GETTERS --------------------------------------------------
   function getUser()    { return lsGet(K.USER) || ssGet(K.USER) || null; }
   function getToken()   { return lsGet(K.TOKEN) || ssGet(K.TOKEN) || null; }
   function isLoggedIn() { return !!(getToken() && getUser()); }
 
-  // ── PROFILE ──────────────────────────────────────────────────
+  // -- PROFILE --------------------------------------------------
   async function updateProfile({ name, phone }) {
     const user = getUser();
     if (!user) return { success: false, error: 'Not logged in.' };
@@ -160,7 +160,7 @@ const UserSystem = (function () {
     return api('changePassword', { userId: user.userId, currentHash, newHash });
   }
 
-  // ── CART SYNC ────────────────────────────────────────────────
+  // -- CART SYNC ------------------------------------------------
   async function syncCart(userId) {
     const local      = lsGet(K.CART) || [];
     const res        = await api('getCart', { userId });
@@ -185,7 +185,7 @@ const UserSystem = (function () {
     try { await api('saveCart', { userId: user.userId, cart: lsGet(K.CART) || [] }); } catch {}
   }
 
-  // ── ORDERS ───────────────────────────────────────────────────
+  // -- ORDERS ---------------------------------------------------
   async function saveOrder(order) {
     const user = getUser();
     return api('saveOrder', { userId: user ? user.userId : 'GUEST', order });
@@ -197,7 +197,7 @@ const UserSystem = (function () {
     return api('getOrders', { userId: user.userId });
   }
 
-  // ── ADDRESSES ────────────────────────────────────────────────
+  // -- ADDRESSES ------------------------------------------------
   async function saveAddress(address) {
     const user = getUser();
     if (!user) return { success: false, error: 'Not logged in.' };
@@ -216,7 +216,7 @@ const UserSystem = (function () {
     return api('getAddresses', { userId: user.userId });
   }
 
-  // ── WISHLIST ─────────────────────────────────────────────────
+  // -- WISHLIST -------------------------------------------------
   function getWishlist()     { return lsGet(K.WISH) || []; }
   function isWishlisted(id)  { return getWishlist().some(i => String(i.id) === String(id)); }
   function toggleWishlist(product) {
@@ -228,7 +228,7 @@ const UserSystem = (function () {
     return list;
   }
 
-  // ── HEADER ───────────────────────────────────────────────────
+  // -- HEADER ---------------------------------------------------
   function esc(s) {
     return String(s == null ? '' : s)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
@@ -251,7 +251,7 @@ const UserSystem = (function () {
     }
   }
 
-  // ── INIT ─────────────────────────────────────────────────────
+  // -- INIT -----------------------------------------------------
   (function init() {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateHeader);
     else updateHeader();
