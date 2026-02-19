@@ -113,7 +113,7 @@
 <body>
 
 <div class="trust-bar">
-    <i class="fa-solid fa-lock"></i> <strong>Secure Checkout</strong> — Your payment information is protected with 256-bit SSL encryption
+    <i class="fa-solid fa-lock"></i> <strong>Secure Checkout</strong> â€” Your payment information is protected with 256-bit SSL encryption
 </div>
 
 <div class="progress-bar">
@@ -145,9 +145,9 @@
             <img id="productImage" src="https://via.placeholder.com/100x100/111/d4af37?text=..." alt="Product">
             <div class="product-info" id="productInfoBox">
                 <h3>Loading Product...</h3>
-                <div class="price" id="productPrice">₹0</div>
+                <div class="price" id="productPrice">â‚¹0</div>
                 <div class="shipping-note">
-                    <i class="fa-solid fa-truck-fast"></i> FREE Shipping • Arrives in 3-5 days
+                    <i class="fa-solid fa-truck-fast"></i> FREE Shipping â€¢ Arrives in 3-5 days
                 </div>
             </div>
         </div>
@@ -254,22 +254,22 @@
         <div style="padding:20px; background:rgba(212,175,55,0.1); border-radius:8px; margin-bottom:20px;">
             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                 <span style="color:#888;">Subtotal:</span>
-                <span id="subtotalAmount" style="color:white;">₹0</span>
+                <span id="subtotalAmount" style="color:white;">â‚¹0</span>
             </div>
             <div id="discountRow" style="display:none; margin-bottom:10px;">
                 <div style="display:flex; justify-content:space-between;">
                     <span style="color:#4CAF50;"><i class="fa-solid fa-tag"></i> Discount:</span>
-                    <span id="discountAmount" style="color:#4CAF50; font-weight:bold;">-₹0</span>
+                    <span id="discountAmount" style="color:#4CAF50; font-weight:bold;">-â‚¹0</span>
                 </div>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                 <span style="color:#888;">Shipping:</span>
-                <span id="shippingAmount" style="color:white;">₹75</span>
+                <span id="shippingAmount" style="color:white;">â‚¹75</span>
             </div>
             <div style="border-top:1px solid #444; padding-top:12px; margin-top:10px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="font-size:1.1rem; font-weight:bold; color:white;">Total:</span>
-                    <span id="totalAmount" style="font-size:1.6rem; color:var(--accent); font-weight:bold; font-family:'Cinzel',serif;">₹0</span>
+                    <span id="totalAmount" style="font-size:1.6rem; color:var(--accent); font-weight:bold; font-family:'Cinzel',serif;">â‚¹0</span>
                 </div>
             </div>
         </div>
@@ -313,32 +313,61 @@ const CONFIG = {
 };
 
 let appliedCoupon    = null;   // { code, discount, minimumAmount, expiryDate }
-let availableCoupons = [];     // loaded from doGet — includes all 5 columns
+let availableCoupons = [];     // loaded from doGet â€” includes all 5 columns
 
 // ============================================================
 //  LOAD COUPONS via doGet
-//  Your doGet already returns coupons[] with all 5 fields:
-//  code, discount, expiryDate, minimumAmount
-//  This avoids the POST/CORS redirect bug entirely.
+//  ?t=timestamp busts Google's CDN cache so fresh data is always returned
 // ============================================================
 async function loadCouponsFromServer() {
     try {
-        const res    = await fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL);
+        // ✅ Cache-busting: append timestamp so Google never serves stale data
+        const url    = CONFIG.GOOGLE_APPS_SCRIPT_URL + '?t=' + Date.now();
+        const res    = await fetch(url);
         const result = await res.json();
 
         if (Array.isArray(result.coupons)) {
-            // Apps Script already filters expired + inactive coupons server-side
             availableCoupons = result.coupons;
-            console.log('Loaded coupons:', availableCoupons.map(c => c.code));
+
+            // ✅ DEBUG: Check exactly what the server returned
+            console.log('=== COUPONS FROM SERVER ===');
+            availableCoupons.forEach(c => {
+                console.log(`Code: ${c.code} | Discount: ${c.discount}% | Expiry: "${c.expiryDate}" | MinAmount: ${c.minimumAmount}`);
+            });
+            console.log('===========================');
         }
     } catch (e) {
         console.warn('Could not load coupons:', e);
         availableCoupons = [];
     }
 
-    // Show the coupon input now
     document.getElementById('couponLoading').style.display  = 'none';
     document.getElementById('couponInputArea').style.display = 'block';
+}
+
+// ============================================================
+//  HELPER: Parse any date string/object and return midnight Date
+//  Handles: "2026-02-15", "Sat Feb 15 2026 ...", Date objects, etc.
+// ============================================================
+function parseCouponExpiry(val) {
+    if (!val) return null;
+    var str = val.toString().trim();
+    if (!str) return null;
+
+    // Try YYYY-MM-DD first (most reliable)
+    var iso = str.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (iso) {
+        // Build date in LOCAL time to avoid UTC midnight issues
+        return new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]), 23, 59, 59);
+    }
+
+    // Fallback: let browser parse it
+    var d = new Date(str);
+    if (!isNaN(d.getTime())) {
+        d.setHours(23, 59, 59, 0);
+        return d;
+    }
+    return null;
 }
 
 // ============================================================
@@ -366,7 +395,7 @@ function loadCartItems() {
             <div style="text-align:center; padding:40px; color:#888; width:100%;">
                 <i class="fa-solid fa-shopping-cart" style="font-size:3rem; margin-bottom:20px; opacity:0.3;"></i>
                 <p>Your cart is empty</p>
-                <a href="index.html" style="color:var(--accent); text-decoration:none; margin-top:15px; display:inline-block;">← Continue Shopping</a>
+                <a href="index.html" style="color:var(--accent); text-decoration:none; margin-top:15px; display:inline-block;">â† Continue Shopping</a>
             </div>`;
         return;
     }
@@ -388,19 +417,17 @@ function loadCartItems() {
                     <img src="${item.image}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; border-radius:4px; border:1px solid var(--accent); flex-shrink:0;">
                     <div style="flex:1; min-width:0;">
                         <div style="color:white; font-weight:500; font-size:0.9rem; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
-                        <div style="color:#888; font-size:0.8rem;">₹${item.price.toLocaleString('en-IN')} × ${item.quantity}</div>
+                        <div style="color:#888; font-size:0.8rem;">â‚¹${item.price.toLocaleString('en-IN')} Ã— ${item.quantity}</div>
                     </div>
-                    <div style="color:var(--accent); font-weight:bold; font-size:0.95rem; flex-shrink:0;">₹${(item.price * item.quantity).toLocaleString('en-IN')}</div>
+                    <div style="color:var(--accent); font-weight:bold; font-size:0.95rem; flex-shrink:0;">â‚¹${(item.price * item.quantity).toLocaleString('en-IN')}</div>
                 </div>
             `).join('')}
         </div>`;
 }
 
 // ============================================================
-//  COUPON VALIDATION — client-side, checks all 3 conditions:
-//  1. Code must exist in the loaded list
-//  2. ExpiryDate must not be passed (server already filters but double-check)
-//  3. MinimumAmount must be met by current cart subtotal
+// ============================================================
+//  COUPON VALIDATION - bulletproof checks
 // ============================================================
 function applyCoupon() {
     const entered = (document.getElementById('couponCode').value || '').trim().toUpperCase();
@@ -414,47 +441,50 @@ function applyCoupon() {
         return;
     }
 
-    // Find in loaded list (server already filtered inactive + expired)
-    const match = availableCoupons.find(c => c.code.toUpperCase().trim() === entered);
+    // Find coupon in loaded list
+    const match = availableCoupons.find(c => (c.code || '').toString().toUpperCase().trim() === entered);
 
     if (!match) {
-        showCouponMsg('❌ Invalid coupon code. Please check and try again.', 'error');
+        showCouponMsg('\u274C Invalid or expired coupon code.', 'error');
         appliedCoupon = null;
         return;
     }
 
-    // Double-check expiry client-side
+    // BULLETPROOF expiry check - handles any date format from server
     if (match.expiryDate) {
-        const expiry = new Date(match.expiryDate);
-        expiry.setHours(23, 59, 59, 0);
-        if (new Date() > expiry) {
-            showCouponMsg('❌ This coupon has expired.', 'error');
+        const expiry = parseCouponExpiry(match.expiryDate);
+        console.log('Coupon expiry parsed:', expiry, '| Now:', new Date());
+        if (expiry && new Date() > expiry) {
+            showCouponMsg('\u274C This coupon has expired.', 'error');
             appliedCoupon = null;
             return;
         }
     }
 
-    // Check minimum order amount
+    // BULLETPROOF minimum amount - force Number() to handle string values
     const cart     = ShoppingCart.getCart();
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const minAmt   = match.minimumAmount || 0;
+    const subtotal = cart.reduce((sum, item) => sum + (Number(item.price) * Number(item.quantity)), 0);
+    const minAmt   = Number(match.minimumAmount) || 0;
+
+    console.log('Subtotal: ' + subtotal + ' | Min amount required: ' + minAmt);
 
     if (minAmt > 0 && subtotal < minAmt) {
         showCouponMsg(
-            `❌ This coupon requires a minimum order of ₹${minAmt.toLocaleString('en-IN')}. Your cart total is ₹${subtotal.toLocaleString('en-IN')}.`,
+            '\u274C This coupon needs a minimum order of \u20B9' + minAmt.toLocaleString('en-IN') +
+            '. Your cart is \u20B9' + subtotal.toLocaleString('en-IN') + '.',
             'error'
         );
         appliedCoupon = null;
         return;
     }
 
-    // ✅ All checks passed — apply coupon
-    appliedCoupon = { code: match.code, discount: match.discount, minimumAmount: minAmt, expiryDate: match.expiryDate };
+    // All checks passed - apply coupon
+    appliedCoupon = { code: match.code, discount: Number(match.discount), minimumAmount: minAmt, expiryDate: match.expiryDate };
 
-    const saving = Math.round(subtotal * match.discount / 100);
-    showCouponMsg('', 'none'); // clear any old error
+    const saving = Math.round(subtotal * Number(match.discount) / 100);
+    showCouponMsg('', 'none');
     document.getElementById('couponSuccess').style.display  = 'block';
-    document.getElementById('couponSavingText').textContent = `${match.discount}% off — You save ₹${saving.toLocaleString('en-IN')}!`;
+    document.getElementById('couponSavingText').textContent = match.discount + '% off - You save \u20B9' + saving.toLocaleString('en-IN') + '!';
     document.getElementById('couponCode').disabled          = true;
     document.getElementById('applyBtn').style.display       = 'none';
 
@@ -504,13 +534,13 @@ function calculateTotals() {
     const total         = afterDiscount + shipping;
 
     const g = id => document.getElementById(id);
-    if (g('subtotalAmount'))  g('subtotalAmount').textContent  = `₹${subtotal.toLocaleString('en-IN')}`;
-    if (g('shippingAmount'))  g('shippingAmount').textContent  = shipping === 0 ? 'FREE ✅' : `₹${shipping}`;
-    if (g('totalAmount'))     g('totalAmount').textContent     = `₹${total.toLocaleString('en-IN')}`;
+    if (g('subtotalAmount'))  g('subtotalAmount').textContent  = `â‚¹${subtotal.toLocaleString('en-IN')}`;
+    if (g('shippingAmount'))  g('shippingAmount').textContent  = shipping === 0 ? 'FREE âœ…' : `â‚¹${shipping}`;
+    if (g('totalAmount'))     g('totalAmount').textContent     = `â‚¹${total.toLocaleString('en-IN')}`;
 
     if (discountAmount > 0) {
         if (g('discountRow'))    g('discountRow').style.display  = 'flex';
-        if (g('discountAmount')) g('discountAmount').textContent = `-₹${discountAmount.toLocaleString('en-IN')}`;
+        if (g('discountAmount')) g('discountAmount').textContent = `-â‚¹${discountAmount.toLocaleString('en-IN')}`;
     } else {
         if (g('discountRow'))    g('discountRow').style.display  = 'none';
     }
@@ -589,32 +619,32 @@ async function handleSubmit(event) {
     // Build WhatsApp message
     let itemsText = '';
     cart.forEach((item, i) => {
-        itemsText += `${i + 1}. ${item.name} x${item.quantity} = ₹${(item.price * item.quantity).toLocaleString('en-IN')}%0A`;
+        itemsText += `${i + 1}. ${item.name} x${item.quantity} = â‚¹${(item.price * item.quantity).toLocaleString('en-IN')}%0A`;
     });
 
     let couponLine = '';
     if (totals.couponCode) {
-        couponLine = `Coupon (${totals.couponCode}): -₹${(totals.discount || 0).toLocaleString('en-IN')}%0A`;
+        couponLine = `Coupon (${totals.couponCode}): -â‚¹${(totals.discount || 0).toLocaleString('en-IN')}%0A`;
     }
 
     const msg =
-        `*🛍️ NEW ORDER - SWARNIM JEWELS*%0A%0A` +
-        `*👤 Customer*%0A` +
+        `*ðŸ›ï¸ NEW ORDER - SWARNIM JEWELS*%0A%0A` +
+        `*ðŸ‘¤ Customer*%0A` +
         `Name: ${formData.name}%0A` +
         `Phone: ${formData.phone}%0A` +
         `Email: ${formData.email}%0A%0A` +
-        `*📦 Items*%0A${itemsText}%0A` +
-        `*💰 Summary*%0A` +
-        `Subtotal: ₹${(totals.subtotal || 0).toLocaleString('en-IN')}%0A` +
+        `*ðŸ“¦ Items*%0A${itemsText}%0A` +
+        `*ðŸ’° Summary*%0A` +
+        `Subtotal: â‚¹${(totals.subtotal || 0).toLocaleString('en-IN')}%0A` +
         `${couponLine}` +
-        `Shipping: ${totals.shipping === 0 ? 'FREE ✅' : '₹' + totals.shipping}%0A` +
-        `*TOTAL PAID: ₹${(totals.total || 0).toLocaleString('en-IN')}*%0A%0A` +
-        `*📍 Delivery Address*%0A` +
+        `Shipping: ${totals.shipping === 0 ? 'FREE âœ…' : 'â‚¹' + totals.shipping}%0A` +
+        `*TOTAL PAID: â‚¹${(totals.total || 0).toLocaleString('en-IN')}*%0A%0A` +
+        `*ðŸ“ Delivery Address*%0A` +
         `${formData.address}%0A` +
         `${formData.city} - ${formData.pincode}%0A%0A` +
         `_Placed via Swarnim Jewels website_`;
 
-    // Save to Google Sheet via no-cors (avoids redirect bug — body reaches script)
+    // Save to Google Sheet via no-cors (avoids redirect bug â€” body reaches script)
     try {
         const userId = (window.UserSystem && typeof window.UserSystem.getCurrentUser === 'function')
             ? (window.UserSystem.getCurrentUser()?.userId || 'GUEST') : 'GUEST';
@@ -636,7 +666,7 @@ async function handleSubmit(event) {
                 }
             })
         });
-        // fire-and-forget — WhatsApp is the real confirmation
+        // fire-and-forget â€” WhatsApp is the real confirmation
     } catch (e) {
         console.warn('Order save (non-critical):', e);
     }
