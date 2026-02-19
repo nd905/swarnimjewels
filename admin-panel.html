@@ -78,7 +78,7 @@
         #status { text-align: center; margin-top: 20px; font-weight: bold; }
         .auto-id { background: #e9ecef; color: #666; cursor: not-allowed; }
 
-        /* ═══ VIDEO SECTION STYLES ═══ */
+        /* â•â•â• VIDEO SECTION STYLES â•â•â• */
         .video-section {
             background: #f8f9fa;
             border: 2px dashed #d4af37;
@@ -311,9 +311,9 @@
     <div class="card">
         <!-- Tab Navigation -->
         <div class="tab-container">
-            <button class="tab-btn active" onclick="switchTab(0)">📦 Add Product</button>
-            <button class="tab-btn" onclick="switchTab(1)">🏷️ Manage Categories</button>
-            <button class="tab-btn" onclick="switchTab(2)">🎨 Manage Banners</button>
+            <button class="tab-btn active" onclick="switchTab(0)">ðŸ“¦ Add Product</button>
+            <button class="tab-btn" onclick="switchTab(1)">ðŸ·ï¸ Manage Categories</button>
+            <button class="tab-btn" onclick="switchTab(2)">ðŸŽ¨ Manage Banners</button>
         </div>
 
         <!-- ADD PRODUCT TAB -->
@@ -344,7 +344,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Price (₹)</label>
+                    <label>Price (â‚¹)</label>
                     <input type="number" id="price" placeholder="2500" required>
                 </div>
 
@@ -352,7 +352,7 @@
                     <label>Cover Image (Required)</label>
                     <div class="file-box" onclick="document.getElementById('coverImage').click()">
                         <input type="file" id="coverImage" accept="image/*" style="display: none;" onchange="handleCoverImage(this)">
-                        <p>📸 Click to upload cover image</p>
+                        <p>ðŸ“¸ Click to upload cover image</p>
                     </div>
                     <div class="preview" id="coverPreview"></div>
                 </div>
@@ -361,17 +361,17 @@
                     <label>Gallery Images (Optional, Multiple)</label>
                     <div class="file-box" onclick="document.getElementById('galleryImages').click()">
                         <input type="file" id="galleryImages" accept="image/*" multiple style="display: none;" onchange="handleGalleryImages(this)">
-                        <p>🖼️ Click to upload multiple images</p>
+                        <p>ðŸ–¼ï¸ Click to upload multiple images</p>
                     </div>
                     <div class="preview" id="galleryPreview"></div>
                 </div>
 
                 <!-- VIDEO SECTION -->
                 <div class="video-section">
-                    <h3 style="margin-bottom: 15px;">📹 Product Videos (Optional)</h3>
+                    <h3 style="margin-bottom: 15px;">ðŸ“¹ Product Videos (Optional)</h3>
                     
                     <div class="video-info-box">
-                        <h4>💡 Video Tips:</h4>
+                        <h4>ðŸ’¡ Video Tips:</h4>
                         <ul>
                             <li>Max 32MB per video (compress to 10-20MB recommended)</li>
                             <li>MP4 format, 720p resolution</li>
@@ -388,7 +388,7 @@
 
                     <div class="file-box" onclick="document.getElementById('videoFileInput').click()">
                         <input type="file" id="videoFileInput" accept="video/*" style="display: none;">
-                        <p>📹 Click to select video</p>
+                        <p>ðŸ“¹ Click to select video</p>
                     </div>
                     
                     <div class="video-progress" id="videoProgress">
@@ -397,7 +397,7 @@
                     <div class="video-upload-status" id="videoUploadStatus"></div>
                     
                     <button type="button" class="upload-video-btn" id="uploadVideoBtn" disabled>
-                        ➕ Upload Video to Cloudflare R2
+                        âž• Upload Video to Cloudflare R2
                     </button>
                 </div>
 
@@ -423,7 +423,7 @@
             <h2>Manage Homepage Banners</h2>
 
             <div class="banner-specs">
-                <h4>🎨 Banner Image Specifications:</h4>
+                <h4>ðŸŽ¨ Banner Image Specifications:</h4>
                 <ul>
                     <li>Dimensions: <strong>1920 x 800 pixels</strong> (Width x Height)</li>
                     <li>Format: JPG or PNG</li>
@@ -435,7 +435,7 @@
             <h3 style="margin-bottom: 15px;">Upload New Banner</h3>
             <div class="file-box" onclick="document.getElementById('bannerImage').click()">
                 <input type="file" id="bannerImage" accept="image/*" style="display: none;">
-                <p>🖼️ Click to select banner image</p>
+                <p>ðŸ–¼ï¸ Click to select banner image</p>
             </div>
             <button onclick="uploadBanner()" id="uploadBannerBtn" disabled>Upload Banner</button>
 
@@ -453,7 +453,7 @@
         // ============================================================
         const CONFIG = {
             IMGBB_API_KEY: 'c72ca3cbb8cd70e6172b8171763679db',
-            APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbx6aKrVnUwTl6PeJ5LCwZiOqalaDWGKEZF_eY4b6G3B055gqRMVDnnvjsdPUrvHhs-w/exec',
+            APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz2sIsHwOqQPTwTLlsHZgm9D6k9fhH_dZeNxzGYrKfZvTSVfw8Mb0cZg0j8Guefh7MC/exec',
             
             // CLOUDFLARE R2 CREDENTIALS (HIDDEN)
             R2: {
@@ -485,7 +485,7 @@
                 if (file) {
                     selectedVideoFile = file;
                     document.getElementById('uploadVideoBtn').disabled = false;
-                    document.getElementById('uploadVideoBtn').textContent = `➕ Upload: ${file.name}`;
+                    document.getElementById('uploadVideoBtn').textContent = `âž• Upload: ${file.name}`;
                 }
             });
             
@@ -663,14 +663,14 @@
                 
                 renderVideoList();
                 
-                statusText.textContent = '✅ Video uploaded to Cloudflare R2 successfully!';
+                statusText.textContent = 'âœ… Video uploaded to Cloudflare R2 successfully!';
                 statusText.style.color = '#4caf50';
                 
                 setTimeout(() => {
                     progress.style.display = 'none';
                     statusText.style.display = 'none';
                     progressBar.style.width = '0%';
-                    uploadBtn.textContent = '➕ Upload Video to Cloudflare R2';
+                    uploadBtn.textContent = 'âž• Upload Video to Cloudflare R2';
                     uploadBtn.disabled = true;
                     selectedVideoFile = null;
                     document.getElementById('videoFileInput').value = '';
@@ -678,7 +678,7 @@
                 
             } catch (error) {
                 console.error('R2 upload error:', error);
-                statusText.textContent = '❌ Upload failed: ' + error.message;
+                statusText.textContent = 'âŒ Upload failed: ' + error.message;
                 statusText.style.color = '#dc3545';
                 uploadBtn.disabled = false;
                 uploadBtn.textContent = 'Retry Upload';
@@ -706,7 +706,7 @@
                         <div class="video-size">${video.size}</div>
                     </div>
                     <div class="video-actions">
-                        <button onclick="removeVideo(${index})">🗑️ Delete</button>
+                        <button onclick="removeVideo(${index})">ðŸ—‘ï¸ Delete</button>
                     </div>
                 </div>
             `).join('');
@@ -752,7 +752,7 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    document.getElementById('status').innerHTML = '<p style="color: green;">✅ Product saved successfully!</p>';
+                    document.getElementById('status').innerHTML = '<p style="color: green;">âœ… Product saved successfully!</p>';
                     
                     // Increment Product ID
                     productIdCounter++;
@@ -772,10 +772,10 @@
                         document.getElementById('status').innerHTML = '';
                     }, 3000);
                 } else {
-                    document.getElementById('status').innerHTML = '<p style="color: red;">❌ Failed: ' + data.error + '</p>';
+                    document.getElementById('status').innerHTML = '<p style="color: red;">âŒ Failed: ' + data.error + '</p>';
                 }
             } catch (error) {
-                document.getElementById('status').innerHTML = '<p style="color: red;">❌ Error: ' + error.message + '</p>';
+                document.getElementById('status').innerHTML = '<p style="color: red;">âŒ Error: ' + error.message + '</p>';
             }
         });
 
@@ -805,7 +805,7 @@
                     const item = document.createElement('div');
                     item.className = 'category-item';
                     const safecat = String(cat).replace(/'/g, "\\'");
-                    item.innerHTML = `<span>${cat}</span><button onclick="deleteCategory('${safecat}')">�</button>`;
+                    item.innerHTML = `<span>${cat}</span><button onclick="deleteCategory('${safecat}')">ï¿½</button>`;
                     list.appendChild(item);
                 });
             } catch (error) {
