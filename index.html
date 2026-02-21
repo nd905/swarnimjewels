@@ -164,6 +164,7 @@
             height: 100%;
             object-fit: cover;
             object-position: center;
+            display: block;
         }
         
         .carousel-overlay {
@@ -268,16 +269,50 @@
         
         @media (max-width: 768px) {
             .hero-carousel {
-                height: 450px;
+                height: auto;
+                min-height: unset;
+            }
+            .carousel-slide {
+                position: relative;
+                opacity: 1;
+                display: none;
+            }
+            .carousel-slide.active {
+                display: block;
+            }
+            .carousel-slide img {
+                width: 100%;
+                height: auto;
+                object-fit: contain;
+                object-position: center;
+                display: block;
+            }
+            .carousel-overlay {
+                position: absolute;
+                bottom: 0;
+                top: auto;
+                height: auto;
+                padding: 15px;
+                background: linear-gradient(transparent, rgba(0,0,0,0.7));
+                justify-content: flex-end;
+            }
+            .carousel-overlay h1 {
+                font-size: 1.3rem;
+                margin-bottom: 8px;
+            }
+            .cta-btn {
+                padding: 10px 24px;
+                font-size: 0.78rem;
             }
             .carousel-arrow {
                 opacity: 1;
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+                top: 40%;
             }
             .carousel-dots {
-                bottom: 15px;
+                bottom: 10px;
                 gap: 8px;
             }
             .carousel-dot {
@@ -2157,12 +2192,17 @@
             if (slides.length === 0) return;
             
             slides[currentSlide].classList.remove('active');
-            dots[currentSlide].classList.remove('active');
+            if (dots[currentSlide]) dots[currentSlide].classList.remove('active');
             
             currentSlide = (currentSlide + direction + slides.length) % slides.length;
             
             slides[currentSlide].classList.add('active');
-            dots[currentSlide].classList.add('active');
+            if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+            
+            // Scroll banner into view on mobile smoothly
+            if (window.innerWidth <= 768) {
+                document.querySelector('.hero-carousel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         }
 
         function goToSlide(index) {
@@ -2465,7 +2505,6 @@
     </script>
 
     <!-- Shopping Cart System -->
-    <script src="cart.js"></script>
 
     <!-- Cart Notification Styles -->
     <style>
