@@ -2419,9 +2419,11 @@
                 
                 const div = document.createElement('div');
                 div.className = 'product-card';
+                div.style.cursor = 'pointer';
+                div.onclick = function() { showProductDetail(safeProduct); };
                 div.innerHTML = `
                     ${badge ? `<div class="product-badge ${badge.class}">${badge.text}</div>` : ''}
-                    <div class="image-box" onclick='showProductDetail(${JSON.stringify(safeProduct).replace(/'/g, "&#39;")})' style="cursor: pointer;">
+                    <div class="image-box">
                         <img src="${pImage}" class="product-image" alt="${pName}">
                         <div class="quick-view"><i class="fa-solid fa-eye"></i> Quick View</div>
                     </div>
@@ -2598,12 +2600,10 @@
         }
 
         // Add scroll reveal classes to existing elements
-        // IMPORTANT: Only add to elements NOT already in viewport to avoid
-        // setting opacity:0 on visible elements (causes layout shift + scroll jump on mobile)
+        // Only add below-fold elements to avoid setting opacity:0 on already-visible elements
         window.addEventListener('load', () => {
             const viewportHeight = window.innerHeight;
 
-            // Add to product cards
             const productCards = document.querySelectorAll('.product-card');
             productCards.forEach((card, index) => {
                 if (!card.classList.contains('scroll-reveal')) {
@@ -2615,7 +2615,6 @@
                 }
             });
 
-            // Add to section headings
             const headings = document.querySelectorAll('h2, .section-title');
             headings.forEach((heading) => {
                 if (!heading.classList.contains('scroll-reveal-scale')) {
@@ -2626,7 +2625,6 @@
                 }
             });
 
-            // Re-initialize observer for dynamically added elements
             initScrollAnimations();
         });
     </script>
