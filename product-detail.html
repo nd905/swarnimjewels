@@ -1940,41 +1940,31 @@
 
     // Buy Now from Product Page
     function buyNowFromProduct() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const productId = urlParams.get('id');
-        
-        if (!productId) {
+        // currentProduct is set by renderProduct() when the page loads
+        if (!currentProduct || !currentProduct.id) {
             alert('Product not found. Please go back and try again.');
             return;
         }
-        
-        // Get product details
-        const productName = document.querySelector('.product-name, h1, h2')?.textContent || 'Product';
-        const priceElement = document.querySelector('.product-price, .price, [class*="price"]');
-        const imageElement = document.querySelector('.product-image img, .main-image, img[alt]');
-        
-        let price = 0;
-        if (priceElement) {
-            const priceText = priceElement.textContent.replace(/[,\s]/g, '');
-            price = parseFloat(priceText) || 0;
-        }
-        
-        const image = imageElement?.src || 'https://via.placeholder.com/150';
-        
+
+        const productId   = currentProduct.id;
+        const productName = currentProduct.name  || 'Product';
+        const price       = parseFloat(String(currentProduct.price).replace(/[^0-9.]/g, '')) || 0;
+        const image       = currentProduct.coverImage || currentProduct.image || 'https://via.placeholder.com/150';
+
         if (price === 0) {
             alert('Unable to get product price. Please try again.');
             return;
         }
-        
-        // Clear cart and add only this item
+
+        // Clear cart and add only this item (Buy Now = instant checkout)
         ShoppingCart.clear();
         ShoppingCart.addItem({
-            id: productId,
-            name: productName.trim(),
+            id   : String(productId),
+            name : productName.trim(),
             price: price,
             image: image
         });
-        
+
         // Go directly to checkout
         window.location.href = 'checkout.html';
     }
