@@ -818,87 +818,115 @@
             overflow: visible;
         }
 
-        .zoom-lens {
-            position: absolute;
-            border: 2px solid var(--accent);
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            cursor: none;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-            background: rgba(212, 175, 55, 0.1);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3), 
-                        inset 0 0 40px rgba(212, 175, 55, 0.2);
-            backdrop-filter: blur(2px);
-            z-index: 10;
-        }
-
-        .zoom-lens.active {
-            opacity: 1;
-        }
-
-        .zoom-result {
-            position: fixed;
-            right: 30px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 380px;
-            height: 380px;
-            border: 2px solid var(--accent);
-            background: #000;
-            background-repeat: no-repeat;
-            background-size: 300%;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8),
-                        0 0 0 1px rgba(212,175,55,0.2);
-            z-index: 9999;
-        }
-
-        .zoom-result.active {
-            opacity: 1;
-        }
-
-        .zoom-result::before {
-            content: " Hover to see details";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--accent);
-            font-size: 0.9rem;
-            text-align: center;
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .zoom-result.active::before {
-            display: none;
-        }
-
-        /* Mobile: Disable zoom lens, enable tap-to-zoom */
-        @media (max-width: 768px) {
-            .zoom-lens,
-            .zoom-result {
-                display: none !important;
-            }
-            
+        /* Desktop: click-to-expand hint on main image */
+        @media (min-width: 769px) {
             .main-img {
                 cursor: zoom-in;
             }
+            .main-img:hover::after {
+                content: '🔍 Click to expand';
+            }
         }
 
-        /* Tablet: Adjust zoom result size */
-        @media (min-width: 769px) and (max-width: 1200px) {
-            .zoom-result {
-                right: 20px;
-                width: 280px;
-                height: 280px;
-            }
+        /* ── Expanded Image Panel (desktop only) ── */
+        .expand-panel {
+            display: none;
+            margin-top: 16px;
+            position: relative;
+            width: 100%;
+            height: 520px;
+            background: #0a0a0a;
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.7);
+        }
+
+        .expand-panel.open {
+            display: block;
+            animation: expandFadeIn 0.3s ease;
+        }
+
+        @keyframes expandFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .expand-panel-inner {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            cursor: grab;
+            position: relative;
+        }
+
+        .expand-panel-inner:active {
+            cursor: grabbing;
+        }
+
+        .expand-panel-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            /* Will be set by JS based on natural image size */
+            transform-origin: top left;
+            user-select: none;
+            -webkit-user-drag: none;
+            pointer-events: none; /* drag handled by parent */
+        }
+
+        .expand-close-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 34px;
+            height: 34px;
+            background: rgba(0,0,0,0.75);
+            border: 1px solid rgba(212,175,55,0.5);
+            border-radius: 50%;
+            color: var(--accent);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 20;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .expand-close-btn:hover {
+            background: rgba(212,175,55,0.2);
+            transform: scale(1.1);
+        }
+
+        .expand-hint {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.6);
+            color: rgba(212,175,55,0.8);
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+        .expand-hint.hidden {
+            opacity: 0;
+        }
+
+        /* Zoom-in cursor hint on main image */
+        @media (min-width: 769px) {
+            .zoom-lens, .zoom-result { display: none !important; }
+        }
+
+        /* Mobile: tap-to-zoom modal unchanged */
+        @media (max-width: 768px) {
+            .zoom-lens, .zoom-result { display: none !important; }
+            .main-img { cursor: zoom-in; }
+            .expand-panel { display: none !important; }
         }
 
         /* === WHATSAPP FLOATING CHAT BUTTON === */
@@ -1118,6 +1146,15 @@
                 <div id="zoomResult" class="zoom-result"></div>
             </div>
             <div id="thumbs" class="thumbs"></div>
+
+            <!-- Desktop Expand Panel (click main image to open) -->
+            <div class="expand-panel" id="expandPanel">
+                <div class="expand-panel-inner" id="expandPanelInner">
+                    <img id="expandPanelImg" class="expand-panel-img" src="" alt="Expanded View" draggable="false">
+                </div>
+                <button class="expand-close-btn" id="expandCloseBtn" title="Close">&#x2715;</button>
+                <div class="expand-hint" id="expandHint">&#8592; Drag to pan &nbsp;&#8594;</div>
+            </div>
         </div>
 
         <!-- PRODUCT VIDEOS SECTION -->
@@ -1567,97 +1604,155 @@
             // If zoom is NOT open, do nothing  let the browser navigate normally
         });
 
-        // Make images clickable for zoom
-        // === PROFESSIONAL IMAGE ZOOM LENS ===
-        let zoomInitialized = false; // Prevent multiple initializations
-        
+        // === DESKTOP: CLICK-TO-EXPAND + PAN ===
+        let expandInitialized = false;
+
         function initImageZoom() {
-            const mainImg = document.getElementById('mainImage');
-            const zoomLens = document.getElementById('zoomLens');
-            const zoomResult = document.getElementById('zoomResult');
-            
-            if (!mainImg || !zoomLens || !zoomResult) return;
-            
-            // Prevent re-initialization
-            if (zoomInitialized) {
-                // Just update the background image for the new product
-                if (window.innerWidth > 768) {
-                    zoomResult.style.backgroundImage = `url('${mainImg.src}')`;
-                }
-                return;
-            }
-            
-            // Only enable on desktop
+            const mainImg   = document.getElementById('mainImage');
+            if (!mainImg) return;
+
+            // Mobile: keep existing tap-to-open-modal behaviour
             if (window.innerWidth <= 768) {
-                // Mobile: Keep click-to-zoom
-                mainImg.onclick = function() {
-                    openImageZoom(this.src);
-                };
+                mainImg.onclick = function() { openImageZoom(this.src); };
                 return;
             }
-            
-            let zoomRatio = 2.5; // Zoom level (2.5x magnification)
 
-            // Show zoom lens and result on hover
-            mainImg.addEventListener('mouseenter', function() {
-                zoomLens.classList.add('active');
-                zoomResult.classList.add('active');
-                zoomResult.style.backgroundImage = `url('${this.src}')`;
-                // Set background size relative to zoom panel size
-                const rect = this.getBoundingClientRect();
-                const scaleX = (zoomResult.offsetWidth / rect.width) * zoomRatio;
-                const scaleY = (zoomResult.offsetHeight / rect.height) * zoomRatio;
-                zoomResult.style.backgroundSize = `${rect.width * scaleX}px ${rect.height * scaleY}px`;
-            });
+            // Desktop: click opens the expand panel
+            if (!expandInitialized) {
+                mainImg.addEventListener('click', function() {
+                    openExpandPanel(this.src);
+                });
 
-            // Hide zoom lens and result on leave
-            mainImg.addEventListener('mouseleave', function() {
-                zoomLens.classList.remove('active');
-                zoomResult.classList.remove('active');
-            });
+                document.getElementById('expandCloseBtn').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    closeExpandPanel();
+                });
 
-            // Move zoom lens with mouse
-            mainImg.addEventListener('mousemove', function(e) {
-                const rect = this.getBoundingClientRect();
-                const lensWidth = zoomLens.offsetWidth / 2;
-                const lensHeight = zoomLens.offsetHeight / 2;
-
-                // Calculate lens position (relative to image)
-                let x = e.clientX - rect.left - lensWidth;
-                let y = e.clientY - rect.top - lensHeight;
-
-                // Clamp to image bounds
-                x = Math.max(0, Math.min(x, rect.width - zoomLens.offsetWidth));
-                y = Math.max(0, Math.min(y, rect.height - zoomLens.offsetHeight));
-
-                // Position the lens on the image
-                zoomLens.style.left = x + 'px';
-                zoomLens.style.top = y + 'px';
-
-                // Calculate zoomed background position for the fixed result panel
-                const scaleX = (zoomResult.offsetWidth / rect.width) * zoomRatio;
-                const scaleY = (zoomResult.offsetHeight / rect.height) * zoomRatio;
-                const bgX = -(x * scaleX);
-                const bgY = -(y * scaleY);
-                zoomResult.style.backgroundPosition = `${bgX}px ${bgY}px`;
-            });
-            
-            // Mark as initialized
-            zoomInitialized = true;
-        }
-        
-        // Update zoom background when thumbnails are clicked
-        function updateZoomImage(newImageSrc) {
-            const zoomResult = document.getElementById('zoomResult');
-            if (zoomResult && window.innerWidth > 768) {
-                setTimeout(() => {
-                    zoomResult.style.backgroundImage = `url('${newImageSrc}')`;
-                }, 50);
+                expandInitialized = true;
             }
+        }
+
+        function openExpandPanel(src) {
+            const panel     = document.getElementById('expandPanel');
+            const inner     = document.getElementById('expandPanelInner');
+            const img       = document.getElementById('expandPanelImg');
+            const hint      = document.getElementById('expandHint');
+
+            img.src = src;
+            panel.classList.add('open');
+
+            // Reset pan position
+            panX = 0; panY = 0;
+            img.style.transform = 'translate(0px, 0px)';
+            hint.classList.remove('hidden');
+
+            // Once image loaded, set natural size so pan bounds work correctly
+            img.onload = function() {
+                fitImageInPanel();
+            };
+            // If already cached
+            if (img.complete && img.naturalWidth) fitImageInPanel();
+
+            // Hide hint after 2.5s
+            clearTimeout(hintTimer);
+            hintTimer = setTimeout(() => hint.classList.add('hidden'), 2500);
+
+            // Init pan listeners on inner
+            initPan(inner, img);
+
+            // Scroll panel into view smoothly
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function closeExpandPanel() {
+            const panel = document.getElementById('expandPanel');
+            panel.classList.remove('open');
+            removePan();
+        }
+
+        // Update expand panel image when thumbnail clicked
+        function updateZoomImage(newSrc) {
+            const panel = document.getElementById('expandPanel');
+            const img   = document.getElementById('expandPanelImg');
+            if (panel.classList.contains('open')) {
+                img.src = newSrc;
+                panX = 0; panY = 0;
+                img.style.transform = 'translate(0px, 0px)';
+                img.onload = fitImageInPanel;
+                if (img.complete && img.naturalWidth) fitImageInPanel();
+            }
+        }
+
+        // Fit image to panel width, allow vertical pan if taller
+        function fitImageInPanel() {
+            const panel = document.getElementById('expandPanel');
+            const img   = document.getElementById('expandPanelImg');
+            if (!img.naturalWidth) return;
+
+            const panelW = panel.offsetWidth;
+            const scale  = panelW / img.naturalWidth;
+            imgScaledW   = img.naturalWidth  * scale;
+            imgScaledH   = img.naturalHeight * scale;
+
+            img.style.width  = imgScaledW + 'px';
+            img.style.height = imgScaledH + 'px';
+            img.style.transform = `translate(${panX}px, ${panY}px)`;
+        }
+
+        // ── Pan logic ──
+        let panX = 0, panY = 0;
+        let imgScaledW = 0, imgScaledH = 0;
+        let isPanning = false, startX = 0, startY = 0, startPanX = 0, startPanY = 0;
+        let hintTimer = null;
+        let panInner = null;
+
+        function initPan(inner, img) {
+            if (panInner) removePan(); // remove old listeners first
+            panInner = inner;
+
+            inner._onMouseDown = function(e) {
+                isPanning = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startPanX = panX;
+                startPanY = panY;
+                inner.style.cursor = 'grabbing';
+                e.preventDefault();
+            };
+            inner._onMouseMove = function(e) {
+                if (!isPanning) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                const panelW = inner.offsetWidth;
+                const panelH = inner.offsetHeight;
+
+                // Clamp so image can't be panned beyond its edges
+                const minX = Math.min(0, panelW - imgScaledW);
+                const minY = Math.min(0, panelH - imgScaledH);
+
+                panX = Math.max(minX, Math.min(0, startPanX + dx));
+                panY = Math.max(minY, Math.min(0, startPanY + dy));
+                img.style.transform = `translate(${panX}px, ${panY}px)`;
+            };
+            inner._onMouseUp = function() {
+                isPanning = false;
+                inner.style.cursor = 'grab';
+            };
+
+            inner.addEventListener('mousedown', inner._onMouseDown);
+            window.addEventListener('mousemove', inner._onMouseMove);
+            window.addEventListener('mouseup',   inner._onMouseUp);
+        }
+
+        function removePan() {
+            if (!panInner) return;
+            panInner.removeEventListener('mousedown', panInner._onMouseDown);
+            window.removeEventListener('mousemove', panInner._onMouseMove);
+            window.removeEventListener('mouseup',   panInner._onMouseUp);
+            panInner = null;
         }
 
         function setupImageZoom() {
-            // This will be called by initImageZoom which is triggered after product loads
             initImageZoom();
         }
 
