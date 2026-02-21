@@ -1178,7 +1178,7 @@
 
     <!-- Navbar -->
     <nav class="navbar">
-        <a href="#" class="logo"><i class="fa-regular fa-gem"></i> &nbsp;SWARNIM<span>JEWELS</span></a>
+        <a href="index.html" class="logo"><i class="fa-regular fa-gem"></i> &nbsp;SWARNIM<span>JEWELS</span></a>
         
         <ul class="nav-links" id="navLinks">
             <li><a href="index.html" class="active">Home</a></li>
@@ -1894,7 +1894,7 @@
     <footer>
         <div class="footer-content">
             <div>
-                <a href="#" class="logo" style="font-size: 1.2rem; margin-bottom: 15px;">SWARNIM<span>JEWELS</span></a>
+                <a href="index.html" class="logo" style="font-size: 1.2rem; margin-bottom: 15px;">SWARNIM<span>JEWELS</span></a>
                 <p style="color: #666; margin-top: 15px; font-size: 0.9rem; line-height: 1.6;">Bringing you the finest handcrafted jewelry from the heart of India.</p>
                 
                 <div style="margin-top: 20px; display: flex; gap: 20px;">
@@ -2199,10 +2199,8 @@
             slides[currentSlide].classList.add('active');
             if (dots[currentSlide]) dots[currentSlide].classList.add('active');
             
-            // Scroll banner into view on mobile smoothly
-            if (window.innerWidth <= 768) {
-                document.querySelector('.hero-carousel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
+            // NOTE: scrollIntoView removed — it was causing the page to jump to top
+            // every 4 seconds on mobile when the carousel auto-advanced.
         }
 
         function goToSlide(index) {
@@ -2600,21 +2598,31 @@
         }
 
         // Add scroll reveal classes to existing elements
+        // IMPORTANT: Only add to elements NOT already in viewport to avoid
+        // setting opacity:0 on visible elements (causes layout shift + scroll jump on mobile)
         window.addEventListener('load', () => {
+            const viewportHeight = window.innerHeight;
+
             // Add to product cards
             const productCards = document.querySelectorAll('.product-card');
             productCards.forEach((card, index) => {
                 if (!card.classList.contains('scroll-reveal')) {
-                    card.classList.add('scroll-reveal');
-                    card.setAttribute('data-delay', (index % 3) + 1);
+                    const rect = card.getBoundingClientRect();
+                    if (rect.top > viewportHeight) {
+                        card.classList.add('scroll-reveal');
+                        card.setAttribute('data-delay', (index % 3) + 1);
+                    }
                 }
             });
 
             // Add to section headings
             const headings = document.querySelectorAll('h2, .section-title');
-            headings.forEach((heading, index) => {
-                if (!heading.classList.contains('scroll-reveal')) {
-                    heading.classList.add('scroll-reveal-scale');
+            headings.forEach((heading) => {
+                if (!heading.classList.contains('scroll-reveal-scale')) {
+                    const rect = heading.getBoundingClientRect();
+                    if (rect.top > viewportHeight) {
+                        heading.classList.add('scroll-reveal-scale');
+                    }
                 }
             });
 
