@@ -840,11 +840,12 @@
         }
 
         .zoom-result {
-            position: absolute;
-            right: -420px;
-            top: 0;
-            width: 400px;
-            height: 420px;
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 380px;
+            height: 380px;
             border: 2px solid var(--accent);
             background: #000;
             background-repeat: no-repeat;
@@ -853,8 +854,9 @@
             pointer-events: none;
             transition: opacity 0.2s;
             border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8),
+                        0 0 0 1px rgba(212,175,55,0.2);
+            z-index: 9999;
         }
 
         .zoom-result.active {
@@ -890,12 +892,12 @@
             }
         }
 
-        /* Tablet: Adjust zoom result position */
+        /* Tablet: Adjust zoom result size */
         @media (min-width: 769px) and (max-width: 1200px) {
             .zoom-result {
-                right: -320px;
-                width: 300px;
-                height: 320px;
+                right: 20px;
+                width: 280px;
+                height: 280px;
             }
         }
 
@@ -1293,7 +1295,7 @@
 
     <script>
         const CONFIG = {
-            GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbx6aKrVnUwTl6PeJ5LCwZiOqalaDWGKEZF_eY4b6G3B055gqRMVDnnvjsdPUrvHhs-w/exec'
+            GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz2sIsHwOqQPTwTLlsHZgm9D6k9fhH_dZeNxzGYrKfZvTSVfw8Mb0cZg0j8Guefh7MC/exec'
         };
 
         let currentProduct = null;
@@ -1595,42 +1597,48 @@
             }
             
             let zoomRatio = 2.5; // Zoom level (2.5x magnification)
-            
+
             // Show zoom lens and result on hover
             mainImg.addEventListener('mouseenter', function() {
                 zoomLens.classList.add('active');
                 zoomResult.classList.add('active');
                 zoomResult.style.backgroundImage = `url('${this.src}')`;
+                // Set background size relative to zoom panel size
+                const rect = this.getBoundingClientRect();
+                const scaleX = (zoomResult.offsetWidth / rect.width) * zoomRatio;
+                const scaleY = (zoomResult.offsetHeight / rect.height) * zoomRatio;
+                zoomResult.style.backgroundSize = `${rect.width * scaleX}px ${rect.height * scaleY}px`;
             });
-            
+
             // Hide zoom lens and result on leave
             mainImg.addEventListener('mouseleave', function() {
                 zoomLens.classList.remove('active');
                 zoomResult.classList.remove('active');
             });
-            
+
             // Move zoom lens with mouse
             mainImg.addEventListener('mousemove', function(e) {
                 const rect = this.getBoundingClientRect();
                 const lensWidth = zoomLens.offsetWidth / 2;
                 const lensHeight = zoomLens.offsetHeight / 2;
-                
-                // Calculate lens position
+
+                // Calculate lens position (relative to image)
                 let x = e.clientX - rect.left - lensWidth;
                 let y = e.clientY - rect.top - lensHeight;
-                
-                // Prevent lens from going outside image bounds
+
+                // Clamp to image bounds
                 x = Math.max(0, Math.min(x, rect.width - zoomLens.offsetWidth));
                 y = Math.max(0, Math.min(y, rect.height - zoomLens.offsetHeight));
-                
-                // Position the lens
+
+                // Position the lens on the image
                 zoomLens.style.left = x + 'px';
                 zoomLens.style.top = y + 'px';
-                
-                // Calculate background position for zoomed image
-                const bgX = -(x * zoomRatio);
-                const bgY = -(y * zoomRatio);
-                
+
+                // Calculate zoomed background position for the fixed result panel
+                const scaleX = (zoomResult.offsetWidth / rect.width) * zoomRatio;
+                const scaleY = (zoomResult.offsetHeight / rect.height) * zoomRatio;
+                const bgX = -(x * scaleX);
+                const bgY = -(y * scaleY);
                 zoomResult.style.backgroundPosition = `${bgX}px ${bgY}px`;
             });
             
@@ -1660,7 +1668,6 @@
     </script>
 
     <!-- Shopping Cart System -->
-    <script src="cart.js"></script>
 
     <!-- Cart Notification Styles -->
     <style>
@@ -1804,7 +1811,7 @@
         // Get product details from page
         const productName = document.querySelector('.product-name, h1, h2')?.textContent || 'Product';
         const priceElement = document.querySelector('.product-price, .price, [class*="price"]');
-        const imageElement = document.getElementById('mainImage');
+        const imageElement = document.querySelector('.product-image img, .main-image, img[alt]');
         
         let price = 0;
         if (priceElement) {
@@ -1813,7 +1820,7 @@
             price = parseFloat(priceText) || 0;
         }
         
-        const image = (imageElement && imageElement.src) ? imageElement.src : '';
+        const image = imageElement?.src || 'https://via.placeholder.com/150';
         
         if (price === 0) {
             alert('Unable to get product price. Please try again.');
@@ -1849,7 +1856,7 @@
         // Get product details
         const productName = document.querySelector('.product-name, h1, h2')?.textContent || 'Product';
         const priceElement = document.querySelector('.product-price, .price, [class*="price"]');
-        const imageElement = document.getElementById('mainImage');
+        const imageElement = document.querySelector('.product-image img, .main-image, img[alt]');
         
         let price = 0;
         if (priceElement) {
@@ -1857,7 +1864,7 @@
             price = parseFloat(priceText) || 0;
         }
         
-        const image = (imageElement && imageElement.src) ? imageElement.src : '';
+        const image = imageElement?.src || 'https://via.placeholder.com/150';
         
         if (price === 0) {
             alert('Unable to get product price. Please try again.');
