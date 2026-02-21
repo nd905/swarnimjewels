@@ -9,6 +9,8 @@
 
     <style>
         :root { --bg-dark: #050505; --accent: #d4af37; --text-main: #f4f4f4; --border: 1px solid #333; }
+        * { box-sizing: border-box; }
+        html, body { overflow-x: hidden; max-width: 100%; }
         body { 
             background: var(--bg-dark); 
             color: var(--text-main); 
@@ -489,70 +491,7 @@
             font-family: 'Cinzel', serif;
         }
 
-        /* Image Zoom Modal */
-        .zoom-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s;
-        }
-        .zoom-modal.active {
-            display: flex;
-        }
-        .zoom-modal img {
-            max-width: 95%;
-            max-height: 95%;
-            object-fit: contain;
-            animation: zoomIn 0.3s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes zoomIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .zoom-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 2.5rem;
-            cursor: pointer;
-            background: rgba(0,0,0,0.7);
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: 0.3s;
-            z-index: 10000;
-        }
-        .zoom-close:hover {
-            background: var(--accent);
-            color: black;
-            transform: rotate(90deg);
-        }
-        .zoom-hint {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 0.9rem;
-            background: rgba(0,0,0,0.7);
-            padding: 10px 20px;
-            border-radius: 20px;
-        }
+        /* zoom-close button styles are defined once above in .image-zoom-modal section */
 
         @media (max-width: 768px) { 
             body { padding: 0; }
@@ -564,7 +503,13 @@
                 grid-template-columns: 1fr; 
                 gap: 20px; 
                 padding: 20px 10px 100px;
+                width: 100%;
+                max-width: 100%;
             } 
+            .info-box, .gallery-box {
+                max-width: 100%;
+                overflow: hidden;
+            }
             .main-img { height: 300px; }
             .thumbs { gap: 6px; }
             .thumb { width: 60px; height: 60px; }
@@ -818,13 +763,10 @@
             overflow: visible;
         }
 
-        /* Desktop: click-to-expand hint on main image */
+        /* Desktop: zoom-in cursor on main image */
         @media (min-width: 769px) {
             .main-img {
                 cursor: zoom-in;
-            }
-            .main-img:hover::after {
-                content: '🔍 Click to expand';
             }
         }
 
@@ -997,7 +939,7 @@
 
         @media (max-width: 768px) {
             .whatsapp-float {
-                bottom: 20px;
+                bottom: 80px; /* sit above the BUY NOW sticky bar (~65px tall) */
                 right: 20px;
                 width: 60px;
                 height: 60px;
@@ -1019,7 +961,7 @@
 
         @media (max-width: 480px) {
             .whatsapp-float {
-                bottom: 15px;
+                bottom: 75px; /* above sticky CTA */
                 right: 15px;
                 width: 55px;
                 height: 55px;
@@ -1140,10 +1082,6 @@
             <div class="image-zoom-container" style="position: relative;">
                 <img id="mainImage" class="main-img" src="">
                 <div class="image-badge">LIMITED STOCK</div>
-                <!-- Zoom Lens Overlay -->
-                <div id="zoomLens" class="zoom-lens"></div>
-                <!-- Zoomed Image Display -->
-                <div id="zoomResult" class="zoom-result"></div>
             </div>
             <div id="thumbs" class="thumbs"></div>
 
@@ -1173,7 +1111,7 @@
             <h1 id="pName"></h1>
             
             <div class="rating-section">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <span class="rating-text">4.8 out of 5 | <span class="reviews-count">247 reviews</span></span>
             </div>
             
@@ -1219,7 +1157,7 @@
             </div>
             
             <div class="btn-container" style="display: flex; gap: 15px;">
-                <button class="btn" onclick="addProductToCart()" style="flex: 1; background: transparent; border: 2px solid var(--accent);">
+                <button class="btn" onclick="addProductToCart()" style="flex: 1; background: transparent; border: 2px solid var(--accent); color: var(--accent);">
                     <i class="fa-solid fa-cart-plus"></i> ADD TO CART
                 </button>
                 <button class="btn" onclick="buyNow()" style="flex: 1;">
@@ -1283,7 +1221,7 @@
                     <div class="review-header">
                         <div>
                             <div class="reviewer-name">Priya Sharma</div>
-                            <div class="stars"></div>
+                            <div class="stars">★★★★★</div>
                         </div>
                         <div class="review-date">2 days ago</div>
                     </div>
@@ -1294,7 +1232,7 @@
                     <div class="review-header">
                         <div>
                             <div class="reviewer-name">Ananya Verma</div>
-                            <div class="stars"></div>
+                            <div class="stars">★★★★★</div>
                         </div>
                         <div class="review-date">5 days ago</div>
                     </div>
@@ -1305,7 +1243,7 @@
                     <div class="review-header">
                         <div>
                             <div class="reviewer-name">Meera Patel</div>
-                            <div class="stars"></div>
+                            <div class="stars">★★★★☆</div>
                         </div>
                         <div class="review-date">1 week ago</div>
                     </div>
@@ -1440,7 +1378,7 @@
             
             document.title = p.name + " | Swarnim Jewels";
             document.getElementById('pName').textContent = p.name;
-            const priceFormatted = '' + parseFloat(p.price).toLocaleString('en-IN');
+            const priceFormatted = '₹' + parseFloat(p.price).toLocaleString('en-IN');
             document.getElementById('pPrice').textContent = priceFormatted;
             document.getElementById('mobilePriceDisplay').textContent = priceFormatted;
             document.getElementById('pDesc').textContent = p.description || "Exquisite handcrafted jewelry piece from our exclusive collection. Each piece is carefully selected to ensure the highest quality and authentic craftsmanship.";
@@ -1451,7 +1389,7 @@
                 const videoPlayer = document.getElementById('videoPlayer');
                 const videoThumbnails = document.getElementById('videoThumbnails');
                 
-                const videoURLs = p.videoURLs.split(',').map(url => url.trim()).filter(url => url);
+                const videoURLs = p.videoURLs.split('|').map(url => url.trim()).filter(url => url);
                 
                 if (videoURLs.length > 0) {
                     videoSection.style.display = 'block';
@@ -1518,7 +1456,7 @@
             const thumbsDiv = document.getElementById('thumbs');
             const images = [p.coverImage || p.image];
             if (p.galleryImages) {
-                images.push(...p.galleryImages.split('||'));
+                images.push(...p.galleryImages.split('|').map(s => s.trim()).filter(Boolean));
             }
 
             images.forEach((src, i) => {
@@ -1555,6 +1493,7 @@
         }
 
         function shareWhatsApp() {
+            if (!currentProduct) return;
             const text = `Check out this beautiful jewelry: ${currentProduct.name} - ${window.location.href}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
         }
@@ -1564,13 +1503,19 @@
         }
 
         function shareTwitter() {
+            if (!currentProduct) return;
             const text = `Check out this beautiful jewelry from Swarnim Jewels: ${currentProduct.name}`;
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`, '_blank');
         }
 
         function copyLink() {
             navigator.clipboard.writeText(window.location.href).then(() => {
-                alert('Link copied to clipboard!');
+                // Show toast instead of alert
+                const toast = document.createElement('div');
+                toast.textContent = '🔗 Link copied!';
+                toast.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:0.85rem;z-index:99999;border:1px solid var(--accent);animation:fadeIn 0.3s ease';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2500);
             });
         }
 
@@ -1757,9 +1702,6 @@
         }
 
         init();
-        
-        // Setup zoom after a short delay to ensure images are loaded
-        setTimeout(setupImageZoom, 500);
     </script>
 
     <!-- Shopping Cart System -->
@@ -1823,63 +1765,18 @@
 
     <!-- Premium Scroll Animations Script -->
     <script>
-        // Intersection Observer for scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
         const scrollObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                }
+                if (entry.isIntersecting) entry.target.classList.add('revealed');
             });
         }, observerOptions);
 
-        // Initialize scroll animations
         function initScrollAnimations() {
-            const revealElements = document.querySelectorAll(
-                '.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale'
-            );
-            
-            revealElements.forEach(el => {
-                scrollObserver.observe(el);
-            });
+            document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale')
+                .forEach(el => scrollObserver.observe(el));
         }
 
-        // Add scroll reveal classes to product elements
-        window.addEventListener('load', () => {
-            // Add to product content section
-            const productContent = document.querySelector('.product-content');
-            if (productContent) {
-                productContent.classList.add('scroll-reveal-left');
-            }
-
-            // Add to product images
-            const productImages = document.querySelector('.product-images');
-            if (productImages) {
-                productImages.classList.add('scroll-reveal-right');
-            }
-
-            // Add to video section
-            const videoSection = document.getElementById('videoSection');
-            if (videoSection) {
-                videoSection.classList.add('scroll-reveal');
-            }
-
-            // Add to related products if they exist
-            const relatedProducts = document.querySelectorAll('.related-product');
-            relatedProducts.forEach((product, index) => {
-                product.classList.add('scroll-reveal');
-                product.setAttribute('data-delay', (index % 3) + 1);
-            });
-
-            // Initialize observer
-            initScrollAnimations();
-        });
-
-        // Initialize on DOMContentLoaded as fallback
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initScrollAnimations);
         } else {
@@ -1895,47 +1792,34 @@
     <script>
     // Add to Cart from Product Page
     function addToCartFromProduct() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const productId = urlParams.get('id');
-        
-        if (!productId) {
+        if (!currentProduct || !currentProduct.id) {
             alert('Product not found. Please go back and try again.');
             return;
         }
-        
-        // Get product details from page
-        const productName = document.querySelector('.product-name, h1, h2')?.textContent || 'Product';
-        const priceElement = document.querySelector('.product-price, .price, [class*="price"]');
-        const imageElement = document.querySelector('.product-image img, .main-image, img[alt]');
-        
-        let price = 0;
-        if (priceElement) {
-            // Extract number from price text (1,299  1299)
-            const priceText = priceElement.textContent.replace(/[,\s]/g, '');
-            price = parseFloat(priceText) || 0;
-        }
-        
-        const image = imageElement?.src || 'https://via.placeholder.com/150';
-        
+
+        const productId   = currentProduct.id;
+        const productName = currentProduct.name || 'Product';
+        const price       = parseFloat(String(currentProduct.price).replace(/[^0-9.]/g, '')) || 0;
+        const image       = currentProduct.coverImage || currentProduct.image || 'https://via.placeholder.com/150';
+
         if (price === 0) {
             alert('Unable to get product price. Please try again.');
             return;
         }
-        
-        // Add to cart
+
         ShoppingCart.addItem({
-            id: productId,
-            name: productName.trim(),
+            id   : String(productId),
+            name : productName.trim(),
             price: price,
             image: image
         });
-        
-        // Ask if want to go to cart
-        setTimeout(() => {
-            if (confirm('Item added to cart! View cart now?')) {
-                window.location.href = 'cart.html';
-            }
-        }, 500);
+
+        // Show a toast instead of confirm dialog
+        const toast = document.createElement('div');
+        toast.innerHTML = '🛒 Added to cart! <a href="cart.html" style="color:var(--accent);text-decoration:underline;margin-left:8px;">View Cart</a>';
+        toast.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:12px 20px;border-radius:20px;font-size:0.85rem;z-index:99999;border:1px solid var(--accent);white-space:nowrap;animation:fadeIn 0.3s ease';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
     }
 
     // Buy Now from Product Page
