@@ -444,8 +444,83 @@
         </div>
     </div>
 
-    <!-- AWS SDK for Cloudflare R2 -->
-    <script src="https://cdn.jsdelivr.net/npm/@aws-sdk/client-s3@3.451.0/dist-browser/client-s3.min.js"></script>
+    <!-- AWS Signature V4 helper — uses browser-native crypto.subtle, no external library needed -->
+    <script>
+        // ── AWS Sig V4 helpers ──────────────────────────────────────────────
+        async function _hmac(key, data) {
+            const k = await crypto.subtle.importKey(
+                'raw',
+                key instanceof ArrayBuffer ? key : new TextEncoder().encode(key),
+                { name: 'HMAC', hash: 'SHA-256' },
+                false, ['sign']
+            );
+            return crypto.subtle.sign('HMAC', k, new TextEncoder().encode(data));
+        }
+
+        async function _sha256Hex(data) {
+            const buf = data instanceof ArrayBuffer ? data : new TextEncoder().encode(data);
+            const hash = await crypto.subtle.digest('SHA-256', buf);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+        }
+
+        /**
+         * Returns headers (including Authorization) for an S3-compatible PUT request.
+         * @param {string} host        - e.g. "4c21...r2.cloudflarestorage.com"
+         * @param {string} path        - e.g. "/bucket/videos/file.mp4"
+         * @param {string} contentType - MIME type of the file
+         * @param {ArrayBuffer} body   - raw file bytes
+         * @param {string} accessKeyId
+         * @param {string} secretAccessKey
+         * @param {string} region      - "auto" for Cloudflare R2
+         */
+        async function buildS3PutHeaders(host, path, contentType, body, accessKeyId, secretAccessKey, region = 'auto') {
+            const service  = 's3';
+            const now      = new Date();
+            const dateStr  = now.toISOString().slice(0,10).replace(/-/g,'');          // YYYYMMDD
+            const dateTime = now.toISOString().slice(0,19).replace(/[-:]/g,'') + 'Z'; // YYYYMMDDTHHmmssZ
+
+            const payloadHash = await _sha256Hex(body);
+
+            // Canonical headers (MUST be sorted alphabetically by header name)
+            const headersToSign = {
+                'content-type'           : contentType,
+                'host'                   : host,
+                'x-amz-content-sha256'   : payloadHash,
+                'x-amz-date'             : dateTime
+            };
+            const sortedKeys      = Object.keys(headersToSign).sort();
+            const canonicalHeaders = sortedKeys.map(k => `${k}:${headersToSign[k]}`).join('\n') + '\n';
+            const signedHeaders   = sortedKeys.join(';');
+
+            const canonicalRequest = [
+                'PUT', path, '',
+                canonicalHeaders, signedHeaders, payloadHash
+            ].join('\n');
+
+            const credentialScope = `${dateStr}/${region}/${service}/aws4_request`;
+            const stringToSign    = [
+                'AWS4-HMAC-SHA256', dateTime, credentialScope,
+                await _sha256Hex(canonicalRequest)
+            ].join('\n');
+
+            // Derive signing key
+            const kDate    = await _hmac('AWS4' + secretAccessKey, dateStr);
+            const kRegion  = await _hmac(kDate,   region);
+            const kService = await _hmac(kRegion, service);
+            const kSign    = await _hmac(kService,'aws4_request');
+
+            const sigBytes  = await _hmac(kSign, stringToSign);
+            const signature = Array.from(new Uint8Array(sigBytes)).map(b => b.toString(16).padStart(2,'0')).join('');
+
+            return {
+                'Authorization'        : `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
+                'Content-Type'         : contentType,
+                'x-amz-content-sha256' : payloadHash,
+                'x-amz-date'           : dateTime
+            };
+        }
+        // ── End AWS Sig V4 helpers ──────────────────────────────────────────
+    </script>
 
     <script>
         // ============================================================
@@ -462,7 +537,7 @@
                 bucket: 'swarnim-videos',
                 accessKeyId: '6a76b4d798cdb376fd59600f0fb2fa84',
                 secretAccessKey: 'c9f7a7bbdcc1ff0ba27239e2dc7018d217f832404ad1c7192dc2bf3ed41e660d',
-                publicDomain: 'https://pub-a8af64134ed74913b3828ee8f389b6c0.r2.dev'
+                publicDomain: 'https://videos.swarnimjewels.com'
             }
         };
 
@@ -600,88 +675,88 @@
         // ============================================================
         
         async function uploadVideoToR2(file) {
-            const uploadBtn = document.getElementById('uploadVideoBtn');
-            const progress = document.getElementById('videoProgress');
-            const progressBar = document.getElementById('videoProgressBar');
+            const uploadBtn  = document.getElementById('uploadVideoBtn');
+            const progress   = document.getElementById('videoProgress');
+            const progressBar= document.getElementById('videoProgressBar');
             const statusText = document.getElementById('videoUploadStatus');
-            
-            uploadBtn.disabled = true;
+
+            uploadBtn.disabled    = true;
             uploadBtn.textContent = 'Uploading to R2...';
-            progress.style.display = 'block';
+            progress.style.display   = 'block';
             statusText.style.display = 'block';
-            statusText.textContent = 'Uploading video to Cloudflare R2...';
-            statusText.style.color = '#666';
-            
+            statusText.textContent   = 'Uploading video to Cloudflare R2...';
+            statusText.style.color   = '#666';
+
+            // Simulate progress bar while upload is in flight
+            let progressValue = 0;
+            const progressInterval = setInterval(() => {
+                if (progressValue < 90) {
+                    progressValue += 5;
+                    progressBar.style.width = progressValue + '%';
+                }
+            }, 300);
+
             try {
-                const { S3Client, PutObjectCommand } = window['@aws-sdk/client-s3'];
-                
-                const s3Client = new S3Client({
-                    region: 'auto',
-                    endpoint: CONFIG.R2.endpoint,
-                    credentials: {
-                        accessKeyId: CONFIG.R2.accessKeyId,
-                        secretAccessKey: CONFIG.R2.secretAccessKey
-                    }
-                });
-
-                const timestamp = Date.now();
+                const timestamp     = Date.now();
                 const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-                const filename = `videos/${timestamp}_${sanitizedName}`;
+                const key           = `videos/${timestamp}_${sanitizedName}`;
 
-                // Simulate progress
-                let progressValue = 0;
-                const progressInterval = setInterval(() => {
-                    if (progressValue < 90) {
-                        progressValue += 10;
-                        progressBar.style.width = progressValue + '%';
-                    }
-                }, 200);
+                // Parse host from endpoint URL
+                const endpointURL = new URL(CONFIG.R2.endpoint);
+                const host        = endpointURL.host;                              // e.g. <accountId>.r2.cloudflarestorage.com
+                const path        = `/${CONFIG.R2.bucket}/${key}`;                // e.g. /swarnim-videos/videos/…
 
-                const fileBuffer = await file.arrayBuffer();
+                const fileBuffer  = await file.arrayBuffer();
+                const contentType = file.type || 'video/mp4';
 
-                const command = new PutObjectCommand({
-                    Bucket: CONFIG.R2.bucket,
-                    Key: filename,
-                    Body: fileBuffer,
-                    ContentType: file.type
+                // Build AWS Sig V4 signed headers using browser-native crypto
+                const headers = await buildS3PutHeaders(
+                    host, path, contentType, fileBuffer,
+                    CONFIG.R2.accessKeyId, CONFIG.R2.secretAccessKey,
+                    'auto'   // Cloudflare R2 region is always "auto"
+                );
+
+                const uploadURL = `${CONFIG.R2.endpoint}${path}`;
+                const response  = await fetch(uploadURL, {
+                    method : 'PUT',
+                    headers: headers,
+                    body   : fileBuffer
                 });
 
-                await s3Client.send(command);
+                if (!response.ok) {
+                    const errText = await response.text().catch(() => response.statusText);
+                    throw new Error(`HTTP ${response.status}: ${errText}`);
+                }
 
                 clearInterval(progressInterval);
                 progressBar.style.width = '100%';
 
-                const videoUrl = `${CONFIG.R2.publicDomain}/${filename}`;
+                const videoUrl  = `${CONFIG.R2.publicDomain}/${key}`;
                 const videoSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
-                
-                // Add to video list
-                productVideos.push({
-                    url: videoUrl,
-                    size: videoSize,
-                    filename: file.name
-                });
-                
+
+                productVideos.push({ url: videoUrl, size: videoSize, filename: file.name });
                 renderVideoList();
-                
-                statusText.textContent = ' Video uploaded to Cloudflare R2 successfully!';
+
+                statusText.textContent = '✅ Video uploaded to Cloudflare R2 successfully!';
                 statusText.style.color = '#4caf50';
-                
+
                 setTimeout(() => {
-                    progress.style.display = 'none';
+                    progress.style.display   = 'none';
                     statusText.style.display = 'none';
-                    progressBar.style.width = '0%';
-                    uploadBtn.textContent = ' Upload Video to Cloudflare R2';
-                    uploadBtn.disabled = true;
-                    selectedVideoFile = null;
+                    progressBar.style.width  = '0%';
+                    uploadBtn.textContent    = '⬆ Upload Video to Cloudflare R2';
+                    uploadBtn.disabled       = true;
+                    selectedVideoFile        = null;
                     document.getElementById('videoFileInput').value = '';
                 }, 2000);
-                
+
             } catch (error) {
+                clearInterval(progressInterval);
                 console.error('R2 upload error:', error);
-                statusText.textContent = ' Upload failed: ' + error.message;
+                statusText.textContent = '❌ Upload failed: ' + error.message;
                 statusText.style.color = '#dc3545';
-                uploadBtn.disabled = false;
-                uploadBtn.textContent = 'Retry Upload';
+                uploadBtn.disabled     = false;
+                uploadBtn.textContent  = 'Retry Upload';
             }
         }
 
