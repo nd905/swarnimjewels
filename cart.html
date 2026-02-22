@@ -18,6 +18,7 @@
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { overflow-x: hidden; max-width: 100%; }
         body { font-family: 'Lato', sans-serif; background: var(--bg-dark); color: var(--text-main); min-height: 100vh; }
         
         /* Header */
@@ -777,13 +778,15 @@
                 itemCount.textContent = `${totalItems} item${totalItems > 1 ? 's' : ''} in your cart`;
                 
                 // Render cart items
-                cartItemsContainer.innerHTML = cart.map(item => `
+                cartItemsContainer.innerHTML = cart.map(item => {
+                    const safeName = String(item.name)
+                        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+                    return `
                     <div class="cart-item">
-                        <img src="${item.image}" alt="${item.name}" class="item-image">
-                        
+                        <img src="${item.image}" alt="${safeName}" class="item-image" onerror="this.style.display='none'">
                         <div class="item-details">
-                            <h3>${item.name}</h3>
-                            <div class="item-price">${item.price} each</div>
+                            <h3>${safeName}</h3>
+                            <div class="item-price">₹${Number(item.price).toLocaleString('en-IN')} each</div>
                             <div class="quantity-control">
                                 <button class="quantity-btn" onclick="updateQuantity('${item.id}', ${item.quantity - 1})">
                                     <i class="fa-solid fa-minus"></i>
@@ -794,15 +797,14 @@
                                 </button>
                             </div>
                         </div>
-                        
                         <div class="item-actions">
-                            <div class="item-total">${item.price * item.quantity}</div>
+                            <div class="item-total">₹${(Number(item.price) * Number(item.quantity)).toLocaleString('en-IN')}</div>
                             <button class="remove-btn" onclick="removeItem('${item.id}')">
                                 <i class="fa-solid fa-trash"></i> Remove
                             </button>
                         </div>
-                    </div>
-                `).join('');
+                    </div>`;
+                }).join('');
                 
                 // Update summary
                 updateSummary();
@@ -812,10 +814,8 @@
         // Update quantity
         function updateQuantity(productId, newQuantity) {
             if (newQuantity < 1) {
-                if (confirm('Remove this item from cart?')) {
-                    ShoppingCart.removeItem(productId);
-                    loadCart();
-                }
+                ShoppingCart.removeItem(productId);
+                loadCart();
             } else {
                 ShoppingCart.updateQuantity(productId, newQuantity);
                 loadCart();
@@ -824,10 +824,8 @@
         
         // Remove item
         function removeItem(productId) {
-            if (confirm('Are you sure you want to remove this item?')) {
-                ShoppingCart.removeItem(productId);
-                loadCart();
-            }
+            ShoppingCart.removeItem(productId);
+            loadCart();
         }
         
         // Update summary
@@ -847,7 +845,7 @@
             
             // Update subtotal
             document.getElementById('totalItems').textContent = itemCount;
-            document.getElementById('subtotal').textContent = '' + subtotal;
+            document.getElementById('subtotal').textContent = '₹' + subtotal.toLocaleString('en-IN');
             
             // Update shipping progress bar
             const shippingProgressContainer = document.getElementById('shippingProgressContainer');
@@ -863,20 +861,20 @@
                 // Update progress bar
                 shippingProgressFill.style.width = progressPercent + '%';
                 shippingProgressPercent.textContent = Math.round(progressPercent) + '%';
-                currentAmount.textContent = '' + subtotal;
+                currentAmount.textContent = '₹' + subtotal.toLocaleString('en-IN');
                 
                 if (isFreeShipping) {
                     // Free shipping achieved!
-                    shippingText.textContent = ' You got FREE shipping!';
+                    shippingText.textContent = '🎉 You got FREE shipping!';
                     shippingText.classList.add('achieved');
                     shippingProgressFill.classList.add('achieved');
                     shippingCharge.innerHTML = '<span style="color: #4caf50; font-weight: 700;">FREE</span>';
                 } else {
                     // Still need more for free shipping
-                    shippingText.textContent = `Add ${remainingAmount} more for FREE shipping!`;
+                    shippingText.textContent = `Add ₹${remainingAmount.toLocaleString('en-IN')} more for FREE shipping!`;
                     shippingText.classList.remove('achieved');
                     shippingProgressFill.classList.remove('achieved');
-                    shippingCharge.innerHTML = '<span style="color: #ff9800;">' + SHIPPING_CHARGE + '</span>';
+                    shippingCharge.innerHTML = '<span style="color: #ff9800;">₹' + SHIPPING_CHARGE.toLocaleString('en-IN') + '</span>';
                 }
             } else if (shippingProgressContainer) {
                 shippingProgressContainer.style.display = 'none';
@@ -886,7 +884,7 @@
             const shippingFee = isFreeShipping ? 0 : (subtotal > 0 ? SHIPPING_CHARGE : 0);
             const grandTotal = subtotal + shippingFee;
             
-            document.getElementById('grandTotal').textContent = '' + grandTotal;
+            document.getElementById('grandTotal').textContent = '₹' + grandTotal.toLocaleString('en-IN');
         }
         
         // Clear cart with confirmation
