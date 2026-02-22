@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, follow">
   <title>Sign In | Swarnim Jewels</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -14,6 +16,7 @@
       --err:#e57373; --ok:#81c784;
     }
     *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{overflow-x:hidden;max-width:100%;}
     body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
     header{background:#0a0a0a;padding:18px 5%;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
     .logo{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--gold);text-decoration:none;}
@@ -108,14 +111,14 @@
 
     <form onsubmit="handleLogin(event)">
       <div class="form-group">
-        <label>Email Address</label>
+        <label for="email">Email Address</label>
         <div class="iw">
           <i class="fa-solid fa-envelope il"></i>
           <input type="email" id="email" placeholder="your@email.com" autocomplete="email" required>
         </div>
       </div>
       <div class="form-group">
-        <label>Password</label>
+        <label for="password">Password</label>
         <div class="iw">
           <i class="fa-solid fa-lock il"></i>
           <input type="password" id="password" placeholder="Your password" autocomplete="current-password" required>
@@ -146,7 +149,7 @@
     <div class="forgot-alert" id="forgotAlert"></div>
     <div class="iw">
       <i class="fa-solid fa-envelope il"></i>
-      <input type="email" id="forgotEmail" placeholder="your@email.com" style="width:100%;background:#1a1a1a;border:1px solid rgba(255,255,255,.08);border-radius:7px;color:#eee;font-size:.95rem;padding:12px 14px 12px 40px;outline:none;">
+      <input type="email" id="forgotEmail" placeholder="your@email.com" autocomplete="email" style="width:100%;background:#1a1a1a;border:1px solid rgba(255,255,255,.08);border-radius:7px;color:#eee;font-size:.95rem;padding:12px 14px 12px 40px;outline:none;">
     </div>
     <div class="modal-foot">
       <button class="btn-ghost" onclick="closeForgot()">Cancel</button>
@@ -155,7 +158,7 @@
   </div>
 </div>
 
-<footer>� 2026 Swarnim Jewels � <a href="privacy-policy.html">Privacy</a> � <a href="contact.html">Support</a></footer>
+<footer>&copy; 2026 Swarnim Jewels &middot; <a href="privacy-policy.html">Privacy</a> &middot; <a href="contact.html">Support</a></footer>
 
 <script src="shopping-cart.js"></script>
 <script src="user-system.js"></script>
@@ -212,12 +215,20 @@
     icon.className = show ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
   }
 
-  function openForgot()  { document.getElementById('forgotOverlay').classList.add('open'); }
+  function openForgot()  {
+    forgotAborted = false;
+    document.getElementById('forgotOverlay').classList.add('open');
+  }
   function closeForgot() {
+    forgotAborted = true; // abort any in-flight submitForgot
     document.getElementById('forgotOverlay').classList.remove('open');
     document.getElementById('forgotEmail').value = '';
     const a = document.getElementById('forgotAlert');
     a.className = 'forgot-alert'; a.textContent = '';
+    // Reset button so modal works correctly if reopened
+    const btn = document.getElementById('forgotBtn');
+    btn.disabled = false;
+    btn.innerHTML = 'Send Reset Link';
   }
 
   document.getElementById('forgotOverlay').addEventListener('click', function(e) {
@@ -227,12 +238,17 @@
     if (e.key === 'Escape') closeForgot();
   });
 
+  let forgotAborted = false;
+
   async function submitForgot() {
     const email = document.getElementById('forgotEmail').value.trim();
-    const alert = document.getElementById('forgotAlert');
-    if (!email) {
-      alert.className = 'forgot-alert show err';
-      alert.textContent = 'Please enter your email address.';
+    const forgotAlertEl = document.getElementById('forgotAlert');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Validate: not empty AND valid email format (browser check bypassed on onclick)
+    if (!email || !emailRegex.test(email)) {
+      forgotAlertEl.className = 'forgot-alert show err';
+      forgotAlertEl.textContent = email ? 'Please enter a valid email address.' : 'Please enter your email address.';
       return;
     }
     const btn = document.getElementById('forgotBtn');
@@ -240,10 +256,13 @@
     btn.innerHTML = '<div class="spinner" style="border-top-color:#000;border-color:rgba(0,0,0,.2)"></div> Sending…';
     // Simulate — replace with real email API when available
     await new Promise(r => setTimeout(r, 1200));
-    alert.className = 'forgot-alert show ok';
-    alert.textContent = 'If that email exists, a reset link has been sent.';
-    btn.disabled = false;
-    btn.innerHTML = 'Send Reset Link';
+    // If user cancelled while request was in flight, stop here — don't mutate closed modal
+    if (forgotAborted) return;
+    forgotAlertEl.className = 'forgot-alert show ok';
+    forgotAlertEl.textContent = 'If that email exists, a reset link has been sent.';
+    // Keep button disabled — modal will close automatically, preventing double-submit
+    btn.innerHTML = 'Sent!';
+    setTimeout(closeForgot, 2000);
   }
 </script>
 </body>
