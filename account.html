@@ -5,11 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>My Account | Swarnim Jewels</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root{--bg:#050505;--card:#111;--card2:#161616;--gold:#d4af37;--gold2:#f0d060;--text:#eee;--muted:#888;--border:rgba(212,175,55,.2);--err:#e57373;--ok:#81c784;}
     *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{overflow-x:hidden;max-width:100%;}
     body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
     header{background:#0a0a0a;padding:18px 5%;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
     .logo{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--gold);text-decoration:none;}
@@ -247,15 +250,15 @@
   </div>
 </div>
 
-<footer>� 2026 Swarnim Jewels � <a href="privacy-policy.html">Privacy</a> � <a href="contact.html">Support</a></footer>
+<footer>&copy; 2026 Swarnim Jewels &middot; <a href="privacy-policy.html">Privacy</a> &middot; <a href="contact.html">Support</a></footer>
 
 <script src="shopping-cart.js"></script>
 <script src="user-system.js"></script>
 <script>
-  // Redirect if not logged in
+  // Redirect if not logged in — wrapped in else so nothing runs after redirect
   if (!UserSystem.isLoggedIn()) {
     window.location.href = 'login.html?redirect=account.html';
-  }
+  } else {
 
   const user = UserSystem.getUser();
 
@@ -421,7 +424,15 @@
   }
 
   function openModal()  { document.getElementById('addrModal').classList.add('open'); }
-  function closeModal() { document.getElementById('addrModal').classList.remove('open'); }
+  function closeModal() {
+    document.getElementById('addrModal').classList.remove('open');
+    // Clear fields so stale data doesn't appear on next open
+    ['m_name','m_line','m_city','m_state','m_pin','m_phone'].forEach(id => document.getElementById(id).value = '');
+    // Reset button in case it was left in loading state
+    const btn = document.getElementById('saveAddrBtn');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Address';
+  }
 
   // Escape key and overlay click close modal
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
@@ -521,6 +532,8 @@
   populateHeader();
   loadProfile();
   loadOrders();
+
+  } // end else (isLoggedIn)
 </script>
 </body>
 </html>
