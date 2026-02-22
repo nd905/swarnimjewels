@@ -5,11 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, follow">
   <title>Create Account | Swarnim Jewels</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root{--bg:#050505;--card:#111;--gold:#d4af37;--gold2:#f0d060;--text:#eee;--muted:#888;--border:rgba(212,175,55,.2);--err:#e57373;--ok:#81c784;}
     *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{overflow-x:hidden;max-width:100%;}
     body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
     header{background:#0a0a0a;padding:18px 5%;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
     .logo{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--gold);text-decoration:none;}
@@ -108,38 +111,38 @@
 
     <form onsubmit="handleRegister(event)">
       <div class="form-group">
-        <label>Full Name *</label>
+        <label for="name">Full Name *</label>
         <div class="iw">
           <i class="fa-solid fa-user il"></i>
           <input type="text" id="name" placeholder="Your full name" autocomplete="name" required>
         </div>
       </div>
       <div class="form-group">
-        <label>Email Address *</label>
+        <label for="email">Email Address *</label>
         <div class="iw">
           <i class="fa-solid fa-envelope il"></i>
           <input type="email" id="email" placeholder="your@email.com" autocomplete="email" required>
         </div>
       </div>
       <div class="form-group">
-        <label>Phone <span style="color:#555">(optional)</span></label>
+        <label for="phone">Phone <span style="color:#555">(optional)</span></label>
         <div class="iw">
           <i class="fa-solid fa-phone il"></i>
           <input type="tel" id="phone" placeholder="+91 98765 43210" autocomplete="tel">
         </div>
       </div>
       <div class="form-group">
-        <label>Password *</label>
+        <label for="password">Password *</label>
         <div class="iw">
           <i class="fa-solid fa-lock il"></i>
-          <input type="password" id="password" placeholder="Minimum 6 characters" autocomplete="new-password" required oninput="checkStrength(this.value)">
+          <input type="password" id="password" placeholder="Minimum 6 characters" autocomplete="new-password" required minlength="6" oninput="checkStrength(this.value)">
           <button type="button" class="eye" onclick="togglePwd('password',this)"><i class="fa-solid fa-eye"></i></button>
         </div>
         <div class="strength-bar"><div class="strength-fill" id="sBar"></div></div>
         <div class="strength-label" id="sLabel"></div>
       </div>
       <div class="form-group">
-        <label>Confirm Password *</label>
+        <label for="confirmPassword">Confirm Password *</label>
         <div class="iw">
           <i class="fa-solid fa-lock il"></i>
           <input type="password" id="confirmPassword" placeholder="Repeat your password" autocomplete="new-password" required>
@@ -160,12 +163,12 @@
   </div>
 </main>
 
-<footer>� 2026 Swarnim Jewels � <a href="privacy-policy.html">Privacy</a> � <a href="contact.html">Support</a></footer>
+<footer>&copy; 2026 Swarnim Jewels &middot; <a href="privacy-policy.html">Privacy</a> &middot; <a href="contact.html">Support</a></footer>
 
 <script src="shopping-cart.js"></script>
 <script src="user-system.js"></script>
 <script>
-  if (UserSystem.isLoggedIn()) window.location.href = 'account.html';
+  if (UserSystem.isLoggedIn()) window.location.href = UserSystem.safeRedirect('account.html');
 
   function showAlert(msg, type='error') {
     const box = document.getElementById('alertBox');
@@ -194,6 +197,11 @@
   function checkStrength(val) {
     const bar = document.getElementById('sBar'), lbl = document.getElementById('sLabel');
     if (!val) { bar.style.width='0'; lbl.textContent=''; return; }
+    // Always show Too short if under minimum — regardless of character variety
+    if (val.length < 6) {
+      bar.style.width='20%'; bar.style.background='#e57373';
+      lbl.textContent='Too short'; lbl.style.color='#e57373'; return;
+    }
     let s = 0;
     if (val.length >= 6)  s++;
     if (val.length >= 10) s++;
@@ -219,7 +227,9 @@
     const phone    = document.getElementById('phone').value.trim();
     const password = document.getElementById('password').value;
     const confirm  = document.getElementById('confirmPassword').value;
+    if (!name) { showAlert('Full name is required.'); return; }
     if (password !== confirm) { showAlert('Passwords do not match.'); return; }
+    if (password.length < 6) { showAlert('Password must be at least 6 characters.'); return; }
     setLoading(true);
     try {
       const result = await UserSystem.register({ name, email, phone, password });
