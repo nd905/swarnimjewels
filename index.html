@@ -456,8 +456,8 @@
         }
         .badge-new { background: #4CAF50; color: white; }
         .badge-trending { background: #FF5722; color: white; }
-        .badge-limited { background: #f44336; color: white; animation: pulse 2s infinite; }
-        @keyframes pulse {
+        .badge-limited { background: #f44336; color: white; animation: badgePulse 2s infinite; }
+        @keyframes badgePulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
@@ -1020,16 +1020,6 @@
             }
         }
 
-        /* Floating animation */
-        @keyframes whatsappFloat {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
         /* Mobile adjustments */
         @media (max-width: 768px) {
             .whatsapp-float {
@@ -1156,7 +1146,7 @@
 <body>
     <!-- Announcement Bar -->
     <div class="announcement-bar">
-         <strong>FREE SHIPPING</strong> on Orders Above 999 | <strong>7-Day Easy Returns</strong> | <strong>100% Authentic Jewelry</strong>
+         <strong>FREE SHIPPING</strong> on Orders Above ₹1,299 | <strong>7-Day Easy Returns</strong> | <strong>100% Authentic Jewelry</strong>
     </div>
 
     <!-- Trust Badges Bar -->
@@ -1301,7 +1291,7 @@
             <div class="benefit-card">
                 <div class="benefit-icon"><i class="fa-solid fa-truck-fast"></i></div>
                 <div class="benefit-title">Fast Shipping</div>
-                <div class="benefit-desc">Free delivery on orders above 999 across India</div>
+                <div class="benefit-desc">Free delivery on orders above ₹1,299 across India</div>
             </div>
             <div class="benefit-card">
                 <div class="benefit-icon"><i class="fa-solid fa-rotate-left"></i></div>
@@ -1321,7 +1311,7 @@
         <h3>Loved by 15,000+ Customers Across India & Worldwide </h3>
         <div class="reviews-grid" id="reviewsCarousel">
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Absolutely stunning quality! The American Diamond set looks exactly like the photos. Delivery was super fast to Mumbai."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">P</div>
@@ -1332,7 +1322,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Perfect for my sister's wedding! The Jadau choker is gorgeous and the price is unbeatable. Highly recommend Swarnim!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">A</div>
@@ -1343,7 +1333,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Best jewelry shopping experience! Authentic pieces, great customer service on WhatsApp, and secure packaging."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">M</div>
@@ -1354,7 +1344,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Received my Kundan necklace in Bangalore within 3 days! The craftsmanship is exceptional. Worth every rupee."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">R</div>
@@ -1365,7 +1355,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered from Jaipur and got exactly what I wanted! The oxidized silver earrings are beautiful. Great communication throughout."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">S</div>
@@ -1376,7 +1366,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"My go-to store for traditional jewelry! Bought 3 sets for Diwali from Kolkata. All pieces are authentic and beautifully packed."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">D</div>
@@ -1387,7 +1377,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Amazing service from start to finish! The gold-plated necklace arrived in Hyderabad in perfect condition. Highly recommended!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">L</div>
@@ -1398,7 +1388,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered for my daughter's engagement from Chandigarh. The jewelry exceeded expectations! Fast shipping and beautiful packaging."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">H</div>
@@ -1409,7 +1399,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Best quality American Diamond jewelry I've found online! Delivered to Lucknow within 4 days. Customer service is top-notch."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">N</div>
@@ -1420,7 +1410,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Stunning Jadau choker delivered to Indore! The photos don't do it justice. Looks even better in person. 100% authentic!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">K</div>
@@ -1431,7 +1421,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered from Surat for my wife's birthday. The gift wrapping was beautiful and she loved the necklace! Will order again."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">V</div>
@@ -1442,7 +1432,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Reliable and trustworthy! Got my order in Nagpur within 3 days. The quality is outstanding and prices are very reasonable."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">T</div>
@@ -1453,7 +1443,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Bought oxidized silver jhumkas from Gurgaon. Absolutely love them! Perfect for both traditional and modern outfits."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">I</div>
@@ -1464,7 +1454,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Amazing collection! Ordered from Kochi and received beautifully crafted jewelry. The customer support team was very helpful."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">M</div>
@@ -1475,7 +1465,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered for Navratri from Vadodara. The traditional designs are authentic and prices are unbeatable. Highly satisfied!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">P</div>
@@ -1486,7 +1476,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Perfect shopping experience from Bhopal! Fast delivery, secure packaging, and gorgeous jewelry. My new favorite store!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">A</div>
@@ -1497,7 +1487,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Received my bridal jewelry set in Patna before my wedding! Everything was perfect. Thank you for making my special day beautiful!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">S</div>
@@ -1508,7 +1498,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Excellent quality Kundan jewelry delivered to Visakhapatnam! The designs are unique and elegant. Will definitely recommend!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">R</div>
@@ -1519,7 +1509,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Got my order in Ludhiana super fast! The American Diamond set sparkles beautifully. Great value for money!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">J</div>
@@ -1530,7 +1520,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered from Coimbatore for a festival. The jewelry arrived on time and looks stunning! Very happy with my purchase."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">D</div>
@@ -1541,7 +1531,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Amazing handcrafted pieces! Delivered to Guwahati in perfect condition. The quality speaks for itself. Highly recommended!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">M</div>
@@ -1552,7 +1542,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Bought gold-plated earrings from Ranchi. They're absolutely gorgeous and well-made. Great customer service too!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">N</div>
@@ -1563,7 +1553,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Excellent service from Dehradun! The packaging was premium and jewelry quality is top-notch. Worth every penny!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">S</div>
@@ -1574,7 +1564,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered traditional jewelry from Mysore for my daughter. She loved it! Beautiful designs and authentic craftsmanship."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">L</div>
@@ -1585,7 +1575,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Excellent quality Kundan jewelry delivered to Meerut! Being so close to Delhi, I got it the very next day. Highly satisfied!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">R</div>
@@ -1596,7 +1586,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered from Muzaffarnagar for my daughter's wedding. The bridal set is absolutely gorgeous! Quick delivery and beautiful packaging."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">S</div>
@@ -1607,7 +1597,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Best traditional jewelry I've found! Delivered to Noida within hours. The American Diamond necklace is stunning!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">A</div>
@@ -1618,7 +1608,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Amazing service from Faridabad! Got my order same day. The oxidized silver earrings are exactly what I wanted."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">P</div>
@@ -1629,7 +1619,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered from Sonipat for my sister's engagement. The jewelry arrived in perfect condition! Great quality and reasonable prices."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">K</div>
@@ -1640,7 +1630,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Beautiful Jadau choker delivered to Ghaziabad! The craftsmanship is exceptional. Will definitely order again!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">D</div>
@@ -1651,7 +1641,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered from Baraut for Diwali. The gold-plated necklace set is stunning! Fast delivery and secure packaging."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">M</div>
@@ -1662,7 +1652,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Got my order delivered to Greater Noida in just a few hours! The traditional jewelry is beautiful and authentic."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">N</div>
@@ -1673,7 +1663,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Shipped to New York for my niece's wedding! The jewelry arrived safely and looks absolutely gorgeous. Worth the international shipping!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">P</div>
@@ -1684,7 +1674,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered from London for my daughter's Indian wedding. The bridal jewelry set exceeded all expectations! Beautifully packaged."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">S</div>
@@ -1695,7 +1685,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Shipped to Toronto! Authentic Indian jewelry that's hard to find here. The Kundan necklace is stunning and arrived in perfect condition."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">M</div>
@@ -1706,7 +1696,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Delivered to Dubai! Amazing collection of traditional Indian jewelry. Fast international shipping and excellent customer service."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">A</div>
@@ -1717,7 +1707,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered from Sydney for a festival! The jewelry arrived on time and looks even better than the photos. Highly recommend!"</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">R</div>
@@ -1728,7 +1718,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Shipped to Singapore for Diwali celebrations! The American Diamond set sparkles beautifully. Great quality at reasonable prices."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">L</div>
@@ -1739,7 +1729,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Delivered to California! Perfect for our Indian wedding. The traditional designs are authentic and the quality is outstanding."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">N</div>
@@ -1750,7 +1740,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered from Melbourne for my mother. She absolutely loves the Jadau choker! International shipping was smooth and reliable."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">V</div>
@@ -1761,7 +1751,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Shipped to Abu Dhabi! Beautiful handcrafted jewelry that reminds me of home. Fast delivery and excellent packaging."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">F</div>
@@ -1772,7 +1762,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Delivered to Vancouver! The oxidized silver jewelry is exactly what I was looking for. Great for keeping our Indian traditions alive abroad."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">H</div>
@@ -1783,7 +1773,7 @@
                 </div>
             </div>
             <div class="review-card">
-                <div class="stars"></div>
+                <div class="stars">★★★★★</div>
                 <p class="review-text">"Ordered from New Jersey for Navratri! The traditional jewelry arrived in perfect condition. Beautifully crafted and authentic designs."</p>
                 <div class="reviewer">
                     <div class="reviewer-avatar">K</div>
@@ -1935,6 +1925,7 @@
 
         let allProducts = [];
         let currentProduct = null;
+        let activeCategory = 'All'; // track the currently selected category
 
         // Live Purchase Notifications
         const livePurchases = [
@@ -2213,12 +2204,12 @@
             if (slides.length === 0) return;
             
             slides[currentSlide].classList.remove('active');
-            dots[currentSlide].classList.remove('active');
+            if (dots[currentSlide]) dots[currentSlide].classList.remove('active');
             
             currentSlide = index;
             
             slides[currentSlide].classList.add('active');
-            dots[currentSlide].classList.add('active');
+            if (dots[currentSlide]) dots[currentSlide].classList.add('active');
             
             // Reset auto-rotation
             stopCarousel();
@@ -2350,6 +2341,7 @@
         }
 
         function filterCategory(category) {
+            activeCategory = category;
             const title = document.getElementById('collectionTitle');
             if (category === 'All') {
                 title.innerText = "Curated Selection";
@@ -2433,7 +2425,7 @@
                     <div class="card-details">
                         <span class="tag">${pCat}</span>
                         <div class="p-name">${pName}</div>
-                        <div class="price">${priceNum.toLocaleString('en-IN')}</div>
+                        <div class="price">₹${priceNum.toLocaleString('en-IN')}</div>
                         ${stock ? `<div class="stock-info"><i class="fa-solid fa-fire"></i> ${stock}</div>` : ''}
                         <button class="buy-btn" onclick="event.stopPropagation(); addToCartQuick('${pId}', '${pName.replace(/'/g, "&#39;")}', '${priceNum}', '${pImage.replace(/'/g, "&#39;")}')">
                             <i class="fa-solid fa-cart-plus"></i> ADD TO CART
@@ -2454,7 +2446,7 @@
 
         function buyNowQuick(name, price, image) {
             currentProduct = { name, price, image };
-            document.getElementById('paymentAmount').textContent = '' + parseFloat(price).toLocaleString('en-IN');
+            document.getElementById('paymentAmount').textContent = '₹' + parseFloat(price).toLocaleString('en-IN');
             document.getElementById('modalProductName').textContent = name;
             document.getElementById('modalProductImg').src = image;
             document.getElementById('paymentModal').style.display = 'block';
@@ -2474,8 +2466,16 @@
         }
         
         function proceedToCheckout() {
-            if(currentProduct) {
-                window.location.href = `checkout.html?name=${encodeURIComponent(currentProduct.name)}&price=${encodeURIComponent(currentProduct.price)}&image=${encodeURIComponent(currentProduct.image)}`;
+            if (currentProduct) {
+                // Use ShoppingCart (same as product-detail.html) — checkout.html reads from cart only
+                ShoppingCart.clear();
+                ShoppingCart.addItem({
+                    id: 'buynow_' + Date.now(),
+                    name: currentProduct.name,
+                    price: parseFloat(String(currentProduct.price).replace(/[^0-9.]/g, '')) || 0,
+                    image: currentProduct.image
+                });
+                window.location.href = 'checkout.html';
             }
         }
 
@@ -2487,17 +2487,30 @@
 
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
-            renderProducts(allProducts.filter(p => {
-                const name = p.name || p.Name || "";
+            // Search only within the currently active category
+            const pool = activeCategory === 'All'
+                ? allProducts
+                : allProducts.filter(p => {
+                    const cat = p.category || p.Category || '';
+                    return cat.toLowerCase().includes(activeCategory.toLowerCase());
+                });
+            renderProducts(pool.filter(p => {
+                const name = p.name || p.Name || '';
                 return name.toLowerCase().includes(term);
             }));
         });
 
         function sortProducts(val) {
-            let sorted = [...allProducts];
-            if(val === 'low-high') sorted.sort((a,b) => parseFloat(a.price||a.Price) - parseFloat(b.price||b.Price));
-            if(val === 'high-low') sorted.sort((a,b) => parseFloat(b.price||b.Price) - parseFloat(a.price||a.Price));
-            renderProducts(sorted);
+            // Sort only within the currently active category
+            const pool = activeCategory === 'All'
+                ? [...allProducts]
+                : allProducts.filter(p => {
+                    const cat = p.category || p.Category || '';
+                    return cat.toLowerCase().includes(activeCategory.toLowerCase());
+                });
+            if (val === 'low-high') pool.sort((a,b) => parseFloat(a.price||a.Price) - parseFloat(b.price||b.Price));
+            if (val === 'high-low') pool.sort((a,b) => parseFloat(b.price||b.Price) - parseFloat(a.price||a.Price));
+            renderProducts(pool);
         }
 
         loadProducts();
