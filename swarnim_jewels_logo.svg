@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="140" viewBox="0 0 500 140">
+  <rect width="500" height="140" fill="#0a0a0a" rx="10"/>
+
+  <!-- Gemstone Icon -->
+  <g transform="translate(65, 70)">
+    <polygon points="0,-45 20,-20 -20,-20" fill="#D4AF37" opacity="0.95"/>
+    <polygon points="0,-45 20,-20 38,-28" fill="#C09B28" opacity="0.9"/>
+    <polygon points="0,-45 -20,-20 -38,-28" fill="#E8C84A" opacity="0.9"/>
+    <polygon points="-38,-28 -20,-20 -38,5" fill="#B8922A" opacity="0.85"/>
+    <polygon points="38,-28 20,-20 38,5" fill="#D4AF37" opacity="0.85"/>
+    <polygon points="-20,-20 20,-20 -38,5 38,5" fill="#F0D060" opacity="0.7"/>
+    <polygon points="-38,5 0,45 -18,5" fill="#C09B28" opacity="0.9"/>
+    <polygon points="38,5 0,45 18,5" fill="#B8922A" opacity="0.9"/>
+    <polygon points="-18,5 18,5 0,45" fill="#D4AF37" opacity="0.95"/>
+    <line x1="-38" y1="5" x2="38" y2="5" stroke="#D4AF37" stroke-width="1.2" opacity="0.6"/>
+    <polygon points="0,-45 38,-28 38,5 0,45 -38,5 -38,-28" fill="none" stroke="#D4AF37" stroke-width="1.8"/>
+    <polygon points="-20,-20 20,-20 18,5 -18,5" fill="none" stroke="#D4AF37" stroke-width="1" opacity="0.7"/>
+    <circle cx="-5" cy="-30" r="1.5" fill="white" opacity="0.9"/>
+    <circle cx="10" cy="-10" r="1" fill="white" opacity="0.7"/>
+    <circle cx="-15" cy="-5" r="1" fill="white" opacity="0.6"/>
+  </g>
+
+  <line x1="135" y1="25" x2="135" y2="115" stroke="#D4AF37" stroke-width="1" opacity="0.4"/>
+  <text x="155" y="62" font-family="Georgia, serif" font-size="32" font-weight="bold" fill="#D4AF37" letter-spacing="3">SWARNIM</text>
+  <text x="156" y="90" font-family="Georgia, serif" font-size="20" fill="#C0A030" letter-spacing="8">JEWELS</text>
+  <line x1="155" y1="100" x2="460" y2="100" stroke="#D4AF37" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="155" cy="100" r="2" fill="#D4AF37" opacity="0.7"/>
+  <circle cx="460" cy="100" r="2" fill="#D4AF37" opacity="0.7"/>
+  <text x="155" y="118" font-family="Georgia, serif" font-size="10" fill="#D4AF37" letter-spacing="3" opacity="0.75">EXCLUSIVE HANDCRAFTED JEWELRY</text>
+</svg>

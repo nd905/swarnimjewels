@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#0a0a0a"/>
+  <rect x="12" y="12" width="488" height="488" fill="none" stroke="#D4AF37" stroke-width="2.5" opacity="0.5"/>
+
+  <!-- Large Gemstone centered -->
+  <g transform="translate(256, 220)">
+    <!-- Crown facets (top) -->
+    <polygon points="0,-100 45,-45 -45,-45" fill="#D4AF37" opacity="0.95"/>
+    <polygon points="0,-100 45,-45 85,-62" fill="#C09B28" opacity="0.9"/>
+    <polygon points="0,-100 -45,-45 -85,-62" fill="#E8C84A" opacity="0.9"/>
+
+    <!-- Upper girdle -->
+    <polygon points="-85,-62 -45,-45 -85,10" fill="#B8922A" opacity="0.85"/>
+    <polygon points="85,-62 45,-45 85,10" fill="#D4AF37" opacity="0.85"/>
+    <polygon points="-45,-45 45,-45 85,10 -85,10" fill="#F0D060" opacity="0.65"/>
+
+    <!-- Pavilion (bottom) -->
+    <polygon points="-85,10 0,105 -40,10" fill="#C09B28" opacity="0.9"/>
+    <polygon points="85,10 0,105 40,10" fill="#B8922A" opacity="0.9"/>
+    <polygon points="-40,10 40,10 0,105" fill="#D4AF37" opacity="0.95"/>
+
+    <!-- Girdle line -->
+    <line x1="-85" y1="10" x2="85" y2="10" stroke="#D4AF37" stroke-width="2" opacity="0.6"/>
+
+    <!-- Outline -->
+    <polygon points="0,-100 85,-62 85,10 0,105 -85,10 -85,-62" fill="none" stroke="#D4AF37" stroke-width="3"/>
+
+    <!-- Table outline -->
+    <polygon points="-45,-45 45,-45 40,10 -40,10" fill="none" stroke="#D4AF37" stroke-width="1.5" opacity="0.7"/>
+
+    <!-- Sparkles -->
+    <circle cx="-10" cy="-70" r="3.5" fill="white" opacity="0.95"/>
+    <circle cx="25" cy="-25" r="2.5" fill="white" opacity="0.75"/>
+    <circle cx="-30" cy="-10" r="2" fill="white" opacity="0.65"/>
+    <circle cx="50" cy="-50" r="2" fill="white" opacity="0.6"/>
+  </g>
+
+  <!-- Decorative lines -->
+  <line x1="60" y1="360" x2="452" y2="360" stroke="#D4AF37" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="60" cy="360" r="3" fill="#D4AF37" opacity="0.7"/>
+  <circle cx="452" cy="360" r="3" fill="#D4AF37" opacity="0.7"/>
+
+  <!-- Text -->
+  <text x="256" y="415" font-family="Georgia, serif" font-size="58" font-weight="bold" fill="#D4AF37" text-anchor="middle" letter-spacing="4">SWARNIM</text>
+  <text x="256" y="465" font-family="Georgia, serif" font-size="34" fill="#C0A030" text-anchor="middle" letter-spacing="10">JEWELS</text>
+</svg>
