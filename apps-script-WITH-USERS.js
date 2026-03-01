@@ -10,7 +10,7 @@
 //    Users      A:UserID  B:Name  C:Email  D:PasswordHash
 //                E:Phone  F:CreatedAt  G:Cart(JSON)  H:Addresses(JSON)
 //    Orders     A:OrderID  B:UserID  C:Date  D:Items  E:Total
-//                F:Name  G:Phone  H:Address  I:Status
+//                F:Name  G:Phone  H:Address  I:Status  J:CouponCode
 //
 //  Deploy  New Deployment  Web App
 //  Execute as: Me  |  Access: Anyone
@@ -23,7 +23,7 @@ function out(data) {
 }
 
 //  doGet  products, categories, banners, coupons 
-function doGet() {
+function doGet(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
   // Products  look up by name first, fallback to first sheet
@@ -119,11 +119,15 @@ function _pSheet() {
 }
 
 function addProduct(d) {
-  _pSheet().appendRow([d.id,d.name,d.description,d.price,d.coverImage||'',d.galleryImages||'',d.category||'',d.videoURLs||'']);
+  if (!d.id || !d.name || d.price === undefined || d.price === '')
+    return out({ success:false, error:'Product ID, Name and Price are required.' });
+  _pSheet().appendRow([d.id,d.name,d.description||'',d.price,d.coverImage||'',d.galleryImages||'',d.category||'',d.videoURLs||'']);
   return out({ success:true });
 }
 
 function updateProduct(d) {
+  if (!d.id || !d.name || d.price === undefined || d.price === '')
+    return out({ success:false, error:'Product ID, Name and Price are required.' });
   var sh = _pSheet(), last = sh.getLastRow();
   if (last < 2) return out({ success:false, error:'Product not found.' });
   var ids = sh.getRange(2,1,last-1,1).getValues();
@@ -150,16 +154,20 @@ function deleteProduct(d) {
 //  CATEGORIES / BANNERS / COUPONS
 // 
 function addCategory(d) {
+  if (!d.category || !d.category.toString().trim())
+    return out({ success:false, error:'Category name is required.' });
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var s  = ss.getSheetByName('Categories') || ss.insertSheet('Categories');
-  s.appendRow([d.category]);
+  s.appendRow([d.category.toString().trim()]);
   return out({ success:true });
 }
 
 function deleteCategory(d) {
   var s = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories');
   if (!s) return out({ success:false, error:'Sheet not found.' });
-  var vals = s.getRange(1,1,s.getLastRow(),1).getValues();
+  var last = s.getLastRow();
+  if (last === 0) return out({ success:false, error:'Category not found.' });
+  var vals = s.getRange(1,1,last,1).getValues();
   for (var i=0; i<vals.length; i++) {
     if (vals[i][0].toString().trim() === (d.category||'').trim()) { s.deleteRow(i+1); return out({ success:true }); }
   }
@@ -167,16 +175,20 @@ function deleteCategory(d) {
 }
 
 function addBanner(d) {
+  if (!d.id || !d.imageUrl)
+    return out({ success:false, error:'Banner ID and Image URL are required.' });
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var s  = ss.getSheetByName('Banners') || ss.insertSheet('Banners');
-  s.appendRow([d.id, d.imageUrl||'', d.active!==false, d.sortOrder||0, d.title||'']);
+  s.appendRow([d.id, d.imageUrl, d.active!==false, d.sortOrder||0, d.title||'']);
   return out({ success:true });
 }
 
 function deleteBanner(d) {
   var s = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Banners');
   if (!s) return out({ success:false, error:'Sheet not found.' });
-  var ids = s.getRange(1,1,s.getLastRow(),1).getValues();
+  var last = s.getLastRow();
+  if (last === 0) return out({ success:false, error:'Banner not found.' });
+  var ids = s.getRange(1,1,last,1).getValues();
   for (var i=0; i<ids.length; i++) {
     if (String(ids[i][0]) === String(d.id)) { s.deleteRow(i+1); return out({ success:true }); }
   }
@@ -308,7 +320,7 @@ function updateUser(d) {
   var cur = sh.getRange(row,1,1,5).getValues()[0]; // A-E
   // Only overwrite if new value is non-empty  preserves existing data
   var newName  = (d.name  && d.name.trim())  ? d.name.trim()  : cur[1];
-  var newPhone = (d.phone !== undefined)       ? d.phone.trim() : cur[4];
+  var newPhone = (d.phone != null)             ? String(d.phone).trim() : cur[4];
 
   sh.getRange(row,2).setValue(newName);   // col B
   sh.getRange(row,5).setValue(newPhone);  // col E
@@ -359,7 +371,7 @@ function _oSheet() {
   var s  = ss.getSheetByName('Orders');
   if (!s) {
     s = ss.insertSheet('Orders');
-    s.appendRow(['OrderID','UserID','Date','Items','Total','Name','Phone','Address','Status']);
+    s.appendRow(['OrderID','UserID','Date','Items','Total','Name','Phone','Address','Status','CouponCode']);
     s.setFrozenRows(1);
   }
   return s;
@@ -374,7 +386,8 @@ function saveOrder(d) {
     ? order.items.map(function(i){ return (i.name||'')+' x'+(i.quantity||1); }).join(', ')
     : String(order.items||'');
   s.appendRow([orderId, String(d.userId||'GUEST'), date, items, Number(order.total||0),
-    String(order.name||''), String(order.phone||''), String(order.address||''), 'Pending']);
+    String(order.name||''), String(order.phone||''), String(order.address||''), 'Pending',
+    String(order.couponCode||'')]);
   return out({ success:true, orderId:orderId });
 }
 
@@ -382,11 +395,11 @@ function getOrders(d) {
   var s    = _oSheet(), last = s.getLastRow();
   if (last < 2) return out({ success:true, orders:[] });
   var orders = [];
-  s.getRange(2,1,last-1,9).getValues().forEach(function(r){
+  s.getRange(2,1,last-1,10).getValues().forEach(function(r){
     if (String(r[1]) === String(d.userId))
       orders.push({ orderId:String(r[0]), date:String(r[2]), items:String(r[3]),
         total:Number(r[4]), name:String(r[5]), phone:String(r[6]),
-        address:String(r[7]), status:String(r[8]||'Pending') });
+        address:String(r[7]), status:String(r[8]||'Pending'), couponCode:String(r[9]||'') });
   });
   orders.reverse(); // newest first
   return out({ success:true, orders:orders });
