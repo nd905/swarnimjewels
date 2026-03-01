@@ -656,6 +656,13 @@
                 scroll-behavior: auto !important;
             }
         }
+        /* inline confirm toast */
+        .confirm-toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid rgba(212,175,55,.4);border-radius:10px;padding:18px 24px;z-index:99999;display:flex;align-items:center;gap:16px;box-shadow:0 8px 32px rgba(0,0,0,.6);font-size:.9rem;color:#eee;white-space:nowrap;}
+        .confirm-toast .ct-btns{display:flex;gap:10px;}
+        .ct-yes{padding:7px 18px;background:#e57373;border:none;border-radius:5px;color:#fff;cursor:pointer;font-size:.82rem;font-weight:700;}
+        .ct-yes:hover{background:#c62828;}
+        .ct-no{padding:7px 18px;background:#333;border:1px solid #555;border-radius:5px;color:#eee;cursor:pointer;font-size:.82rem;}
+        .ct-no:hover{border-color:#d4af37;}
     </style>
 </head>
 <body>
@@ -887,19 +894,35 @@
             document.getElementById('grandTotal').textContent = '₹' + grandTotal.toLocaleString('en-IN');
         }
         
+        // Inline confirm helper (no browser blocking dialog)
+        function sjConfirm(message, onYes) {
+            const existing = document.getElementById('sj-confirm-toast');
+            if (existing) existing.remove();
+            const t = document.createElement('div');
+            t.id = 'sj-confirm-toast';
+            t.className = 'confirm-toast';
+            t.innerHTML = `<span>${message}</span><div class="ct-btns">
+              <button class="ct-no" id="ct-no">Cancel</button>
+              <button class="ct-yes" id="ct-yes">Yes, clear</button>
+            </div>`;
+            document.body.appendChild(t);
+            document.getElementById('ct-no').onclick  = () => t.remove();
+            document.getElementById('ct-yes').onclick = () => { t.remove(); onYes(); };
+        }
+
         // Clear cart with confirmation
         function clearCartConfirm() {
-            if (confirm('Are you sure you want to clear your entire cart?')) {
+            sjConfirm('Clear your entire cart?', () => {
                 ShoppingCart.clear();
                 loadCart();
-            }
+            });
         }
         
         // Proceed to checkout
         function proceedToCheckout() {
             const cart = ShoppingCart.getCart();
             if (cart.length === 0) {
-                alert('Your cart is empty!');
+                ShoppingCart.showNotification('⚠️ Your cart is empty!', 'error');
                 return;
             }
             window.location.href = 'checkout.html';
