@@ -211,7 +211,7 @@
         </div>
 
         <div class="guarantee-badge">
-            <i class="fa-solid fa-shield-check"></i>
+            <i class="fa-solid fa-shield-halved"></i>
             <strong>100% Money Back Guarantee</strong><br>
             7-Day Easy Returns Policy
         </div>
@@ -251,10 +251,10 @@ let availableCoupons = [];
 async function loadCouponsFromServer() {
     try {
         const res    = await fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL + '?t=' + Date.now());
+        if (!res.ok) throw new Error('Server returned ' + res.status);
         const result = await res.json();
         if (Array.isArray(result.coupons)) {
             availableCoupons = result.coupons;
-
         }
     } catch (e) {
         console.warn('Coupon load failed:', e);
@@ -418,12 +418,30 @@ function calculateTotals() {
 
 //  HELPERS 
 function copyUPI(event) {
-    navigator.clipboard.writeText('jainswarnima93@yesg').then(function() {
-        var btn = event.target.closest('.copy-btn');
-        var orig = btn.innerHTML;
+    var upiId = 'jainswarnima93@yesg';
+    var btn = event.target.closest('.copy-btn');
+    var orig = btn.innerHTML;
+
+    function showCopied() {
         btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
         setTimeout(function() { btn.innerHTML = orig; }, 2000);
-    });
+    }
+    function fallbackCopy() {
+        var ta = document.createElement('textarea');
+        ta.value = upiId;
+        ta.style.cssText = 'position:fixed;opacity:0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); showCopied(); }
+        catch(e) { ShoppingCart.showNotification('⚠️ Could not copy. Please copy manually: ' + upiId, 'error'); }
+        document.body.removeChild(ta);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(upiId).then(showCopied).catch(fallbackCopy);
+    } else {
+        fallbackCopy();
+    }
 }
 
 function validateForm() {
@@ -449,10 +467,14 @@ document.querySelectorAll('input, textarea').forEach(function(inp) {
 async function handleSubmit(event) {
     event.preventDefault();
     if (!validateForm()) return; // errors shown inline — no alert needed
-    var cart = ShoppingCart.getCart();
-    if (cart.length === 0) { alert('Your cart is empty!'); return; }
 
-    var btn = document.getElementById('submitBtn');
+    var btn = document.getElementById('submitBtn');  // declare FIRST
+    var cart = ShoppingCart.getCart();
+    if (cart.length === 0) { 
+        ShoppingCart.showNotification('⚠️ Your cart is empty!', 'error'); 
+        return; 
+    }
+
     btn.disabled  = true;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
 
@@ -485,8 +507,8 @@ async function handleSubmit(event) {
     var msg = encodeURIComponent(msgRaw);
 
     try {
-        var userId = (window.UserSystem && typeof window.UserSystem.getCurrentUser === 'function')
-            ? (window.UserSystem.getCurrentUser()?.userId || 'GUEST') : 'GUEST';
+        var userId = (window.UserSystem && typeof window.UserSystem.getUser === 'function')
+            ? (window.UserSystem.getUser()?.userId || 'GUEST') : 'GUEST';
         fetch(CONFIG.GOOGLE_APPS_SCRIPT_URL, {
             method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'},
             body: JSON.stringify({ action:'saveOrder', userId:userId, order:{
@@ -518,7 +540,7 @@ async function handleSubmit(event) {
         console.error('Order submission error:', e);
         btn.disabled  = false;
         btn.innerHTML = 'Place Order';
-        alert('Something went wrong. Please try again.');
+        ShoppingCart.showNotification('⚠️ Something went wrong. Please try again.', 'error');
     }
 }
 </script>
