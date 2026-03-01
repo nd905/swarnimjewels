@@ -443,10 +443,20 @@
             justify-content: center;
             transition: 0.3s;
             z-index: 10000;
+            line-height: 1;
         }
         .zoom-close:hover {
             background: white;
             transform: rotate(90deg);
+        }
+        @media (max-width: 768px) {
+            .zoom-close {
+                top: 14px;
+                right: 14px;
+                width: 44px;
+                height: 44px;
+                font-size: 1.3rem;
+            }
         }
         .zoom-instructions {
             position: absolute;
@@ -1261,7 +1271,9 @@
 
     <!-- Image Zoom Modal -->
     <div class="image-zoom-modal" id="imageZoomModal" onclick="closeImageZoom()">
-        <button class="zoom-close" onclick="closeImageZoom()"></button>
+        <button class="zoom-close" onclick="closeImageZoom()" aria-label="Close image">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
         <div class="zoom-image-container" onclick="event.stopPropagation()">
             <img id="zoomImage" class="zoom-image" src="" alt="Zoomed View">
         </div>
