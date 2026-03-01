@@ -25,7 +25,7 @@ const ShoppingCart = {
             return true;
         } catch(e) {
             this.log('ERROR: localStorage not available', e);
-            alert('Cart functionality requires localStorage. Please enable cookies in your browser.');
+            this.showNotification('⚠️ Cart requires cookies to be enabled in your browser.', 'error');
             return false;
         }
     },
@@ -59,7 +59,7 @@ const ShoppingCart = {
             return true;
         } catch(e) {
             this.log('ERROR: Failed to save cart', e);
-            alert('Failed to save cart. Your cart may be full.');
+            this.showNotification('⚠️ Failed to save cart. Your cart may be full.', 'error');
             return false;
         }
     },
@@ -71,7 +71,7 @@ const ShoppingCart = {
         // Validate product data
         if (!product || !product.id) {
             this.log('ERROR: Invalid product - missing ID');
-            alert('Error: Invalid product data');
+            this.showNotification('⚠️ Error: Invalid product data.', 'error');
             return false;
         }
         
@@ -82,14 +82,14 @@ const ShoppingCart = {
         
         if (!product.price || product.price <= 0) {
             this.log('ERROR: Invalid product - invalid price');
-            alert('Error: Invalid product price');
+            this.showNotification('⚠️ Error: Invalid product price.', 'error');
             return false;
         }
         
         let cart = this.getCart();
         
-        // Check if product already exists
-        const existingIndex = cart.findIndex(item => item.id === product.id);
+        // Check if product already exists (always compare as strings — IDs may come in as numbers)
+        const existingIndex = cart.findIndex(item => item.id === String(product.id));
         
         if (existingIndex > -1) {
             // Increase quantity
@@ -120,11 +120,12 @@ const ShoppingCart = {
         let cart = this.getCart();
         const beforeLength = cart.length;
         cart = cart.filter(item => item.id !== String(productId));
-        
+
         if (cart.length === beforeLength) {
             this.log('WARNING: Item not found', productId);
+            return false; // Item wasn't in cart — don't save or notify
         }
-        
+
         this.saveCart(cart);
         this.showNotification('Item removed', 'info');
         return true;
@@ -210,48 +211,27 @@ const ShoppingCart = {
     // Show notification
     showNotification: function(message, type = 'info') {
         this.log('Notification', { message, type });
-        
+
         // Remove existing notifications
         const existing = document.querySelectorAll('.cart-notification');
         existing.forEach(el => el.remove());
-        
-        // Create notification
+
+        // Build safely — NO innerHTML with user-controlled content (XSS prevention)
         const notification = document.createElement('div');
         notification.className = `cart-notification cart-notification-${type}`;
-        notification.innerHTML = `
-            <div style="
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
-                color: white;
-                padding: 15px 25px;
-                border-radius: 5px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                z-index: 10000;
-                font-family: 'Lato', sans-serif;
-                font-size: 14px;
-                font-weight: 500;
-                animation: slideInRight 0.3s ease;
-            ">
-                ${message}
-            </div>
-        `;
-        
-        // Add animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideInRight {
-                from { transform: translateX(400px); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOutRight {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(400px); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-        
+
+        const inner = document.createElement('div');
+        inner.style.cssText = [
+            'position:fixed', 'top:20px', 'right:20px',
+            `background:${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'}`,
+            'color:white', 'padding:15px 25px', 'border-radius:5px',
+            'box-shadow:0 4px 12px rgba(0,0,0,0.3)', 'z-index:10000',
+            "font-family:'Lato',sans-serif", 'font-size:14px',
+            'font-weight:500', 'animation:slideInRight 0.3s ease'
+        ].join(';');
+        inner.textContent = message;   // ← textContent: safe, never executes HTML
+
+        notification.appendChild(inner);
         document.body.appendChild(notification);
         
         // Auto remove after 3 seconds
@@ -264,14 +244,29 @@ const ShoppingCart = {
     // Initialize cart on page load
     init: function() {
         this.log('Initializing cart system');
-        
+
+        // Inject notification animation CSS FIRST (before any checks that may trigger notifications)
+        if (!document.getElementById('sj-cart-styles')) {
+            const style = document.createElement('style');
+            style.id = 'sj-cart-styles';
+            style.textContent = `
+                @keyframes slideInRight {
+                    from { transform: translateX(400px); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOutRight {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(400px); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
         // Check localStorage availability
         if (!this.isLocalStorageAvailable()) {
             console.error('ShoppingCart: localStorage not available');
             return;
         }
-        
-        // Update cart count on load
         this.updateCartCount();
         
         // Listen for storage changes from other tabs
