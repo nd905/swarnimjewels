@@ -1,0 +1,49 @@
+/*
+  # Strong security headers for all pages
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+  # Enforce HTTPS for 1 year (includeSubDomains)
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+  # Content Security Policy
+  # - Scripts: self + trusted CDNs (FontAwesome, Google Fonts, Razorpay, Google Analytics)
+  # - Styles: self + CDNs + unsafe-inline (needed for inline styles)
+  # - Images: self + data URIs (for base64 product images) + https
+  # - Connect: self + Google Apps Script (backend API) + Razorpay
+  # - Frames: block all (no iframes)
+  # Note: X-XSS-Protection is intentionally OMITTED — deprecated in Chrome 78+, use CSP instead
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://checkout.razorpay.com https://www.googletagmanager.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; media-src 'self' https://pub-a8af64134ed74913b3828ee8f389b6c0.r2.dev https://*.r2.cloudflarestorage.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://api.razorpay.com https://api.imgbb.com https://*.r2.cloudflarestorage.com https://pub-a8af64134ed74913b3828ee8f389b6c0.r2.dev; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'
+
+# Sensitive pages: no indexing
+/admin-panel.html
+  X-Robots-Tag: noindex, nofollow
+
+/login.html
+  X-Robots-Tag: noindex, follow
+
+/register.html
+  X-Robots-Tag: noindex, follow
+
+/account.html
+  X-Robots-Tag: noindex, nofollow
+
+/checkout.html
+  X-Robots-Tag: noindex, nofollow
+
+/reset-password.html
+  X-Robots-Tag: noindex, nofollow
+
+# JS and manifest: cache 1 day
+/*.js
+  Cache-Control: public, max-age=86400
+
+/manifest.json
+  Content-Type: application/manifest+json
+  Cache-Control: public, max-age=86400
+
+# HTML pages: must-revalidate (no stale prices/availability shown to users)
+/*.html
+  Cache-Control: no-cache, must-revalidate
