@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell With Us | Swarnim Jewels Collaborators</title>
+    <meta name="description" content="Partner with Swarnim Jewels. Submit your jewellery products and reach thousands of customers across India.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --card-bg: #121212;
+            --text-main: #f4f4f4;
+            --text-muted: #a8a8a8;
+            --accent: #d4af37;
+            --border: 1px solid rgba(212,175,55,0.25);
+            --font-heading: 'Cinzel', serif;
+            --font-body: 'Lato', sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:var(--font-body); background:var(--bg-dark); color:var(--text-main); min-height:100vh; display:flex; flex-direction:column; }
+        a { text-decoration:none; color:inherit; transition:0.3s; }
+        ul { list-style:none; }
+
+        /* ── NAVBAR ── */
+        .navbar { background:rgba(5,5,5,0.97); border-bottom:1px solid rgba(212,175,55,0.3); padding:1.2rem 5%; position:sticky; top:0; z-index:1000; display:flex; justify-content:space-between; align-items:center; backdrop-filter:blur(10px); }
+        .logo { font-family:var(--font-heading); font-size:1.6rem; font-weight:700; color:var(--accent); letter-spacing:2px; display:flex; align-items:center; gap:10px; }
+        .logo span { color:white; font-weight:400; }
+        .nav-links { display:flex; gap:30px; align-items:center; }
+        .nav-links a { font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); }
+        .nav-links a:hover, .nav-links a.active { color:var(--accent); }
+        .menu-icon { display:none; flex-direction:column; gap:5px; cursor:pointer; }
+        .menu-icon span { width:25px; height:2px; background:var(--accent); border-radius:2px; }
+        @media(max-width:768px){
+            .nav-links { display:none; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:#0a0a0a; padding:20px; border-bottom:var(--border); gap:15px; }
+            .nav-links.open { display:flex; }
+            .menu-icon { display:flex; }
+        }
+
+        /* ── HERO ── */
+        .hero {
+            background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(212,175,55,0.06) 100%),
+                url('https://images.unsplash.com/photo-1573408301185-9519f94816b5?q=80&w=2000') center/cover no-repeat;
+            padding:90px 5% 70px;
+            text-align:center;
+            border-bottom:var(--border);
+        }
+        .hero .tag { color:var(--accent); letter-spacing:4px; font-size:0.8rem; text-transform:uppercase; margin-bottom:18px; display:block; }
+        .hero h1 { font-family:var(--font-heading); font-size:clamp(2rem,4.5vw,3.2rem); margin-bottom:20px; }
+        .hero p { color:var(--text-muted); font-size:1.05rem; max-width:580px; margin:0 auto; line-height:1.7; }
+
+        /* ── PERKS ── */
+        .perks { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:25px; padding:50px 5%; background:#0a0a0a; border-bottom:var(--border); }
+        .perk { text-align:center; padding:25px 15px; }
+        .perk i { font-size:2rem; color:var(--accent); margin-bottom:15px; display:block; }
+        .perk h4 { font-family:var(--font-heading); margin-bottom:8px; font-size:1rem; }
+        .perk p { color:var(--text-muted); font-size:0.85rem; line-height:1.5; }
+
+        /* ── FORM SECTION ── */
+        .form-section { padding:60px 5%; max-width:820px; margin:0 auto; width:100%; flex:1; }
+        .form-section h2 { font-family:var(--font-heading); font-size:1.8rem; text-align:center; margin-bottom:8px; }
+        .form-section .sub { text-align:center; color:var(--text-muted); margin-bottom:40px; font-size:0.95rem; }
+        .form-card { background:var(--card-bg); border:var(--border); border-radius:16px; padding:40px; }
+        .section-divider { margin:30px 0 25px; padding-bottom:10px; border-bottom:1px solid #222; }
+        .section-divider h3 { font-family:var(--font-heading); font-size:1rem; color:var(--accent); letter-spacing:2px; text-transform:uppercase; }
+        .form-row { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        .form-group { margin-bottom:20px; }
+        .form-group label { display:block; margin-bottom:8px; font-size:0.82rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; }
+        .form-group label .req { color:#f87171; }
+        .form-group input, .form-group textarea, .form-group select {
+            width:100%; padding:13px 16px; background:#1a1a1a; border:1px solid #333;
+            border-radius:8px; color:var(--text-main); font-family:var(--font-body); font-size:0.95rem;
+            transition:border 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline:none; border-color:var(--accent); }
+        .form-group textarea { resize:vertical; min-height:100px; }
+        .form-group select option { background:#1a1a1a; }
+
+        /* Image Upload */
+        .image-upload-area { border:2px dashed rgba(212,175,55,0.3); border-radius:10px; padding:30px; text-align:center; cursor:pointer; transition:0.3s; background:#0f0f0f; }
+        .image-upload-area:hover { border-color:var(--accent); background:#141414; }
+        .image-upload-area i { font-size:2.5rem; color:rgba(212,175,55,0.4); margin-bottom:12px; display:block; }
+        .image-upload-area p { color:var(--text-muted); font-size:0.9rem; line-height:1.5; }
+        .image-upload-area .limit { font-size:0.8rem; color:#555; margin-top:6px; }
+        #imagePreview { display:flex; flex-wrap:wrap; gap:10px; margin-top:15px; }
+        #imagePreview .prev-item { position:relative; }
+        #imagePreview img { width:80px; height:80px; object-fit:cover; border-radius:8px; border:1px solid #333; }
+        #imagePreview .remove-img { position:absolute; top:-6px; right:-6px; background:#f87171; border:none; border-radius:50%; width:20px; height:20px; color:white; font-size:0.7rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+        #imageInput { display:none; }
+
+        /* Terms */
+        .terms-box { background:#0a0a0a; border:var(--border); border-radius:10px; padding:20px; margin:25px 0; }
+        .terms-box h4 { color:var(--accent); margin-bottom:12px; font-size:0.9rem; }
+        .terms-box ul { list-style:disc; padding-left:20px; }
+        .terms-box ul li { color:var(--text-muted); font-size:0.85rem; margin-bottom:6px; line-height:1.5; }
+        .checkbox-row { display:flex; align-items:flex-start; gap:12px; margin-bottom:20px; }
+        .checkbox-row input[type="checkbox"] { width:18px; height:18px; margin-top:2px; accent-color:var(--accent); cursor:pointer; flex-shrink:0; }
+        .checkbox-row label { color:var(--text-muted); font-size:0.9rem; line-height:1.5; cursor:pointer; }
+
+        /* Submit */
+        .submit-btn { width:100%; padding:16px; background:var(--accent); color:#000; font-weight:700; font-size:1rem; border:none; border-radius:10px; cursor:pointer; font-family:var(--font-heading); letter-spacing:1.5px; transition:0.3s; display:flex; align-items:center; justify-content:center; gap:10px; }
+        .submit-btn:hover { background:#c9a436; }
+        .submit-btn:disabled { background:#555; color:#999; cursor:not-allowed; }
+
+        /* Status msg */
+        #statusMsg { text-align:center; margin-top:20px; padding:15px; border-radius:8px; display:none; font-weight:600; }
+        #statusMsg.success { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); color:#4ade80; }
+        #statusMsg.error   { background:rgba(239,68,68,0.1);  border:1px solid rgba(239,68,68,0.3);  color:#f87171; }
+
+        /* FAQ */
+        .faq { padding:50px 5%; background:#0a0a0a; border-top:var(--border); }
+        .faq h2 { font-family:var(--font-heading); font-size:1.6rem; text-align:center; margin-bottom:35px; }
+        .faq-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:25px; max-width:900px; margin:0 auto; }
+        .faq-item h4 { color:var(--accent); margin-bottom:8px; font-size:0.95rem; }
+        .faq-item p  { color:var(--text-muted); font-size:0.88rem; line-height:1.6; }
+
+        /* Footer */
+        footer { background:#0a0a0a; border-top:var(--border); padding:30px 5%; text-align:center; color:var(--text-muted); font-size:0.85rem; }
+        footer a { color:var(--accent); }
+
+        @media(max-width:600px){
+            .form-row { grid-template-columns:1fr; }
+            .form-card { padding:25px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <a href="index.html" class="logo"><i class="fa-regular fa-gem"></i> &nbsp;SWARNIM<span>JEWELS</span></a>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" onclick="document.getElementById('navLinks').classList.remove('open')">Home</a></li>
+        <li><a href="index.html#shop" onclick="document.getElementById('navLinks').classList.remove('open')">Shop</a></li>
+        <li><a href="rental.html" onclick="document.getElementById('navLinks').classList.remove('open')">Rent Jewellery</a></li>
+        <li><a href="about-us.html" onclick="document.getElementById('navLinks').classList.remove('open')">Our Story</a></li>
+        <li><a href="contact.html" onclick="document.getElementById('navLinks').classList.remove('open')">Contact</a></li>
+        <li><a href="vendor-submit.html" class="active" style="color:var(--accent);font-weight:700;">Sell With Us</a></li>
+    </ul>
+    <div class="nav-actions">
+        <div class="menu-icon" onclick="document.getElementById('navLinks').classList.toggle('open')">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <span class="tag">✦ Become a Partner ✦</span>
+    <h1>Sell Your Jewellery<br>on Swarnim Jewels</h1>
+    <p>Partner with us and showcase your creations to 15,000+ customers across India and worldwide. We handle marketing, payments & logistics.</p>
+</section>
+
+<!-- Perks -->
+<div class="perks">
+    <div class="perk">
+        <i class="fa-solid fa-users"></i>
+        <h4>Huge Reach</h4>
+        <p>Access to our 15,000+ active customers across India, UK, USA, UAE & more</p>
+    </div>
+    <div class="perk">
+        <i class="fa-solid fa-indian-rupee-sign"></i>
+        <h4>You Set the Price</h4>
+        <p>Submit your price. We earn a small commission. You keep the rest.</p>
+    </div>
+    <div class="perk">
+        <i class="fa-solid fa-shield-halved"></i>
+        <h4>Quality Approved</h4>
+        <p>All products go through our quality check before going live. Your brand stays protected.</p>
+    </div>
+    <div class="perk">
+        <i class="fa-solid fa-headset"></i>
+        <h4>Full Support</h4>
+        <p>Dedicated partner support via WhatsApp. We're with you every step.</p>
+    </div>
+</div>
+
+<!-- Form -->
+<div class="form-section">
+    <h2>Submit Your Product</h2>
+    <p class="sub">Fill in the details below. Our team reviews all submissions within 24–48 hours.</p>
+
+    <div class="form-card">
+        <!-- Vendor Info -->
+        <div class="section-divider"><h3>Your Information</h3></div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Your Full Name <span class="req">*</span></label>
+                <input type="text" id="vendorName" placeholder="e.g. Priya Sharma">
+            </div>
+            <div class="form-group">
+                <label>Brand / Shop Name <span class="req">*</span></label>
+                <input type="text" id="brandName" placeholder="e.g. Priya's Crafts">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Email Address <span class="req">*</span></label>
+                <input type="email" id="vendorEmail" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label>WhatsApp / Phone <span class="req">*</span></label>
+                <input type="tel" id="vendorPhone" placeholder="10-digit number">
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="section-divider"><h3>Product Details</h3></div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Product Name <span class="req">*</span></label>
+                <input type="text" id="productName" placeholder="e.g. Kundan Bridal Choker Set">
+            </div>
+            <div class="form-group">
+                <label>Category <span class="req">*</span></label>
+                <select id="productCategory">
+                    <option value="">Select Category</option>
+                    <option>Necklace Sets</option>
+                    <option>Earrings</option>
+                    <option>Bangles & Bracelets</option>
+                    <option>Rings</option>
+                    <option>Maang Tikka</option>
+                    <option>Nose Rings</option>
+                    <option>Anklets</option>
+                    <option>Bridal Sets</option>
+                    <option>Oxidized Silver</option>
+                    <option>Kundan</option>
+                    <option>Gold Plated</option>
+                    <option>American Diamond</option>
+                    <option>Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Product Description <span class="req">*</span></label>
+            <textarea id="productDesc" placeholder="Describe your product — material, weight, dimensions, special features, care instructions..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Your Selling Price (₹) <span class="req">*</span></label>
+            <input type="number" id="productPrice" placeholder="e.g. 1299" min="0">
+        </div>
+
+        <!-- Images -->
+        <div class="section-divider"><h3>Product Images</h3></div>
+        <div class="form-group">
+            <label>Upload Photos <span class="req">*</span> (up to 5 images)</label>
+            <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <p>Click to upload product photos<br><span style="color:var(--accent);">JPG, PNG, WEBP</span> accepted</p>
+                <div class="limit">Max 5 images · Each under 5MB</div>
+            </div>
+            <input type="file" id="imageInput" accept="image/*" multiple onchange="handleImageUpload(event)">
+            <div id="imagePreview"></div>
+        </div>
+        <div class="form-group">
+            <label>Or paste image URLs (comma separated)</label>
+            <input type="text" id="imageUrls" placeholder="https://drive.google.com/... , https://...">
+        </div>
+
+        <!-- Terms -->
+        <div class="terms-box">
+            <h4><i class="fa-solid fa-circle-info"></i> Before You Submit</h4>
+            <ul>
+                <li>Products are reviewed by our team within 24–48 hours.</li>
+                <li>If approved, your product is listed on our website. You'll be notified by email/WhatsApp.</li>
+                <li>Swarnim Jewels charges a 15% platform commission on each sale.</li>
+                <li>You are responsible for delivering the product to our warehouse or directly to the customer (we'll confirm the arrangement).</li>
+                <li>Products must be authentic, handcrafted / quality-assured, and accurately described.</li>
+                <li>We reserve the right to reject products that don't meet our quality standards.</li>
+            </ul>
+        </div>
+        <div class="checkbox-row">
+            <input type="checkbox" id="agreeTerms">
+            <label for="agreeTerms">I have read and agree to the above terms. I confirm that my product is authentic and accurately described.</label>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitVendorProduct()">
+            <i class="fa-solid fa-paper-plane"></i> Submit for Review
+        </button>
+
+        <div id="statusMsg"></div>
+    </div>
+</div>
+
+<!-- FAQ -->
+<section class="faq">
+    <h2>Common Questions</h2>
+    <div class="faq-grid">
+        <div class="faq-item">
+            <h4>How long does approval take?</h4>
+            <p>Our team reviews all submissions within 24–48 hours. You'll be notified via WhatsApp and email.</p>
+        </div>
+        <div class="faq-item">
+            <h4>How do I get paid?</h4>
+            <p>Once a sale is made, your earnings (minus 15% commission) are transferred to your bank account within 7 business days.</p>
+        </div>
+        <div class="faq-item">
+            <h4>Can I submit multiple products?</h4>
+            <p>Yes! You can submit as many products as you want. Each submission is reviewed individually.</p>
+        </div>
+        <div class="faq-item">
+            <h4>What if my product is rejected?</h4>
+            <p>We'll let you know the reason. You can resubmit with improvements or contact us for guidance.</p>
+        </div>
+        <div class="faq-item">
+            <h4>Who handles shipping?</h4>
+            <p>We'll discuss the logistics arrangement after approval — either direct-to-customer or through our warehouse.</p>
+        </div>
+        <div class="faq-item">
+            <h4>Any questions?</h4>
+            <p>WhatsApp us at <a href="https://wa.me/918218768602" style="color:var(--accent);" target="_blank">+91 82187 68602</a> — we respond fast!</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2026 Swarnim Jewels — <a href="index.html">Home</a> · <a href="contact.html">Contact</a> · <a href="privacy-policy.html">Privacy Policy</a></p>
+</footer>
+
+<script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2sIsHwOqQPTwTLlsHZgm9D6k9fhH_dZeNxzGYrKfZvTSVfw8Mb0cZg0j8Guefh7MC/exec';
+    let uploadedImages = [];
+
+    function handleImageUpload(e) {
+        const files = Array.from(e.target.files);
+        const remaining = 5 - uploadedImages.length;
+        if (remaining <= 0) { alert('Max 5 images allowed.'); return; }
+        files.slice(0, remaining).forEach(file => {
+            if (file.size > 5 * 1024 * 1024) { alert(file.name + ' is too large (max 5MB).'); return; }
+            const reader = new FileReader();
+            reader.onload = ev => {
+                uploadedImages.push({ name: file.name, dataUrl: ev.target.result });
+                renderPreviews();
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function renderPreviews() {
+        const div = document.getElementById('imagePreview');
+        div.innerHTML = uploadedImages.map((img,i) => `
+            <div class="prev-item">
+                <img src="${img.dataUrl}" alt="${img.name.replace(/"/g,'&quot;')}">
+                <button class="remove-img" onclick="removeImage(${i})">&times;</button>
+            </div>`).join('');
+    }
+
+    function removeImage(i) {
+        uploadedImages.splice(i,1);
+        renderPreviews();
+    }
+
+    async function submitVendorProduct() {
+        const vendorName   = document.getElementById('vendorName').value.trim();
+        const brandName    = document.getElementById('brandName').value.trim();
+        const vendorEmail  = document.getElementById('vendorEmail').value.trim();
+        const vendorPhone  = document.getElementById('vendorPhone').value.trim();
+        const productName  = document.getElementById('productName').value.trim();
+        const category     = document.getElementById('productCategory').value;
+        const description  = document.getElementById('productDesc').value.trim();
+        const price        = parseFloat(document.getElementById('productPrice').value);
+        const agreed       = document.getElementById('agreeTerms').checked;
+        const urlImages    = document.getElementById('imageUrls').value.trim();
+
+        if (!vendorName||!brandName||!vendorEmail||!vendorPhone||!productName||!category||!description||!price) {
+            showStatus('Please fill in all required fields.', false); return;
+        }
+        if (isNaN(price) || price <= 0) { showStatus('Please enter a valid price greater than ₹0.', false); return; } // Bug 196
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vendorEmail)) { showStatus('Please enter a valid email address.', false); return; }
+        if (!/^\d{10}$/.test(vendorPhone)) { showStatus('Please enter a valid 10-digit phone number.', false); return; }
+        if (!agreed) { showStatus('Please agree to the terms before submitting.', false); return; }
+        if (uploadedImages.length === 0 && !urlImages) { showStatus('Please upload at least one product image or paste an image URL.', false); return; }
+
+        // Combine image sources — send base64 dataUrls for uploaded files
+        let images = urlImages;
+        if (uploadedImages.length > 0) {
+            const dataUrls = uploadedImages.map(i => i.dataUrl);
+            images = urlImages
+                ? urlImages + '|||' + dataUrls.join('|||')
+                : dataUrls.join('|||');
+        }
+
+        // Total size check — base64 adds ~33% overhead; keep under 20MB total raw
+        const totalBytes = uploadedImages.reduce((sum, img) => sum + (img.dataUrl.length * 0.75), 0);
+        if (totalBytes > 20 * 1024 * 1024) {
+            showStatus('Total image size is too large. Please use fewer or smaller images (max ~20MB total).', false);
+            return;
+        }
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+
+        try {
+            const res = await fetch(SCRIPT_URL, {
+                method:  'POST',
+                redirect: 'follow',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ action:'submitVendorProduct', vendorName, brandName, vendorEmail, vendorPhone, productName, category, description, price, images })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showStatus('✓ Submission received! Your ID: ' + data.submissionId + '. We\'ll contact you within 24–48 hours via WhatsApp/email.', true);
+                document.querySelector('.form-card').querySelectorAll('input,textarea,select').forEach(el=>el.value='');
+                uploadedImages = [];
+                renderPreviews();
+                document.getElementById('agreeTerms').checked = false;
+                // Re-enable button so user can submit again
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Another Product';
+            } else {
+                showStatus('Error: ' + (data.error||'Submission failed. Please try again.'), false);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit for Review';
+            }
+        } catch(e) {
+            showStatus('Network error. Please check your connection and try again.', false);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit for Review';
+        }
+    }
+
+    function showStatus(msg, ok) {
+        const el = document.getElementById('statusMsg');
+        el.style.display = 'block';
+        el.className = ok ? 'success' : 'error';
+        el.textContent = msg;
+        el.scrollIntoView({ behavior:'smooth', block:'center' });
+    }
+</script>
+    <script src="shopping-cart.js"></script>
+</body>
+</html>

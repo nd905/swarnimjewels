@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rent Jewellery | Swarnim Jewels</title>
+    <meta name="description" content="Rent exquisite handcrafted jewellery from Swarnim Jewels for weddings, events & special occasions. Book online with date picker.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --card-bg: #121212;
+            --text-main: #f4f4f4;
+            --text-muted: #a8a8a8;
+            --accent: #d4af37;
+            --border: 1px solid rgba(212,175,55,0.25);
+            --font-heading: 'Cinzel', serif;
+            --font-body: 'Lato', sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:var(--font-body); background:var(--bg-dark); color:var(--text-main); min-height:100vh; display:flex; flex-direction:column; }
+        a { text-decoration:none; color:inherit; transition:0.3s; }
+        ul { list-style:none; }
+
+        /* ── NAVBAR ── */
+        .navbar { background:rgba(5,5,5,0.97); border-bottom:1px solid rgba(212,175,55,0.3); padding:1.2rem 5%; position:sticky; top:0; z-index:1000; display:flex; justify-content:space-between; align-items:center; backdrop-filter:blur(10px); }
+        .logo { font-family:var(--font-heading); font-size:1.6rem; font-weight:700; color:var(--accent); letter-spacing:2px; display:flex; align-items:center; gap:10px; }
+        .logo span { color:white; font-weight:400; }
+        .nav-links { display:flex; gap:30px; align-items:center; }
+        .nav-links a { font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); }
+        .nav-links a:hover, .nav-links a.active { color:var(--accent); }
+        .nav-links .rent-link { color:var(--accent) !important; font-weight:700; }
+        .nav-actions { display:flex; gap:20px; align-items:center; }
+        .menu-icon { display:none; flex-direction:column; gap:5px; cursor:pointer; }
+        .menu-icon span { width:25px; height:2px; background:var(--accent); border-radius:2px; }
+        @media(max-width:768px){
+            .nav-links { display:none; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:#0a0a0a; padding:20px; border-bottom:var(--border); gap:15px; }
+            .nav-links.open { display:flex; }
+            .menu-icon { display:flex; }
+        }
+
+        /* ── HERO ── */
+        .rental-hero {
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(212,175,55,0.08) 100%),
+                url('https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=2000') center/cover no-repeat;
+            padding: 100px 5% 80px;
+            text-align:center;
+            border-bottom: var(--border);
+        }
+        .rental-hero .tag { color:var(--accent); letter-spacing:4px; font-size:0.8rem; text-transform:uppercase; margin-bottom:18px; display:block; }
+        .rental-hero h1 { font-family:var(--font-heading); font-size:clamp(2rem,5vw,3.5rem); margin-bottom:20px; }
+        .rental-hero p { color:var(--text-muted); font-size:1.1rem; max-width:600px; margin:0 auto 35px; line-height:1.7; }
+        .hero-badges { display:flex; justify-content:center; gap:30px; flex-wrap:wrap; }
+        .hero-badge { display:flex; align-items:center; gap:8px; color:var(--text-muted); font-size:0.9rem; }
+        .hero-badge i { color:var(--accent); }
+
+        /* ── HOW IT WORKS ── */
+        .how-section { padding:60px 5%; text-align:center; background:#0a0a0a; border-bottom:var(--border); }
+        .how-section h2 { font-family:var(--font-heading); font-size:1.8rem; color:var(--accent); margin-bottom:40px; }
+        .steps { display:flex; justify-content:center; gap:40px; flex-wrap:wrap; }
+        .step { max-width:180px; }
+        .step-num { width:50px; height:50px; border-radius:50%; border:2px solid var(--accent); display:flex; align-items:center; justify-content:center; font-family:var(--font-heading); font-size:1.2rem; color:var(--accent); margin:0 auto 15px; }
+        .step h4 { margin-bottom:8px; font-size:0.95rem; }
+        .step p { color:var(--text-muted); font-size:0.85rem; line-height:1.5; }
+
+        /* ── FILTERS ── */
+        .filters-bar { padding:25px 5%; display:flex; gap:15px; flex-wrap:wrap; align-items:center; background:var(--bg-dark); border-bottom:var(--border); }
+        .filters-bar select, .filters-bar input { background:#1a1a1a; color:var(--text-main); border:1px solid #333; padding:10px 15px; border-radius:6px; font-family:var(--font-body); font-size:0.9rem; cursor:pointer; }
+        .filters-bar select:focus, .filters-bar input:focus { outline:none; border-color:var(--accent); }
+        .filter-label { color:var(--text-muted); font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; }
+
+        /* ── PRODUCTS GRID ── */
+        .rental-grid-section { padding:50px 5%; flex:1; }
+        .section-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:35px; flex-wrap:wrap; gap:15px; }
+        .section-head h2 { font-family:var(--font-heading); font-size:1.6rem; }
+        .section-head span { color:var(--text-muted); font-size:0.9rem; }
+        .rental-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:30px; }
+        .rental-card { background:var(--card-bg); border:var(--border); border-radius:12px; overflow:hidden; transition:transform 0.3s, box-shadow 0.3s; cursor:pointer; }
+        .rental-card:hover { transform:translateY(-5px); box-shadow:0 10px 30px rgba(212,175,55,0.15); }
+        .rental-card img { width:100%; height:260px; object-fit:cover; display:block; }
+        .rental-card-body { padding:20px; }
+        .rental-card-cat { color:var(--accent); font-size:0.75rem; text-transform:uppercase; letter-spacing:2px; margin-bottom:8px; }
+        .rental-card-name { font-family:var(--font-heading); font-size:1.1rem; margin-bottom:12px; }
+        .rental-card-pricing { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:15px; }
+        .daily-rate { font-size:1.4rem; font-weight:700; color:var(--accent); }
+        .daily-rate small { font-size:0.75rem; color:var(--text-muted); font-weight:400; display:block; }
+        .deposit-badge { background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25); padding:4px 10px; border-radius:20px; font-size:0.8rem; color:var(--text-muted); }
+        .book-btn { width:100%; padding:12px; background:var(--accent); color:#000; font-weight:700; font-size:0.9rem; border:none; border-radius:6px; cursor:pointer; font-family:var(--font-heading); letter-spacing:1px; transition:0.3s; }
+        .book-btn:hover { background:#c9a436; }
+        .min-days { color:var(--text-muted); font-size:0.8rem; margin-bottom:12px; }
+        .empty-state { text-align:center; padding:80px 20px; color:var(--text-muted); grid-column:1/-1; }
+        .empty-state i { font-size:3rem; color:rgba(212,175,55,0.3); margin-bottom:20px; display:block; }
+
+        /* ── BOOKING MODAL ── */
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:2000; align-items:center; justify-content:center; padding:20px; }
+        .modal-overlay.open { display:flex; }
+        .modal-box { background:#111; border:var(--border); border-radius:16px; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; }
+        .modal-header { padding:25px 30px 20px; border-bottom:var(--border); display:flex; justify-content:space-between; align-items:center; }
+        .modal-header h3 { font-family:var(--font-heading); font-size:1.3rem; }
+        .modal-close { background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer; line-height:1; }
+        .modal-close:hover { color:var(--accent); }
+        .modal-body { padding:25px 30px; }
+        .modal-product { display:flex; gap:18px; margin-bottom:25px; padding-bottom:25px; border-bottom:var(--border); }
+        .modal-product img { width:90px; height:90px; object-fit:cover; border-radius:8px; border:var(--border); }
+        .modal-product-info h4 { font-family:var(--font-heading); margin-bottom:6px; }
+        .modal-product-info .rate { color:var(--accent); font-size:1.1rem; font-weight:700; }
+        .modal-product-info .dep { color:var(--text-muted); font-size:0.85rem; margin-top:4px; }
+        .form-row { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+        .form-group { margin-bottom:18px; }
+        .form-group label { display:block; margin-bottom:7px; font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; }
+        .form-group input, .form-group textarea, .form-group select { width:100%; padding:12px 15px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:var(--text-main); font-family:var(--font-body); font-size:0.95rem; }
+        .form-group input:focus, .form-group textarea:focus { outline:none; border-color:var(--accent); }
+        .form-group input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(1); cursor:pointer; }
+        .fee-summary { background:#0a0a0a; border:var(--border); border-radius:10px; padding:18px; margin:20px 0; }
+        .fee-row { display:flex; justify-content:space-between; padding:6px 0; font-size:0.9rem; color:var(--text-muted); }
+        .fee-row.total { color:var(--text-main); font-weight:700; font-size:1.05rem; border-top:1px solid #333; margin-top:8px; padding-top:12px; }
+        .fee-row .val { color:var(--text-main); }
+        .fee-row.total .val { color:var(--accent); }
+        .availability-msg { padding:10px 15px; border-radius:8px; font-size:0.85rem; margin-bottom:15px; display:none; }
+        .availability-msg.available { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); color:#4ade80; }
+        .availability-msg.unavailable { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#f87171; }
+        .pay-btn { width:100%; padding:15px; background:var(--accent); color:#000; font-weight:700; font-size:1rem; border:none; border-radius:8px; cursor:pointer; font-family:var(--font-heading); letter-spacing:1px; transition:0.3s; display:flex; align-items:center; justify-content:center; gap:10px; }
+        .pay-btn:hover { background:#c9a436; }
+        .pay-btn:disabled { background:#555; color:#999; cursor:not-allowed; }
+        .secure-note { text-align:center; color:var(--text-muted); font-size:0.8rem; margin-top:12px; }
+
+        /* ── SUCCESS MODAL ── */
+        .success-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:3000; align-items:center; justify-content:center; }
+        .success-overlay.open { display:flex; }
+        .success-box { background:#111; border:1px solid rgba(34,197,94,0.3); border-radius:16px; padding:50px 40px; text-align:center; max-width:420px; width:90%; }
+        .success-icon { font-size:4rem; color:#4ade80; margin-bottom:20px; }
+        .success-box h2 { font-family:var(--font-heading); margin-bottom:15px; }
+        .success-box p { color:var(--text-muted); margin-bottom:10px; line-height:1.6; }
+        .success-box .bid { color:var(--accent); font-weight:700; font-size:1.1rem; }
+        .success-close { margin-top:25px; padding:12px 30px; background:var(--accent); color:#000; font-weight:700; border:none; border-radius:8px; cursor:pointer; font-family:var(--font-heading); }
+
+        /* ── FOOTER ── */
+        footer { background:#0a0a0a; border-top:var(--border); padding:30px 5%; text-align:center; color:var(--text-muted); font-size:0.85rem; margin-top:auto; }
+        footer a { color:var(--accent); }
+
+        /* ── LOADING ── */
+        .loading-spinner { text-align:center; padding:80px 20px; grid-column:1/-1; }
+        .spinner { width:50px; height:50px; border:2px solid #333; border-top:2px solid var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 20px; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <a href="index.html" class="logo"><i class="fa-regular fa-gem"></i> &nbsp;SWARNIM<span>JEWELS</span></a>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" onclick="closeNav()">Home</a></li>
+        <li><a href="index.html#shop" onclick="closeNav()">Shop</a></li>
+        <li><a href="rental.html" class="active rent-link" onclick="closeNav()"><i class="fa-solid fa-gem"></i> Rent Jewellery</a></li>
+        <li><a href="about-us.html" onclick="closeNav()">Our Story</a></li>
+        <li><a href="contact.html" onclick="closeNav()">Contact</a></li>
+        <li><a href="cart.html" onclick="closeNav()"><i class="fa-solid fa-shopping-cart"></i> Cart</a></li>
+        <li><a href="login.html" onclick="closeNav()"><i class="fa-solid fa-user"></i> Account</a></li>
+    </ul>
+    <div class="nav-actions">
+        <div class="menu-icon" onclick="document.getElementById('navLinks').classList.toggle('open')">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="rental-hero">
+    <span class="tag">✦ New Service ✦</span>
+    <h1>Rent Exquisite Jewellery<br>for Your Special Day</h1>
+    <p>Look stunning at weddings, festivals & events — without buying. Book online, wear it, return it.</p>
+    <div class="hero-badges">
+        <div class="hero-badge"><i class="fa-solid fa-calendar-check"></i> Pick Your Dates</div>
+        <div class="hero-badge"><i class="fa-solid fa-shield-halved"></i> Refundable Deposit</div>
+        <div class="hero-badge"><i class="fa-solid fa-truck-fast"></i> Doorstep Delivery</div>
+        <div class="hero-badge"><i class="fa-solid fa-lock"></i> Secure UPI Payment</div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-section">
+    <h2>How Renting Works</h2>
+    <div class="steps">
+        <div class="step">
+            <div class="step-num">1</div>
+            <h4>Browse & Select</h4>
+            <p>Choose a jewellery set you love from our curated rental collection</p>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <h4>Pick Your Dates</h4>
+            <p>Select your rental start & end dates — minimum days vary per piece</p>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <h4>Pay Online</h4>
+            <p>Pay the rental fee + refundable security deposit via Razorpay/UPI</p>
+        </div>
+        <div class="step">
+            <div class="step-num">4</div>
+            <h4>Wear & Return</h4>
+            <p>We deliver to your door. Return within dates & get your deposit back</p>
+        </div>
+    </div>
+</section>
+
+<!-- Filters -->
+<div class="filters-bar">
+    <span class="filter-label">Filter:</span>
+    <select id="categoryFilter" onchange="applyFilters()">
+        <option value="">All Categories</option>
+    </select>
+    <select id="sortFilter" onchange="applyFilters()">
+        <option value="rate-low">Rate: Low to High</option>
+        <option value="rate-high">Rate: High to Low</option>
+    </select>
+    <input type="text" id="searchFilter" placeholder="Search jewellery..." oninput="applyFilters()" style="min-width:200px;">
+</div>
+
+<!-- Rental Grid -->
+<section class="rental-grid-section">
+    <div class="section-head">
+        <h2>Available for Rent</h2>
+        <span id="productCount">Loading...</span>
+    </div>
+    <div class="rental-grid" id="rentalGrid">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p style="color:var(--text-muted);">Loading collection...</p>
+        </div>
+    </div>
+</section>
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="bookingModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Book This Piece</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-product">
+                <img id="modalImg" src="" alt="">
+                <div class="modal-product-info">
+                    <h4 id="modalName">—</h4>
+                    <div class="rate">₹<span id="modalRate">0</span> <small style="font-size:0.75rem;color:var(--text-muted);">per day</small></div>
+                    <div class="dep">Deposit: ₹<span id="modalDeposit">0</span> (refundable)</div>
+                    <div style="color:var(--text-muted);font-size:0.8rem;margin-top:4px;">Min <span id="modalMinDays">1</span> day · Max <span id="modalMaxDays">30</span> days</div>
+                </div>
+            </div>
+
+            <!-- Date Selection -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" id="startDate" onchange="onStartDateChange()">
+                </div>
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" id="endDate" onchange="calculateFee()">
+                </div>
+            </div>
+
+            <!-- Availability Message -->
+            <div class="availability-msg" id="availMsg"></div>
+
+            <!-- Fee Summary -->
+            <div class="fee-summary" id="feeSummary" style="display:none;">
+                <div class="fee-row"><span>Rental Days</span><span class="val" id="summaryDays">—</span></div>
+                <div class="fee-row"><span>Daily Rate</span><span class="val" id="summaryRate">—</span></div>
+                <div class="fee-row"><span>Rental Fee</span><span class="val" id="summaryFee">—</span></div>
+                <div class="fee-row"><span>Security Deposit</span><span class="val" id="summaryDep">—</span></div>
+                <div class="fee-row total"><span>Total to Pay Now</span><span class="val" id="summaryTotal">—</span></div>
+                <p style="color:var(--text-muted);font-size:0.78rem;margin-top:10px;">* Deposit is fully refundable on return in good condition.</p>
+            </div>
+
+            <!-- Contact Details -->
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="custName" placeholder="Your name">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Phone *</label>
+                    <input type="tel" id="custPhone" placeholder="10-digit number">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="custEmail" placeholder="For confirmation">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Delivery Address *</label>
+                <textarea id="custAddress" rows="3" placeholder="Full address with PIN code"></textarea>
+            </div>
+
+            <button class="pay-btn" id="payBtn" onclick="proceedToPayment()" disabled>
+                <i class="fa-solid fa-lock"></i> Pay & Confirm Booking
+            </button>
+            <p class="secure-note"><i class="fa-solid fa-shield-halved"></i> Secured by Razorpay · UPI, Cards, Net Banking accepted</p>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="success-overlay" id="successModal">
+    <div class="success-box">
+        <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>Booking Confirmed!</h2>
+        <p>Your jewellery rental has been booked successfully.</p>
+        <p>Booking ID: <span class="bid" id="successBookingId">—</span></p>
+        <p style="margin-top:10px;">We'll contact you shortly to arrange delivery. Please save your booking ID.</p>
+        <button class="success-close" onclick="document.getElementById('successModal').classList.remove('open');location.reload();">Back to Rentals</button>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 Swarnim Jewels — <a href="index.html">Home</a> · <a href="contact.html">Contact</a> · <a href="privacy-policy.html">Privacy Policy</a></p>
+</footer>
+
+<script src="shopping-cart.js"></script>
+<script src="user-system.js"></script>
+<script>
+    const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbz2sIsHwOqQPTwTLlsHZgm9D6k9fhH_dZeNxzGYrKfZvTSVfw8Mb0cZg0j8Guefh7MC/exec';
+    // ⚠️ Replace with your actual Razorpay Key ID
+    // ⚠️ REPLACE with your live Razorpay key from https://dashboard.razorpay.com
+    // Use 'rzp_live_...' for production, 'rzp_test_...' for testing
+    const RAZORPAY_KEY = '';
+
+    let allRentals = [];
+    let filtered   = [];
+    let activeItem = null;
+
+    // ── LOAD RENTALS ──
+    // HTML escape helper
+    function esc(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+    }
+
+    async function loadRentals() {
+        try {
+            const res  = await fetch(SCRIPT_URL);
+            const data = await res.json();
+            allRentals = data.rentalProducts || [];
+            buildCategoryFilter(allRentals);
+            filtered = [...allRentals];
+            renderGrid(filtered);
+        } catch(e) {
+            document.getElementById('productCount').textContent = '0 pieces available';
+            document.getElementById('rentalGrid').innerHTML =
+                '<div class="empty-state"><i class="fa-solid fa-gem"></i><p>Could not load rentals. Please refresh.</p></div>';
+        }
+    }
+
+    function buildCategoryFilter(items) {
+        const cats = [...new Set(items.map(i=>i.category).filter(Boolean))];
+        const sel  = document.getElementById('categoryFilter');
+        cats.forEach(c => {
+            const o = document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o);
+        });
+    }
+
+    function applyFilters() {
+        const cat    = document.getElementById('categoryFilter').value.toLowerCase();
+        const sort   = document.getElementById('sortFilter').value;
+        const search = document.getElementById('searchFilter').value.toLowerCase();
+        filtered = allRentals.filter(i => {
+            if (cat    && (i.category||'').toLowerCase() !== cat)       return false;
+            if (search && !(i.name||'').toLowerCase().includes(search)) return false;
+            return true;
+        });
+        if (sort === 'rate-low')  filtered.sort((a,b) => a.dailyRate - b.dailyRate);
+        if (sort === 'rate-high') filtered.sort((a,b) => b.dailyRate - a.dailyRate);
+        renderGrid(filtered);
+    }
+
+    function renderGrid(items) {
+        const grid = document.getElementById('rentalGrid');
+        document.getElementById('productCount').textContent = items.length + ' piece' + (items.length!==1?'s':'') + ' available';
+        if (!items.length) {
+            grid.innerHTML = '<div class="empty-state"><i class="fa-solid fa-gem"></i><p>No rental items found.</p><p style="margin-top:10px;font-size:0.85rem;">Check back soon — we\'re adding more!</p></div>';
+            return;
+        }
+        grid.innerHTML = items.map(item => `
+            <div class="rental-card" data-id="${item.id}" onclick="openBooking(this.dataset.id)">
+                <img src="${esc(item.coverImage || '')}" alt="${esc(item.name)}" onerror="this.onerror=null;this.src='';">
+                <div class="rental-card-body">
+                    <div class="rental-card-cat">${esc(item.category || 'Jewellery')}</div>
+                    <div class="rental-card-name">${esc(item.name)}</div>
+                    <div class="rental-card-pricing">
+                        <div class="daily-rate">₹${Number(item.dailyRate).toLocaleString('en-IN')}<small>per day</small></div>
+                        <div class="deposit-badge">Dep. ₹${Number(item.deposit).toLocaleString('en-IN')}</div>
+                    </div>
+                    <div class="min-days"><i class="fa-solid fa-calendar-days"></i> Min ${esc(String(item.minDays||0))} day${item.minDays>1?'s':''} · Max ${esc(String(item.maxDays||0))} days</div>
+                    <button class="book-btn"><i class="fa-solid fa-calendar-check"></i> Book Now</button>
+                </div>
+            </div>`).join('');
+    }
+
+    // ── BOOKING MODAL ──
+    function openBooking(id) {
+        activeItem = allRentals.find(i => String(i.id) === String(id));
+        if (!activeItem) return;
+        document.getElementById('modalImg').src = activeItem.coverImage || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=300';
+        document.getElementById('modalName').textContent    = activeItem.name;
+        document.getElementById('modalRate').textContent    = Number(activeItem.dailyRate).toLocaleString('en-IN');
+        document.getElementById('modalDeposit').textContent = Number(activeItem.deposit).toLocaleString('en-IN');
+        document.getElementById('modalMinDays').textContent = activeItem.minDays;
+        document.getElementById('modalMaxDays').textContent = activeItem.maxDays;
+
+        // Set min date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').min = today;
+        document.getElementById('endDate').min   = today;
+        document.getElementById('startDate').value = '';
+        document.getElementById('endDate').value   = '';
+        document.getElementById('feeSummary').style.display = 'none';
+        document.getElementById('availMsg').style.display   = 'none';
+        document.getElementById('payBtn').disabled = true;
+
+        document.getElementById('bookingModal').classList.add('open');
+    }
+
+    function closeModal() {
+        document.getElementById('bookingModal').classList.remove('open');
+        activeItem = null;
+    }
+
+    function onStartDateChange() {
+        const s = document.getElementById('startDate').value;
+        if (s) {
+            // endDate must be at least 1 day after startDate
+            const nextDay = new Date(s);
+            nextDay.setDate(nextDay.getDate() + 1);
+            document.getElementById('endDate').min = nextDay.toISOString().split('T')[0];
+            // Clear endDate if it's now before startDate
+            const e = document.getElementById('endDate').value;
+            if (e && e <= s) {
+                document.getElementById('endDate').value = '';
+                document.getElementById('feeSummary').style.display = 'none';
+                document.getElementById('availMsg').style.display   = 'none';
+                document.getElementById('payBtn').disabled = true;
+            }
+        }
+        calculateFee();
+    }
+
+    async function calculateFee() {
+        const s = document.getElementById('startDate').value;
+        const e = document.getElementById('endDate').value;
+        if (!s || !e || !activeItem) return;
+
+        const start = new Date(s), end = new Date(e);
+        if (end <= start) {
+            showAvail('End date must be after start date.', false); return;
+        }
+        const days = Math.ceil((end - start) / (1000*60*60*24));
+        if (days < activeItem.minDays) {
+            showAvail(`Minimum rental is ${activeItem.minDays} day(s).`, false);
+            document.getElementById('feeSummary').style.display = 'none';
+            document.getElementById('payBtn').disabled = true;
+            return;
+        }
+        if (days > activeItem.maxDays) {
+            showAvail(`Maximum rental is ${activeItem.maxDays} day(s).`, false);
+            document.getElementById('feeSummary').style.display = 'none';
+            document.getElementById('payBtn').disabled = true;
+            return;
+        }
+
+        // Check availability
+        showAvail('Checking availability...', null);
+        document.getElementById('payBtn').disabled = true;
+        try {
+            const res = await postData({ action:'checkRentalAvailability', productId:activeItem.id, startDate:s, endDate:e });
+            if (!res.available) {
+                showAvail('Sorry, this item is already booked for ' + (res.conflictDates||'these dates') + '.', false);
+                document.getElementById('feeSummary').style.display = 'none';
+                return;
+            }
+        } catch(err) {
+            // Availability check network failure — do NOT allow payment
+            showAvail('Could not verify availability. Please check your connection and try again.', false);
+            document.getElementById('feeSummary').style.display = 'none';
+            return;
+        }
+
+        const rentalFee = days * activeItem.dailyRate;
+        const deposit   = activeItem.deposit;
+        const total     = rentalFee + deposit;
+        document.getElementById('summaryDays').textContent  = days;
+        document.getElementById('summaryRate').textContent  = '₹' + Number(activeItem.dailyRate).toLocaleString('en-IN') + '/day';
+        document.getElementById('summaryFee').textContent   = '₹' + Number(rentalFee).toLocaleString('en-IN');
+        document.getElementById('summaryDep').textContent   = '₹' + Number(deposit).toLocaleString('en-IN');
+        document.getElementById('summaryTotal').textContent = '₹' + Number(total).toLocaleString('en-IN');
+        document.getElementById('feeSummary').style.display = 'block';
+        showAvail('✓ Available for your selected dates!', true);
+        document.getElementById('payBtn').disabled = false;
+    }
+
+    function showAvail(msg, ok) {
+        const el = document.getElementById('availMsg');
+        el.style.display = 'block';
+        el.className = 'availability-msg ' + (ok === true ? 'available' : ok === false ? 'unavailable' : '');
+        el.textContent = msg;
+    }
+
+    // ── PAYMENT ──
+    async function proceedToPayment() {
+        const name    = document.getElementById('custName').value.trim();
+        const phone   = document.getElementById('custPhone').value.trim();
+        const address = document.getElementById('custAddress').value.trim();
+        const email   = document.getElementById('custEmail').value.trim();
+        if (!name || !phone || !address) { alert('Please fill in your name, phone & address.'); return; }
+        if (!/^\d{10}$/.test(phone)) { alert('Please enter a valid 10-digit phone number.'); return; }
+        // Bug 174: validate email if provided
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('Please enter a valid email address or leave it blank.'); return; }
+
+        const s    = document.getElementById('startDate').value;
+        const e    = document.getElementById('endDate').value;
+        const today = new Date(); today.setHours(0,0,0,0);
+        if (!s || new Date(s) < today) { alert('Start date cannot be in the past.'); return; }
+        const days = Math.ceil((new Date(e) - new Date(s)) / (1000*60*60*24));
+        if (!days || days < 1) { alert('Please select valid rental dates.'); return; }
+        if (days < activeItem.minDays) { alert('Minimum rental period is ' + activeItem.minDays + ' day(s). Please adjust your dates.'); return; }
+        if (days > activeItem.maxDays) { alert('Maximum rental period is ' + activeItem.maxDays + ' days. Please adjust your dates.'); return; }
+        const rentalFee = days * activeItem.dailyRate;
+        const deposit   = activeItem.deposit;
+        const totalPaise = (rentalFee + deposit) * 100; // Razorpay uses paise
+        // Bug 173: guard against zero-amount payment
+        if (totalPaise <= 0) { alert('Booking total is invalid. Please contact support.'); document.getElementById('payBtn').disabled = false; return; }
+
+        const options = {
+            key: RAZORPAY_KEY,
+            amount: totalPaise,
+            currency: 'INR',
+            name: 'Swarnim Jewels',
+            description: 'Rental: ' + activeItem.name,
+            image: activeItem.coverImage || '',
+            prefill: { name: name, contact: phone, email: email },
+            theme: { color: '#d4af37' },
+            handler: async function(response) {
+                // Payment success — save booking
+                const booking = {
+                    productId: activeItem.id,
+                    productName: activeItem.name,
+                    startDate: s, endDate: e, days: days,
+                    rentalFee: rentalFee, deposit: deposit,
+                    total: rentalFee + deposit,
+                    name: name, phone: phone, address: address,
+                    razorpayOrderId: response.razorpay_order_id || '',
+                    razorpayPaymentId: response.razorpay_payment_id
+                };
+                const userId = (UserSystem.getUser() || {}).userId || 'GUEST';
+                try {
+                    const res = await postData({ action:'createRentalBooking', userId, booking });
+                    if (!res.success) throw new Error(res.error || 'Booking save failed');
+                    closeModal();
+                    document.getElementById('successBookingId').textContent = res.bookingId || '—';
+                    document.getElementById('successModal').classList.add('open');
+                } catch(err) {
+                    alert('Payment received but booking save failed. Contact us with Payment ID: ' + response.razorpay_payment_id);
+                }
+            },
+            modal: { ondismiss: function() { document.getElementById('payBtn').disabled = false; } }
+        };
+
+        document.getElementById('payBtn').disabled = true;
+
+        // Final availability re-check before charging (prevents race-condition double-booking)
+        try {
+            const avail = await postData({ action:'checkRentalAvailability', productId:activeItem.id, startDate:s, endDate:e });
+            if (!avail.available) {
+                alert('Sorry — this item was just booked by someone else for these dates. Please choose different dates.');
+                document.getElementById('payBtn').disabled = false;
+                calculateFee(); // refresh the UI
+                return;
+            }
+        } catch(err) {
+            alert('Could not verify availability. Please check your connection and try again.');
+            document.getElementById('payBtn').disabled = false;
+            return;
+        }
+
+        if (typeof Razorpay === 'undefined') {
+            alert('Payment gateway failed to load. Please disable any ad-blocker and refresh the page.');
+            document.getElementById('payBtn').disabled = false;
+            return;
+        }
+        const rzp = new Razorpay(options);
+        rzp.open();
+    }
+
+    async function postData(payload) {
+        // Auto-inject userId + token for authenticated calls
+        const _u = (window.UserSystem && UserSystem.getUser) ? UserSystem.getUser() : null;
+        const _t = (window.UserSystem && UserSystem.getToken) ? UserSystem.getToken() : null;
+        const auth = (_u && _t) ? { userId: _u.userId, token: _t } : {};
+        const res = await fetch(SCRIPT_URL, {
+            method:  'POST',
+            redirect: 'follow',
+            headers: { 'Content-Type': 'text/plain' },
+            body:    JSON.stringify({ ...auth, ...payload })
+        });
+        return await res.json();
+    }
+
+    function closeNav() {
+        document.getElementById('navLinks').classList.remove('open');
+    }
+
+    loadRentals();
+</script>
+</body>
+</html>
