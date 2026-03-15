@@ -9,7 +9,7 @@
 const UserSystem = (function () {
 
   // -- CONFIG --------------------------------------------------
-  const API_URL = 'https://script.google.com/macros/s/AKfycbwGDUDUHI8QgcyqG5idSiRWfOztJ1bktvaNEfxdEiBV09NuP6HunG_-9r5gbVo6UHY3/exec';
+  const API_URL = 'https://script.google.com/macros/s/AKfycbzYdpyQFlckiKNQaouy4Q_E8dJix-10az3ETFQN6GOqqOHnOKmsLSeDkCl3G_r6SI57/exec';
   const K = { USER: 'sj_user', TOKEN: 'sj_token', CART: 'swarnimCart', WISH: 'sj_wishlist' };
 
   // -- STORAGE -------------------------------------------------
