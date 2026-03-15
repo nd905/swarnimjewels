@@ -159,6 +159,28 @@
         </div>
 
         <!-- COUPON SECTION -->
+        <!-- WALLET CREDIT BANNER -->
+        <div id="walletBanner" style="display:none;margin:0 0 16px 0;padding:16px 18px;
+            background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.4);
+            border-radius:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                <div>
+                    <span style="color:var(--accent);font-weight:700;font-size:1rem;">
+                        <i class="fa-solid fa-wallet"></i> ₹500 Welcome Credit Available!
+                    </span>
+                    <div style="color:#999;font-size:0.8rem;margin-top:3px;">
+                        Code: <span id="walletCouponCode" style="font-family:monospace;color:var(--accent);letter-spacing:1px;"></span>
+                        &nbsp;·&nbsp; Min order ₹999 &nbsp;·&nbsp; One-time use
+                    </div>
+                </div>
+                <button type="button" id="walletApplyBtn" onclick="applyWalletCredit()"
+                    style="padding:9px 20px;background:var(--accent);color:#000;border:none;
+                    border-radius:7px;font-weight:700;cursor:pointer;font-size:0.85rem;white-space:nowrap;">
+                    Apply ₹500
+                </button>
+            </div>
+        </div>
+
         <div style="margin:25px 0; padding:20px; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid #222;">
             <h4 style="color:var(--accent); margin-bottom:15px; font-size:0.95rem;">
                 <i class="fa-solid fa-tag"></i> Have a Coupon Code?
@@ -254,13 +276,45 @@ let appliedCoupon = null;
 window.addEventListener('load', function () {
     loadCartItems();
     calculateTotals();
-    // Show coupon input immediately (no pre-loading needed)
+    // Load wallet credit if user is logged in
+async function loadWalletCredit() {
+    if (!UserSystem.isLoggedIn()) return;
+    try {
+        const res = await UserSystem.getWelcomeCoupon();
+        const w = res.welcome;
+        if (w && !w.used && !w.expired) {
+            document.getElementById('walletCouponCode').textContent = w.code;
+            document.getElementById('walletBanner').style.display = 'block';
+        }
+    } catch(e) { /* silent */ }
+}
+
+async function applyWalletCredit() {
+    const code = document.getElementById('walletCouponCode').textContent.trim();
+    if (!code) return;
+    const wBtn = document.getElementById('walletApplyBtn');
+    wBtn.textContent = 'Applying...';
+    wBtn.disabled = true;
+    document.getElementById('couponCode').value = code;
+    document.getElementById('couponInputArea').style.display = 'block';
+    await applyCoupon(); // W14: await so button state reflects actual result
+    // Check if coupon was actually applied successfully
+    if (appliedCoupon) {  // W14: check module-scoped variable
+        wBtn.textContent = '✓ Applied';
+    } else {
+        wBtn.textContent = 'Apply ₹500';
+        wBtn.disabled = false;
+    }
+}
+
+// Show coupon input immediately (no pre-loading needed)
     document.getElementById('couponLoading').style.display   = 'none';
     document.getElementById('couponInputArea').style.display = 'block';
 });
 
 //  LOAD CART ITEMS 
 function loadCartItems() {
+    loadWalletCredit();
     var cart     = ShoppingCart.getCart();
     var prevBox  = document.getElementById('productPreviewBox');
     var infoBox  = document.getElementById('productInfoBox');
@@ -322,12 +376,17 @@ async function applyCoupon() {
         } else {
             var discount  = Number(result.discount) || 0;
             var minAmt    = Number(result.minimumAmount) || 0;
-            var saving    = Math.round(subtotal * discount / 100);
-            appliedCoupon = { code: entered, discount: discount };
+            var flatAmount = Number(result.flatAmount) || 0;
+            var saving    = flatAmount > 0 ? flatAmount : Math.round(subtotal * discount / 100);
+            appliedCoupon = { code: entered, discount: discount, flatAmount: flatAmount };
             showCouponMsg('', 'none');
             document.getElementById('couponSuccess').style.display  = 'block';
             var minNote   = minAmt > 0 ? ' <span style="color:#aaa;font-size:0.82rem;font-weight:normal;">(Min. order &#8377;' + minAmt.toLocaleString('en-IN') + ')</span>' : '';
-            document.getElementById('couponSavingText').innerHTML   = discount + '% off &mdash; You save &#8377;' + saving.toLocaleString('en-IN') + '!' + minNote;
+            // W6: flat coupons show '₹X off' not '0% off'
+            var savingLabel = flatAmount > 0
+                ? '&#8377;' + saving.toLocaleString('en-IN') + ' off &mdash; Welcome Credit Applied! 🎉'
+                : discount + '% off &mdash; You save &#8377;' + saving.toLocaleString('en-IN') + '!';
+            document.getElementById('couponSavingText').innerHTML = savingLabel + minNote;
             document.getElementById('couponCode').disabled          = true;
             applyBtn.style.display = 'none';
             calculateTotals();
@@ -348,6 +407,9 @@ function removeCoupon() {
     document.getElementById('couponSuccess').style.display  = 'none';
     document.getElementById('couponMessage').style.display  = 'none';
     document.getElementById('applyBtn').style.display       = 'block';
+    // W5/W12: re-enable wallet button when coupon is removed
+    var wBtn = document.getElementById('walletApplyBtn');
+    if (wBtn) { wBtn.textContent = 'Apply ₹500'; wBtn.disabled = false; }
     calculateTotals();
 }
 
@@ -373,7 +435,11 @@ function calculateTotals() {
     var subtotal = 0;
     for (var i = 0; i < cart.length; i++) { subtotal += Number(cart[i].price || 0) * Number(cart[i].quantity || 0); }
 
-    var discount     = appliedCoupon ? Math.round(subtotal * appliedCoupon.discount / 100) : 0;
+    var discount     = appliedCoupon
+        ? (appliedCoupon.flatAmount > 0
+            ? Math.min(appliedCoupon.flatAmount, subtotal)
+            : Math.round(subtotal * appliedCoupon.discount / 100))
+        : 0;
     var afterDisc    = subtotal - discount;
     var shipping     = afterDisc >= CONFIG.FREE_SHIPPING_THRESHOLD ? 0 : CONFIG.SHIPPING_CHARGE;
     var total        = afterDisc + shipping;

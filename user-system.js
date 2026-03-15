@@ -285,6 +285,13 @@ const UserSystem = (function () {
     setInterval(() => { if (isLoggedIn()) pushCart(); }, 5 * 60 * 1000);
   })();
 
+  // -- WALLET -------------------------------------------------
+  async function getWelcomeCoupon() {
+    const user = getUser();
+    if (!user) return { success:false, welcome:null };
+    return api('getWelcomeCoupon');
+  }
+
   return {
     _API_URL: API_URL,         // exposed so pages can reuse the URL without duplication
     register, login, logout, logoutUser: logout,
@@ -294,6 +301,7 @@ const UserSystem = (function () {
     saveOrder, getOrders,
     saveAddress, replaceAddresses, getAddresses,
     getWishlist, toggleWishlist, isWishlisted,
+    getWelcomeCoupon,
     updateHeader, safeRedirect
   };
 

@@ -462,6 +462,39 @@
                     </button>
                 </div>
 
+                <!-- Also Add to Rentals -->
+                <div id="rentalToggleBox" style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.3);border-radius:10px;padding:18px;margin-bottom:18px;">
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-family:'Cinzel',serif;color:#d4af37;font-size:0.95rem;font-weight:700;">
+                        <input type="checkbox" id="addToRentals" style="width:18px;height:18px;accent-color:#d4af37;cursor:pointer;">
+                        💎 Also Add to Rent Jewellery Page
+                    </label>
+                    <div id="rentalFields" style="display:none;margin-top:14px;display:none;">
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-top:12px;">
+                            <div>
+                                <label style="font-size:0.8rem;color:#aaa;display:block;margin-bottom:4px;">Daily Rate (₹)</label>
+                                <input type="number" id="rentalDailyRate" placeholder="Auto: 10% of price" min="1"
+                                    style="width:100%;padding:9px 10px;background:#1a1a1a;border:1px solid #444;border-radius:6px;color:#eee;font-size:0.85rem;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem;color:#aaa;display:block;margin-bottom:4px;">Deposit (₹)</label>
+                                <input type="number" id="rentalDeposit" value="500" min="0"
+                                    style="width:100%;padding:9px 10px;background:#1a1a1a;border:1px solid #444;border-radius:6px;color:#eee;font-size:0.85rem;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem;color:#aaa;display:block;margin-bottom:4px;">Min Days</label>
+                                <input type="number" id="rentalMinDays" value="2" min="1"
+                                    style="width:100%;padding:9px 10px;background:#1a1a1a;border:1px solid #444;border-radius:6px;color:#eee;font-size:0.85rem;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem;color:#aaa;display:block;margin-bottom:4px;">Max Days</label>
+                                <input type="number" id="rentalMaxDays" value="10" min="1"
+                                    style="width:100%;padding:9px 10px;background:#1a1a1a;border:1px solid #444;border-radius:6px;color:#eee;font-size:0.85rem;">
+                            </div>
+                        </div>
+                        <p style="color:#888;font-size:0.78rem;margin-top:8px;">Leave Daily Rate blank to auto-calculate as 10% of product price.</p>
+                    </div>
+                </div>
+
                 <button type="submit">Upload & Save Product</button>
                 <div id="status"></div>
             </form>
@@ -659,6 +692,29 @@
                     await uploadVideoToR2(selectedVideoFile);
                 }
             });
+        });
+
+        // Toggle rental fields visibility
+        document.getElementById('addToRentals').addEventListener('change', function() {
+            document.getElementById('rentalFields').style.display = this.checked ? 'block' : 'none';
+            if (this.checked) {
+                // Auto-fill daily rate as 10% of current price
+                const price = parseFloat(document.getElementById('price').value) || 0;
+                if (price > 0 && !document.getElementById('rentalDailyRate').value) {
+                    document.getElementById('rentalDailyRate').value = Math.ceil(price * 0.1);
+                }
+            }
+        });
+
+        // Auto-update daily rate when price changes if checkbox is checked
+        document.getElementById('price').addEventListener('input', function() {
+            if (document.getElementById('addToRentals').checked && !document.getElementById('rentalDailyRate')._manuallySet) {
+                const price = parseFloat(this.value) || 0;
+                if (price > 0) document.getElementById('rentalDailyRate').value = Math.ceil(price * 0.1);
+            }
+        });
+        document.getElementById('rentalDailyRate').addEventListener('input', function() {
+            this._manuallySet = !!this.value;
         });
 
         // Generate Product ID
@@ -903,11 +959,47 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    document.getElementById('status').innerHTML = '<p style="color: green;"> Product saved successfully!</p>';
-                    
+                    // If "Also add to Rentals" is checked — call addRentalProduct
+                    if (document.getElementById('addToRentals').checked) {
+                        const price = parseFloat(productData.price) || 0;
+                        const dailyRateInput = parseFloat(document.getElementById('rentalDailyRate').value);
+                        const dailyRate = dailyRateInput > 0 ? dailyRateInput : Math.ceil(price * 0.1);
+                        const rentalData = {
+                            action: 'addRentalProduct',
+                            adminSecret: CONFIG.ADMIN_SECRET,
+                            id: 'R' + productData.id,
+                            name: productData.name,
+                            description: productData.description,
+                            dailyRate: dailyRate,
+                            deposit: parseFloat(document.getElementById('rentalDeposit').value) || 500,
+                            minDays: parseInt(document.getElementById('rentalMinDays').value) || 2,
+                            maxDays: parseInt(document.getElementById('rentalMaxDays').value) || 10,
+                            coverImage: productData.coverImage,
+                            galleryImages: productData.galleryImages,
+                            category: productData.category
+                        };
+                        try {
+                            const rRes = await fetch(CONFIG.APPS_SCRIPT_URL, {
+                                method: 'POST', redirect: 'follow',
+                                headers: { 'Content-Type': 'text/plain' },
+                                body: JSON.stringify(rentalData)
+                            });
+                            const rData = await rRes.json();
+                            if (rData.success) {
+                                document.getElementById('status').innerHTML = '<p style="color: green;">✅ Product saved & added to Rent Jewellery page!</p>';
+                            } else {
+                                document.getElementById('status').innerHTML = '<p style="color: orange;">✅ Product saved, but rental add failed: ' + (rData.error||'unknown') + '</p>';
+                            }
+                        } catch(re) {
+                            document.getElementById('status').innerHTML = '<p style="color: orange;">✅ Product saved, but rental add failed: ' + re.message + '</p>';
+                        }
+                    } else {
+                        document.getElementById('status').innerHTML = '<p style="color: green;">✅ Product saved successfully!</p>';
+                    }
+
                     // Increment Product ID
                     productIdCounter++; // Bug 170: counter in memory only, re-synced from server on next load
-                    
+
                     // Reset form
                     document.getElementById('productForm').reset();
                     generateProductId();
@@ -917,10 +1009,13 @@
                     document.getElementById('coverPreview').innerHTML = '';
                     document.getElementById('galleryPreview').innerHTML = '';
                     renderVideoList();
-                    
+                    document.getElementById('rentalFields').style.display = 'none';
+                    document.getElementById('rentalDailyRate').value = '';
+                    document.getElementById('rentalDailyRate')._manuallySet = false;
+
                     setTimeout(() => {
                         document.getElementById('status').innerHTML = '';
-                    }, 3000);
+                    }, 4000);
                 } else {
                     document.getElementById('status').textContent = '❌ Failed: ' + (data.error || 'Unknown error');
                 }
